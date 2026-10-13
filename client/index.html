@@ -11,6 +11,8 @@
       rel="stylesheet"
     />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <!-- The hero poster is the largest above-the-fold element, so start fetching it before the bundle runs. -->
+    <link rel="preload" as="image" href="/images/hero-poster.jpg" fetchpriority="high" />
     <title>BakeHouse</title>
   </head>
   <body>

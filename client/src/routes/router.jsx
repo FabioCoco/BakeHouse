@@ -15,7 +15,8 @@ export const router = createBrowserRouter([
       { index: true, lazy: lazyPage(() => import('../pages/Home.jsx')) },
       { path: 'products', lazy: lazyPage(() => import('../pages/Catalog.jsx')) },
       { path: 'products/:slug', lazy: lazyPage(() => import('../pages/ProductDetail.jsx')) },
-      { path: 'styleguide', lazy: lazyPage(() => import('../pages/Styleguide.jsx')) },
+      // The styleguide is a development-only page for checking the design tokens.
+      ...(import.meta.env.DEV ? [{ path: 'styleguide', lazy: lazyPage(() => import('../pages/Styleguide.jsx')) }] : []),
       { path: 'forbidden', lazy: lazyPage(() => import('../pages/Forbidden.jsx')) },
       { path: 'login', lazy: lazyPage(() => import('../pages/Login.jsx')) },
       { path: 'register', lazy: lazyPage(() => import('../pages/Register.jsx')) },

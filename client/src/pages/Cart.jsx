@@ -123,9 +123,15 @@ export default function Cart() {
               </div>
             </dl>
             <p className="text-xs text-cocoa">Ongkos kirim dan total dihitung saat checkout.</p>
-            <Button disabled size="lg" className="w-full">
-              Lanjut ke Checkout
-            </Button>
+            {cart.hasIssues ? (
+              <Button disabled size="lg" className="w-full">
+                Perbaiki keranjang dulu
+              </Button>
+            ) : (
+              <Button as={Link} to="/checkout" size="lg" className="w-full">
+                Lanjut ke Checkout
+              </Button>
+            )}
           </Card>
         </div>
       )}

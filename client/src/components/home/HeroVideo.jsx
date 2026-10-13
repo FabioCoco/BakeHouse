@@ -40,9 +40,10 @@ export default function HeroVideo() {
     >
       <div className="flex flex-col lg:block lg:h-full">
         {/* Top band (desktop): eyebrow and headline sit in the empty sand above the croissant. */}
-        <div className="z-10 px-4 pt-28 pb-6 text-center lg:absolute lg:inset-x-0 lg:top-0 lg:pb-0 lg:pt-32">
-          <p className="eyebrow">Roti artisan · Setiap pagi</p>
-          <h1 id="hero-title" className="mx-auto mt-4 max-w-3xl text-4xl sm:text-5xl lg:text-6xl">
+        <div className="z-10 px-4 pt-28 pb-6 text-center lg:absolute lg:inset-x-0 lg:top-0 lg:h-1/4 lg:pb-0 lg:pt-20">
+          {/* Sits on the sand background, where the cocoa eyebrow colour falls below AA contrast. */}
+          <p className="eyebrow text-espresso">Roti artisan · Setiap pagi</p>
+          <h1 id="hero-title" className="mx-auto mt-4 max-w-3xl text-4xl sm:text-5xl lg:text-5xl">
             Dipanggang Pagi Ini, dari Paris hingga Tokyo.
           </h1>
         </div>
@@ -79,7 +80,7 @@ export default function HeroVideo() {
         </div>
 
         {/* Bottom band (desktop): call to action sits in the empty sand below the croissant. */}
-        <div className="z-10 flex flex-col items-center gap-6 px-4 py-8 text-center lg:absolute lg:inset-x-0 lg:bottom-0 lg:py-14">
+        <div className="z-10 flex flex-col items-center gap-6 px-4 py-8 text-center lg:absolute lg:inset-x-0 lg:bottom-0 lg:h-1/4 lg:justify-end lg:gap-4 lg:py-6">
           <p className="max-w-xl text-lg text-espresso">
             Croissant, sourdough, dan kue dari dapur kecil kami, dikirim hangat ke pintumu.
           </p>

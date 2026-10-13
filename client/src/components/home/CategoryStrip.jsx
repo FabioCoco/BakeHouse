@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import Container from '../layout/Container.jsx';
 import Skeleton from '../ui/Skeleton.jsx';
 import useFetch from '../../hooks/useFetch.js';
 import { categoryService } from '../../services/categoryService.js';
@@ -9,7 +10,7 @@ export default function CategoryStrip() {
   const categories = body?.data ?? [];
 
   return (
-    <section id="kategori" aria-labelledby="kategori-title" className="scroll-mt-20 py-14">
+    <Container as="section" id="kategori" aria-labelledby="kategori-title" className="scroll-mt-20 py-14">
       <h2 id="kategori-title" className="sr-only">
         Kategori roti
       </h2>
@@ -25,7 +26,7 @@ export default function CategoryStrip() {
       {error && <p className="text-cocoa">Kategori belum bisa dimuat.</p>}
 
       {!loading && !error && (
-        <ul className="-mx-4 flex snap-x gap-3 overflow-x-auto px-4 pb-2 md:mx-0 md:flex-wrap md:justify-center md:overflow-visible md:px-0">
+        <ul className="flex snap-x gap-3 overflow-x-auto pb-2 md:flex-wrap md:justify-center md:overflow-visible">
           {categories.map((category) => (
             <li key={category._id} className="snap-start shrink-0">
               <Link
@@ -41,6 +42,6 @@ export default function CategoryStrip() {
           ))}
         </ul>
       )}
-    </section>
+    </Container>
   );
 }

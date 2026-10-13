@@ -28,9 +28,15 @@ export default function CartDrawer() {
         <Button as={Link} to="/cart" variant="outline" className="flex-1" onClick={closeCart}>
           Lihat Keranjang
         </Button>
-        <Button disabled className="flex-1">
-          Lanjut ke Checkout
-        </Button>
+        {cart.hasIssues ? (
+          <Button disabled className="flex-1">
+            Perbaiki keranjang dulu
+          </Button>
+        ) : (
+          <Button as={Link} to="/checkout" onClick={closeCart} className="flex-1">
+            Lanjut ke Checkout
+          </Button>
+        )}
       </div>
     </div>
   );
