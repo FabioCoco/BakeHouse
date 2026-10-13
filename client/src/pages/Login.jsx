@@ -20,20 +20,24 @@ export default function Login() {
   const [errors, setErrors] = useState({});
   const [submitting, setSubmitting] = useState(false);
 
-  const target = safeRedirect(location.state?.from);
-
   useEffect(() => {
     document.title = 'Masuk · BakeHouse';
   }, []);
 
+  // Returns to the page the user came from. Without one, admins land on the dashboard and customers on the home page.
+  const destinationFor = (signedInUser) => {
+    if (location.state?.from) return safeRedirect(location.state.from);
+    return signedInUser?.role === 'admin' ? '/admin' : '/';
+  };
+
   if (user) {
-    return <Navigate to={target} replace />;
+    return <Navigate to={destinationFor(user)} replace />;
   }
 
   const signedIn = (signedInUser) => {
     setUser(signedInUser);
     toast.success(`Selamat datang kembali, ${signedInUser.name}!`);
-    navigate(target, { replace: true });
+    navigate(destinationFor(signedInUser), { replace: true });
   };
 
   const handleError = (err) => {

@@ -137,6 +137,7 @@ export const checkout = async ({ userId, addressId, address, paymentNote, buyNow
         discountPercent: product.isOnSale ? product.discountPercent : 0,
         quantity: line.quantity,
         image: product.images[0],
+        slug: product.slug,
       });
       subtotal += unitPrice * line.quantity;
     }

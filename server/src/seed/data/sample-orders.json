@@ -1,0 +1,103 @@
+[
+  {
+    "customer": "rina@example.com",
+    "items": [
+      { "product": "Butter Croissant", "quantity": 2 },
+      { "product": "Lemon Tart", "quantity": 1 },
+      { "product": "Rosemary Focaccia", "quantity": 1 }
+    ],
+    "reviews": [
+      { "product": "Butter Croissant", "rating": 5, "comment": "Lapisannya renyah dan aromanya mentega sekali. Masih hangat keesokan paginya." },
+      { "product": "Lemon Tart", "rating": 4, "comment": "Isian lemonnya segar dan tidak terlalu manis. Kulitnya bisa sedikit lebih renyah." },
+      { "product": "Rosemary Focaccia", "rating": 5, "comment": "Aroma rosemary-nya pas, bagian atasnya lembut dengan garam yang seimbang." }
+    ]
+  },
+  {
+    "customer": "budi@example.com",
+    "items": [
+      { "product": "Country Sourdough Loaf", "quantity": 1 },
+      { "product": "Hojicha Cookie", "quantity": 2 },
+      { "product": "Matcha Basque Cheesecake", "quantity": 1 },
+      { "product": "Rye Sourdough Boule", "quantity": 1 }
+    ],
+    "reviews": [
+      { "product": "Country Sourdough Loaf", "rating": 5, "comment": "Remah terbuka, kulit asam yang pas, dan tetap segar sampai tiga hari." },
+      { "product": "Hojicha Cookie", "rating": 4, "comment": "Aroma hojicha-nya terasa sekali, teksturnya lembut di tengah dan renyah di pinggir." },
+      { "product": "Matcha Basque Cheesecake", "rating": 4, "comment": "Permukaannya gosong cantik dan bagian dalamnya creamy. Porsinya agak besar untuk satu orang." },
+      { "product": "Rye Sourdough Boule", "rating": 4, "comment": "Rasa rye-nya kuat tapi tidak pahit. Cocok untuk sandwich keju." }
+    ]
+  },
+  {
+    "customer": "dewi@example.com",
+    "items": [
+      { "product": "Lemon Tart", "quantity": 2 },
+      { "product": "Shokupan Milk Bread", "quantity": 1 },
+      { "product": "Country Sourdough Loaf", "quantity": 1 },
+      { "product": "Matcha Basque Cheesecake", "quantity": 1 }
+    ],
+    "reviews": [
+      { "product": "Lemon Tart", "rating": 3, "comment": "Enak, tapi karamelnya terlalu tebal dan menutupi rasa lemon." },
+      { "product": "Shokupan Milk Bread", "rating": 5, "comment": "Lembut seperti awan dan sisa dua hari masih empuk. Ini roti favorit keluarga kami." },
+      { "product": "Country Sourdough Loaf", "rating": 4, "comment": "Kulitnya tebal dan renyah, rasa asamnya pas untuk dipadukan dengan selai." },
+      { "product": "Matcha Basque Cheesecake", "rating": 5, "comment": "Matcha-nya tidak terlalu pahit dan teksturnya lumer. Pantas dibeli lagi." }
+    ]
+  },
+  {
+    "customer": "andi@example.com",
+    "items": [
+      { "product": "Butter Croissant", "quantity": 1 },
+      { "product": "Hojicha Cookie", "quantity": 1 },
+      { "product": "Shokupan Milk Bread", "quantity": 2 },
+      { "product": "Matcha Basque Cheesecake", "quantity": 1 }
+    ],
+    "reviews": [
+      { "product": "Butter Croissant", "rating": 4, "comment": "Bagus, meski sedikit lebih dingin saat sampai. Kualitas laminasinya tetap terasa." },
+      { "product": "Hojicha Cookie", "rating": 3, "comment": "Rasanya unik, tapi menurut saya kurang kuat aroma hojicha-nya." },
+      { "product": "Shokupan Milk Bread", "rating": 5, "comment": "Potongannya rapi dan sangat lembut. Cocok untuk roti tawar bakar." },
+      { "product": "Matcha Basque Cheesecake", "rating": 5, "comment": "Kue terenak yang saya beli bulan ini. Kemasannya juga rapi." }
+    ]
+  },
+  {
+    "customer": "sari@example.com",
+    "items": [
+      { "product": "Butter Croissant", "quantity": 1 },
+      { "product": "Melon Pan", "quantity": 2 },
+      { "product": "Shokupan Milk Bread", "quantity": 1 },
+      { "product": "Brown Butter Chocolate Chip Cookie", "quantity": 2 }
+    ],
+    "reviews": [
+      { "product": "Butter Croissant", "rating": 5, "comment": "Sempurna untuk sarapan. Bagian dalamnya berongga seperti sarang lebah." },
+      { "product": "Melon Pan", "rating": 3, "comment": "Kulit cookie-nya tipis dan renyah, tetapi bagian rotinya agak kering." },
+      { "product": "Shokupan Milk Bread", "rating": 4, "comment": "Enak dan lembut, hanya saja saya berharap ukurannya sedikit lebih besar." },
+      { "product": "Brown Butter Chocolate Chip Cookie", "rating": 5, "comment": "Aroma brown butter-nya kuat dan cokelatnya banyak. Anak saya sampai minta tambah." }
+    ]
+  },
+  {
+    "customer": "yoga@example.com",
+    "items": [
+      { "product": "Pain au Chocolat", "quantity": 1 },
+      { "product": "Butter Croissant", "quantity": 1 },
+      { "product": "Rosemary Focaccia", "quantity": 2 },
+      { "product": "Brown Butter Chocolate Chip Cookie", "quantity": 1 },
+      { "product": "Country Sourdough Loaf", "quantity": 1 }
+    ],
+    "reviews": [
+      { "product": "Pain au Chocolat", "rating": 1, "comment": "Bagian bawahnya gosong dan cokelatnya sudah mengeras. Sangat kecewa dengan kualitas hari ini." },
+      { "product": "Butter Croissant", "rating": 2, "comment": "Terlalu asin dan agak keras. Mungkin hanya kebetulan, tapi sayang untuk harganya." },
+      { "product": "Rosemary Focaccia", "rating": 4, "comment": "Pori-porinya bagus dan minyak zaitunnya terasa. Sedikit lebih banyak rosemary akan lebih baik." },
+      { "product": "Brown Butter Chocolate Chip Cookie", "rating": 3, "comment": "Cukup enak, tetapi kurang renyah di pinggir dibanding yang saya harapkan." },
+      { "product": "Country Sourdough Loaf", "rating": 4, "comment": "Roti yang jujur dan kenyang. Saya suka aroma fermentasinya." }
+    ]
+  },
+  {
+    "customer": "rina@example.com",
+    "items": [
+      { "product": "Japanese Curry Bread", "quantity": 2 },
+      { "product": "Rye Sourdough Boule", "quantity": 1 }
+    ],
+    "reviews": [
+      { "product": "Japanese Curry Bread", "rating": 2, "comment": "Kari di dalamnya terlalu encer dan rotinya cepat dingin. Mungkin saya perlu mencoba varian lain." },
+      { "product": "Rye Sourdough Boule", "rating": 4, "comment": "Roti rye yang mantap. Cocok untuk dibuat sandwich dan awet di kulkas." }
+    ]
+  }
+]

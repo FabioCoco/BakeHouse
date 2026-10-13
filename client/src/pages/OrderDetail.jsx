@@ -3,6 +3,7 @@ import { Link, useLocation, useParams } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import Container from '../components/layout/Container.jsx';
 import OrderTimeline from '../components/order/OrderTimeline.jsx';
+import OrderReviewPanel from '../components/review/OrderReviewPanel.jsx';
 import PaymentCountdown from '../components/order/PaymentCountdown.jsx';
 import PaymentStatusPill from '../components/order/PaymentStatusPill.jsx';
 import Button from '../components/ui/Button.jsx';
@@ -181,6 +182,20 @@ export default function OrderDetail() {
               <p className="text-sm text-cocoa">Pembayaran dikembalikan. Proses pengembalian dana dilakukan oleh toko.</p>
             )}
           </Card>
+
+          {order.status === 'completed' && (
+            <section aria-labelledby="review-title" className="flex flex-col gap-4">
+              <div className="flex flex-col gap-1">
+                <h2 id="review-title" className="text-2xl">Beri Ulasan</h2>
+                <p className="text-sm text-cocoa">Ulasanmu membantu pembeli lain. Satu ulasan per roti.</p>
+              </div>
+              {order.items
+                .filter((item) => item.slug)
+                .map((item) => (
+                  <OrderReviewPanel key={`${item.product}`} productSlug={item.slug} productName={item.name} />
+                ))}
+            </section>
+          )}
 
           <Card className="p-6 md:p-8">
             <h2 className="mb-6 text-2xl">Riwayat Status</h2>

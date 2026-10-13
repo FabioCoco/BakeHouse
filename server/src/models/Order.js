@@ -14,6 +14,8 @@ const orderItemSchema = new mongoose.Schema(
     discountPercent: { type: Number, default: 0, min: 0, max: 90 },
     quantity: { type: Number, required: true, min: 1 },
     image: { type: String },
+    // Lets the order page link to the product and open its review form.
+    slug: { type: String },
   },
   { _id: false },
 );

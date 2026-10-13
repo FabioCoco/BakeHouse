@@ -5,6 +5,7 @@ import ProductImage from './ProductImage.jsx';
 import StockBadge from './StockBadge.jsx';
 import PriceTag from './PriceTag.jsx';
 import SaleBadge from './SaleBadge.jsx';
+import StarRating from '../review/StarRating.jsx';
 import { ORIGIN_LABELS } from '../../config/catalog.js';
 
 export default function ProductCard({ product, priority = false }) {
@@ -30,6 +31,14 @@ export default function ProductCard({ product, priority = false }) {
             <StockBadge stock={stock} />
           </div>
           <h3 className="text-xl">{name}</h3>
+          {product.ratingCount > 0 && (
+            <div className="flex items-center gap-2 text-sm text-cocoa">
+              <StarRating value={product.ratingAverage} size={13} />
+              <span>
+                {product.ratingAverage.toFixed(1)} ({product.ratingCount})
+              </span>
+            </div>
+          )}
           <PriceTag
             className="mt-auto pt-2"
             price={price}

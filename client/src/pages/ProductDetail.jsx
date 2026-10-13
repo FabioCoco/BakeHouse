@@ -6,6 +6,7 @@ import ProductCardSkeleton from '../components/product/ProductCardSkeleton.jsx';
 import ProductImage from '../components/product/ProductImage.jsx';
 import StockBadge from '../components/product/StockBadge.jsx';
 import PriceTag from '../components/product/PriceTag.jsx';
+import ReviewsSection from '../components/review/ReviewsSection.jsx';
 import SaleBadge from '../components/product/SaleBadge.jsx';
 import Badge from '../components/ui/Badge.jsx';
 import Button from '../components/ui/Button.jsx';
@@ -148,6 +149,8 @@ export default function ProductDetail() {
           </div>
         </div>
       </div>
+
+      <ReviewsSection slug={product.slug} />
 
       {(related.loading || relatedItems.length > 0) && (
         <section aria-labelledby="related-title" className="flex flex-col gap-8">

@@ -30,6 +30,9 @@ const productSchema = new mongoose.Schema(
     discountPercent: { type: Number, default: 0, min: 0, max: 90, validate: { validator: Number.isInteger, message: 'discountPercent must be an integer' } },
     discountStartsAt: { type: Date, default: null },
     discountEndsAt: { type: Date, default: null },
+    // Kept up to date from visible reviews by services/reviewService.js. Never edited directly.
+    ratingAverage: { type: Number, default: 0, min: 0, max: 5 },
+    ratingCount: { type: Number, default: 0, min: 0 },
   },
   { timestamps: true, toJSON: { virtuals: true }, toObject: { virtuals: true } },
 );
