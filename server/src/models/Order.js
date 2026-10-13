@@ -1,6 +1,7 @@
 import mongoose from 'mongoose';
 
-export const ORDER_STATUSES = ['pending_confirmation', 'processing', 'shipped', 'completed', 'cancelled'];
+export const ORDER_STATUSES = ['pending_payment', 'processing', 'shipped', 'completed', 'cancelled'];
+export const PAYMENT_STATUSES = ['unpaid', 'paid', 'failed', 'expired', 'refunded'];
 
 // Snapshot of the product at checkout time. Later price or name edits do not affect past orders.
 const orderItemSchema = new mongoose.Schema(
@@ -30,7 +31,22 @@ const statusHistorySchema = new mongoose.Schema(
   {
     status: { type: String, enum: ORDER_STATUSES, required: true },
     changedAt: { type: Date, default: Date.now },
-    changedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+    // A user id for admin and customer actions, or 'system:midtrans' for payment notifications.
+    changedBy: { type: String },
+  },
+  { _id: false },
+);
+
+// Midtrans Snap details. Filled at checkout and updated from the status API.
+const paymentSchema = new mongoose.Schema(
+  {
+    provider: { type: String, enum: ['midtrans'], default: 'midtrans' },
+    snapToken: { type: String },
+    redirectUrl: { type: String },
+    transactionId: { type: String },
+    paymentType: { type: String },
+    paidAt: { type: Date },
+    rawStatus: { type: String },
   },
   { _id: false },
 );
@@ -47,9 +63,12 @@ const orderSchema = new mongoose.Schema(
     subtotal: { type: Number, required: true, min: 0 },
     shippingFee: { type: Number, required: true, min: 0 },
     total: { type: Number, required: true, min: 0 },
-    paymentMethod: { type: String, enum: ['bank_transfer'], default: 'bank_transfer' },
     paymentNote: { type: String, trim: true, maxlength: 200 },
-    status: { type: String, enum: ORDER_STATUSES, default: 'pending_confirmation' },
+    status: { type: String, enum: ORDER_STATUSES, default: 'pending_payment' },
+    paymentStatus: { type: String, enum: PAYMENT_STATUSES, default: 'unpaid' },
+    payment: { type: paymentSchema, default: () => ({}) },
+    // Unpaid orders are cancelled after this time if no payment arrives.
+    paymentExpiresAt: { type: Date, required: true },
     statusHistory: { type: [statusHistorySchema], default: [] },
   },
   { timestamps: true },
@@ -57,5 +76,6 @@ const orderSchema = new mongoose.Schema(
 
 orderSchema.index({ user: 1, createdAt: -1 });
 orderSchema.index({ status: 1, createdAt: -1 });
+orderSchema.index({ paymentStatus: 1, createdAt: -1 });
 
 export const Order = mongoose.model('Order', orderSchema);

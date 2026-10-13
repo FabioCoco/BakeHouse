@@ -1,8 +1,8 @@
 import request from 'supertest';
-import app from '../src/app.js';
 import { Order } from '../src/models/Order.js';
 import { Product } from '../src/models/Product.js';
 import { clearTestDb, startTestDb, stopTestDb } from './helpers/db.js';
+import { midtrans, notificationFor, resetMidtrans, statusBody } from './helpers/midtrans.js';
 import {
   createAdmin,
   createCategory,
@@ -11,6 +11,9 @@ import {
   loginCookie,
   testAddress,
 } from './helpers/factories.js';
+
+// The app must load after the midtrans-client mock is registered, so it is imported dynamically.
+const { default: app } = await import('../src/app.js');
 
 beforeAll(startTestDb);
 afterAll(stopTestDb);
@@ -23,6 +26,7 @@ let adminCookie;
 
 beforeEach(async () => {
   await clearTestDb();
+  resetMidtrans();
   category = await createCategory('French Pastry');
   customer = await createUser({ email: 'buyer@example.com' });
   customerCookie = await loginCookie(request(app), customer.email);
@@ -40,12 +44,20 @@ const checkout = (body = {}, cookie = customerCookie) =>
   request(app)
     .post('/api/orders/checkout')
     .set('Cookie', cookie)
-    .send({ address: testAddress, paymentNote: 'BCA transfer ref 123', ...body });
+    .send({ address: testAddress, paymentNote: 'Kirim sebelum jam 10', ...body });
 
 const setStatus = (orderId, status) =>
   request(app).patch(`/api/admin/orders/${orderId}/status`).set('Cookie', adminCookie).send({ status });
 
 const stockOf = async (product) => (await Product.findById(product._id)).stock;
+
+// Simulates the Midtrans settlement webhook, so an order can be moved to processing the way it really happens.
+const payOrder = async (orderNumber, grossAmount) => {
+  midtrans.statusFor = (id) => statusBody(id, { transaction_status: 'settlement', gross_amount: grossAmount });
+  return request(app)
+    .post('/api/payments/midtrans/notification')
+    .send(notificationFor({ order_id: orderNumber, gross_amount: String(grossAmount), transaction_status: 'settlement', fraud_status: 'accept' }));
+};
 
 describe('cart', () => {
   it('rejects adding more than the available stock', async () => {
@@ -72,7 +84,7 @@ describe('cart', () => {
 });
 
 describe('POST /api/orders/checkout', () => {
-  it('prices from the database, decrements stock, clears the cart and returns bank details', async () => {
+  it('prices from the database, reserves stock, clears the cart and creates a Snap transaction', async () => {
     const croissant = await createProduct(category, { name: 'Croissant', price: 22000, stock: 10 });
     const bread = await createProduct(category, { name: 'Shokupan', price: 65000, stock: 5 });
     await addToCart(croissant, 2);
@@ -85,8 +97,17 @@ describe('POST /api/orders/checkout', () => {
     expect(res.body.data.order.subtotal).toBe(109000);
     expect(res.body.data.order.shippingFee).toBe(15000);
     expect(res.body.data.order.total).toBe(124000);
-    expect(res.body.data.order.status).toBe('pending_confirmation');
-    expect(res.body.data.payment).toMatchObject({ bankName: 'BCA', accountNumber: '1234567890' });
+    expect(res.body.data.order.status).toBe('pending_payment');
+    expect(res.body.data.order.paymentStatus).toBe('unpaid');
+    expect(res.body.data.snapToken).toBe(`snap-token-${res.body.data.order.orderNumber}`);
+    expect(res.body.data.clientKey).toBe('SB-Mid-client-test-key');
+
+    // Snap items must add up to gross_amount exactly, so the shipping fee is its own line.
+    const params = midtrans.snapCalls[0];
+    expect(params.transaction_details).toEqual({ order_id: res.body.data.order.orderNumber, gross_amount: 124000 });
+    expect(params.item_details.reduce((sum, i) => sum + i.price * i.quantity, 0)).toBe(124000);
+    expect(params.item_details.at(-1)).toMatchObject({ name: 'Ongkos Kirim', price: 15000 });
+    expect(params.expiry).toEqual({ unit: 'hour', duration: 24 });
 
     expect(await stockOf(croissant)).toBe(8);
     expect(await stockOf(bread)).toBe(4);
@@ -103,6 +124,7 @@ describe('POST /api/orders/checkout', () => {
 
     expect(res.body.data.order.shippingFee).toBe(0);
     expect(res.body.data.order.total).toBe(300000);
+    expect(midtrans.snapCalls[0].item_details.some((i) => i.name === 'Ongkos Kirim')).toBe(false);
   });
 
   it('rolls back every stock change and keeps the cart when one item is out of stock', async () => {
@@ -122,9 +144,56 @@ describe('POST /api/orders/checkout', () => {
 
     expect(await stockOf(croissant)).toBe(10);
     expect(await Order.countDocuments({})).toBe(0);
+    expect(midtrans.snapCalls).toHaveLength(0);
 
     const cart = await request(app).get('/api/cart').set('Cookie', customerCookie);
     expect(cart.body.data.items).toHaveLength(2);
+  });
+
+  it('cancels the order, restores stock and the cart when Midtrans fails', async () => {
+    const croissant = await createProduct(category, { price: 22000, stock: 10 });
+    await addToCart(croissant, 2);
+    midtrans.snapFails = true;
+
+    const res = await checkout();
+
+    expect(res.status).toBe(502);
+    expect(res.body.message).toMatch(/Pesanan dibatalkan/);
+    expect(await stockOf(croissant)).toBe(10);
+
+    const order = await Order.findOne({});
+    expect(order.status).toBe('cancelled');
+    expect(order.paymentStatus).toBe('failed');
+
+    const cart = await request(app).get('/api/cart').set('Cookie', customerCookie);
+    expect(cart.body.data.items).toHaveLength(1);
+    expect(cart.body.data.items[0].quantity).toBe(2);
+  });
+});
+
+describe('POST /api/orders/me/:id/pay', () => {
+  it('returns the existing Snap token while the order is unpaid', async () => {
+    const product = await createProduct(category, { stock: 5 });
+    await addToCart(product, 1);
+    const created = await checkout();
+    const orderId = created.body.data.order._id;
+
+    const res = await request(app).post(`/api/orders/me/${orderId}/pay`).set('Cookie', customerCookie);
+
+    expect(res.status).toBe(200);
+    expect(res.body.data.snapToken).toBe(created.body.data.snapToken);
+    expect(midtrans.snapCalls).toHaveLength(1);
+  });
+
+  it('refuses once the order has been paid', async () => {
+    const product = await createProduct(category, { stock: 5 });
+    await addToCart(product, 1);
+    const created = await checkout();
+    await payOrder(created.body.data.order.orderNumber, created.body.data.order.total);
+
+    const res = await request(app).post(`/api/orders/me/${created.body.data.order._id}/pay`).set('Cookie', customerCookie);
+
+    expect(res.status).toBe(409);
   });
 });
 
@@ -148,37 +217,48 @@ describe('order status transitions', () => {
     const product = await createProduct(category, { price: 22000, stock: 10 });
     await addToCart(product, 2);
     const res = await checkout();
-    return { orderId: res.body.data.order._id, product };
+    return { orderId: res.body.data.order._id, orderNumber: res.body.data.order.orderNumber, total: res.body.data.order.total, product };
   };
 
-  it('follows the allowed flow and records each change in statusHistory', async () => {
-    const { orderId } = await placeOrder();
+  it('moves through the flow after payment and records each change in statusHistory', async () => {
+    const { orderId, orderNumber, total } = await placeOrder();
+    expect((await payOrder(orderNumber, total)).status).toBe(200);
 
-    expect((await setStatus(orderId, 'processing')).status).toBe(200);
     expect((await setStatus(orderId, 'shipped')).status).toBe(200);
     const done = await setStatus(orderId, 'completed');
 
     expect(done.status).toBe(200);
     expect(done.body.data.statusHistory.map((h) => h.status)).toEqual([
-      'pending_confirmation',
+      'pending_payment',
       'processing',
       'shipped',
       'completed',
     ]);
+    expect(done.body.data.statusHistory[1].changedBy).toBe('system:midtrans');
+  });
+
+  it('does not let an admin move an unpaid order to processing by hand', async () => {
+    const { orderId } = await placeOrder();
+
+    const res = await setStatus(orderId, 'processing');
+
+    expect(res.status).toBe(400);
+    expect((await Order.findById(orderId)).status).toBe('pending_payment');
   });
 
   it('rejects skipping a step with 400', async () => {
-    const { orderId } = await placeOrder();
+    const { orderId, orderNumber, total } = await placeOrder();
+    await payOrder(orderNumber, total);
 
-    const res = await setStatus(orderId, 'shipped');
+    const res = await setStatus(orderId, 'completed');
 
     expect(res.status).toBe(400);
     expect(res.body.message).toMatch(/Cannot change order status/);
   });
 
   it('rejects leaving a terminal status', async () => {
-    const { orderId } = await placeOrder();
-    await setStatus(orderId, 'processing');
+    const { orderId, orderNumber, total } = await placeOrder();
+    await payOrder(orderNumber, total);
     await setStatus(orderId, 'shipped');
     await setStatus(orderId, 'completed');
 
@@ -187,7 +267,7 @@ describe('order status transitions', () => {
     expect(res.status).toBe(400);
   });
 
-  it('restores stock when an admin cancels an order', async () => {
+  it('restores stock when an admin cancels an unpaid order', async () => {
     const { orderId, product } = await placeOrder();
     expect(await stockOf(product)).toBe(8);
 
@@ -197,7 +277,17 @@ describe('order status transitions', () => {
     expect(await stockOf(product)).toBe(10);
   });
 
-  it('lets a customer cancel while pending and restores stock', async () => {
+  it('marks a paid order as refunded when an admin cancels it', async () => {
+    const { orderId, orderNumber, total } = await placeOrder();
+    await payOrder(orderNumber, total);
+
+    const res = await setStatus(orderId, 'cancelled');
+
+    expect(res.status).toBe(200);
+    expect(res.body.data.paymentStatus).toBe('refunded');
+  });
+
+  it('lets a customer cancel while pending payment and restores stock', async () => {
     const { orderId, product } = await placeOrder();
 
     const res = await request(app).patch(`/api/orders/me/${orderId}/cancel`).set('Cookie', customerCookie);
@@ -207,9 +297,9 @@ describe('order status transitions', () => {
     expect(await stockOf(product)).toBe(10);
   });
 
-  it('blocks a customer from cancelling once processing has started', async () => {
-    const { orderId } = await placeOrder();
-    await setStatus(orderId, 'processing');
+  it('blocks a customer from cancelling once payment has been received', async () => {
+    const { orderId, orderNumber, total } = await placeOrder();
+    await payOrder(orderNumber, total);
 
     const res = await request(app).patch(`/api/orders/me/${orderId}/cancel`).set('Cookie', customerCookie);
 

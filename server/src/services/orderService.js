@@ -7,10 +7,15 @@ import { Product } from '../models/Product.js';
 import { User } from '../models/User.js';
 import { ApiError } from '../utils/ApiError.js';
 import { buildMeta, parsePagination } from '../utils/pagination.js';
+import { createSnapTransaction, getTransactionStatus } from './midtransService.js';
+
+export const PAYMENT_WINDOW_HOURS = 24;
+export const MIDTRANS_ACTOR = 'system:midtrans';
 
 // Order status state machine. Anything not listed here is rejected with 400.
+// pending_payment only moves to processing through a Midtrans notification, never by hand.
 export const ALLOWED_TRANSITIONS = {
-  pending_confirmation: ['processing', 'cancelled'],
+  pending_payment: ['cancelled'],
   processing: ['shipped', 'cancelled'],
   shipped: ['completed'],
   completed: [],
@@ -39,7 +44,7 @@ const outOfStockError = (product, quantity) =>
   ]);
 
 // Runs `work` inside a MongoDB transaction. Any thrown error rolls back every write made so far.
-const runInTransaction = async (work) => {
+export const runInTransaction = async (work) => {
   const session = await mongoose.startSession();
   try {
     let result;
@@ -52,7 +57,7 @@ const runInTransaction = async (work) => {
   }
 };
 
-const restoreStock = (items, session) =>
+export const restoreStock = (items, session) =>
   Product.bulkWrite(
     items.map((item) => ({
       updateOne: {
@@ -63,9 +68,13 @@ const restoreStock = (items, session) =>
     { session },
   );
 
+// Drops keys whose value is undefined, so optional payment fields never overwrite stored values with nothing.
+const definedOnly = (object) => Object.fromEntries(Object.entries(object).filter(([, value]) => value !== undefined));
+
 // Checkout: prices come from the DB, stock is decremented atomically, and the cart is cleared.
-export const checkout = ({ userId, addressId, address, paymentNote }) =>
-  runInTransaction(async (session) => {
+// After the commit, a Snap transaction is created. If Midtrans fails, the order is cancelled and everything is restored.
+export const checkout = async ({ userId, addressId, address, paymentNote }) => {
+  const order = await runInTransaction(async (session) => {
     let shipping;
     if (addressId) {
       const user = await User.findById(userId).session(session);
@@ -118,8 +127,9 @@ export const checkout = ({ userId, addressId, address, paymentNote }) =>
     }
 
     const shippingFee = subtotal >= env.shipping.freeAbove ? 0 : env.shipping.flatFee;
+    const now = new Date();
 
-    const [order] = await Order.create(
+    const [created] = await Order.create(
       [
         {
           orderNumber: generateOrderNumber(),
@@ -129,10 +139,11 @@ export const checkout = ({ userId, addressId, address, paymentNote }) =>
           subtotal,
           shippingFee,
           total: subtotal + shippingFee,
-          paymentMethod: 'bank_transfer',
           paymentNote,
-          status: 'pending_confirmation',
-          statusHistory: [{ status: 'pending_confirmation', changedBy: userId }],
+          status: 'pending_payment',
+          paymentStatus: 'unpaid',
+          paymentExpiresAt: new Date(now.getTime() + PAYMENT_WINDOW_HOURS * 60 * 60 * 1000),
+          statusHistory: [{ status: 'pending_payment', changedAt: now, changedBy: String(userId) }],
         },
       ],
       { session },
@@ -140,8 +151,213 @@ export const checkout = ({ userId, addressId, address, paymentNote }) =>
 
     await Cart.updateOne({ _id: cart._id }, { $set: { items: [] } }, { session });
 
-    return order;
+    return created;
   });
+
+  const user = await User.findById(userId).lean();
+  let snap;
+  try {
+    snap = await createSnapTransaction(buildSnapParams(order, user));
+  } catch (err) {
+    console.error('Snap transaction failed for', order.orderNumber, err.message);
+    await cancelFailedCheckout(order);
+    throw new ApiError(502, 'Pembayaran belum bisa dibuat. Pesanan dibatalkan, silakan coba lagi.');
+  }
+
+  await Order.updateOne(
+    { _id: order._id },
+    { $set: { 'payment.provider': 'midtrans', 'payment.snapToken': snap.token, 'payment.redirectUrl': snap.redirect_url } },
+  );
+  return {
+    order: await Order.findById(order._id),
+    snapToken: snap.token,
+    redirectUrl: snap.redirect_url,
+    clientKey: env.midtrans.clientKey,
+  };
+};
+
+// Builds the Snap request. item_details must add up to gross_amount exactly, so the total is checked first.
+export const buildSnapParams = (order, user) => {
+  const itemDetails = order.items.map((item) => ({
+    id: String(item.product),
+    price: item.price,
+    quantity: item.quantity,
+    name: item.name.slice(0, 50),
+  }));
+  if (order.shippingFee > 0) {
+    itemDetails.push({ id: 'SHIPPING', price: order.shippingFee, quantity: 1, name: 'Ongkos Kirim' });
+  }
+
+  const itemTotal = itemDetails.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  if (itemTotal !== order.total) {
+    throw new Error(`Item total ${itemTotal} does not match order total ${order.total}`);
+  }
+
+  const address = order.shippingAddress;
+  return {
+    transaction_details: { order_id: order.orderNumber, gross_amount: order.total },
+    item_details: itemDetails,
+    customer_details: {
+      first_name: address.recipientName,
+      email: user?.email,
+      phone: address.phone,
+      shipping_address: {
+        first_name: address.recipientName,
+        phone: address.phone,
+        address: address.street,
+        city: address.city,
+        postal_code: address.postalCode,
+        country_code: 'IDN',
+      },
+    },
+    expiry: { unit: 'hour', duration: PAYMENT_WINDOW_HOURS },
+    callbacks: { finish: `${env.clientUrl}/orders/${order._id}` },
+  };
+};
+
+// Compensation for a failed Snap call: cancel the order, restore stock, and put the cart back as it was.
+const cancelFailedCheckout = (order) =>
+  runInTransaction(async (session) => {
+    const result = await Order.updateOne(
+      { _id: order._id, status: 'pending_payment' },
+      {
+        $set: { status: 'cancelled', paymentStatus: 'failed' },
+        $push: { statusHistory: { status: 'cancelled', changedAt: new Date(), changedBy: String(order.user) } },
+      },
+      { session },
+    );
+    if (result.matchedCount === 0) return;
+
+    await restoreStock(order.items, session);
+    await Cart.updateOne(
+      { user: order.user },
+      { $set: { items: order.items.map((item) => ({ product: item.product, quantity: item.quantity })) } },
+      { upsert: true, session },
+    );
+  });
+
+// Returns the existing Snap token so the customer can resume an unpaid order.
+export const payOrder = async (userId, orderId) => {
+  const order = await Order.findOne({ _id: orderId, user: userId });
+  if (!order) {
+    throw ApiError.notFound('Order not found');
+  }
+  if (order.status !== 'pending_payment' || order.paymentStatus !== 'unpaid') {
+    throw ApiError.conflict('This order is no longer waiting for payment');
+  }
+  if (order.paymentExpiresAt <= new Date()) {
+    throw ApiError.badRequest('The payment window for this order has closed');
+  }
+  if (!order.payment?.snapToken) {
+    throw ApiError.conflict('Payment is not ready yet, please try again shortly');
+  }
+
+  return {
+    order,
+    snapToken: order.payment.snapToken,
+    redirectUrl: order.payment.redirectUrl,
+    clientKey: env.midtrans.clientKey,
+  };
+};
+
+// Maps a Midtrans status response to one of our outcomes. 'unknown' (for example challenge or refund) changes nothing.
+export const resolvePaymentOutcome = ({ transaction_status: status, fraud_status: fraud }) => {
+  if (status === 'capture') return fraud === 'accept' ? 'paid' : 'pending';
+  if (status === 'settlement') return 'paid';
+  if (status === 'pending') return 'pending';
+  if (['deny', 'cancel', 'failure'].includes(status)) return 'failed';
+  if (status === 'expire') return 'expired';
+  return 'unknown';
+};
+
+// Applies one Midtrans status response to an order. Safe to repeat: stock is restored and history is written only on the first real change.
+export const applyPaymentStatus = async (orderId, statusBody) => {
+  const meta = definedOnly({
+    'payment.rawStatus': statusBody.transaction_status,
+    'payment.transactionId': statusBody.transaction_id,
+    'payment.paymentType': statusBody.payment_type,
+  });
+  const outcome = resolvePaymentOutcome(statusBody);
+
+  if (outcome === 'paid') return markPaid(orderId, meta);
+  if (outcome === 'failed' || outcome === 'expired') return cancelUnpaid(orderId, outcome, meta);
+
+  if (Object.keys(meta).length) {
+    await Order.updateOne({ _id: orderId }, { $set: meta });
+  }
+  return Order.findById(orderId);
+};
+
+const markPaid = (orderId, meta) =>
+  runInTransaction(async (session) => {
+    const paidAt = new Date();
+    const result = await Order.updateOne(
+      { _id: orderId, status: 'pending_payment', paymentStatus: { $ne: 'paid' } },
+      {
+        $set: { ...meta, paymentStatus: 'paid', status: 'processing', 'payment.paidAt': paidAt },
+        $push: { statusHistory: { status: 'processing', changedAt: paidAt, changedBy: MIDTRANS_ACTOR } },
+      },
+      { session },
+    );
+
+    const current = await Order.findById(orderId).session(session);
+    if (result.matchedCount === 0 && current.paymentStatus !== 'paid') {
+      // The order was cancelled before the money arrived. Its stock was already returned, so we only record the fact.
+      console.warn(`Payment received for cancelled order ${current.orderNumber}. Refund it manually.`);
+      await Order.updateOne({ _id: orderId }, { $set: meta }, { session });
+    }
+    return Order.findById(orderId).session(session);
+  });
+
+const cancelUnpaid = (orderId, paymentStatus, meta) =>
+  runInTransaction(async (session) => {
+    const result = await Order.updateOne(
+      { _id: orderId, status: 'pending_payment', paymentStatus: 'unpaid' },
+      {
+        $set: { ...meta, status: 'cancelled', paymentStatus },
+        $push: { statusHistory: { status: 'cancelled', changedAt: new Date(), changedBy: MIDTRANS_ACTOR } },
+      },
+      { session },
+    );
+
+    if (result.matchedCount === 1) {
+      const order = await Order.findById(orderId).session(session);
+      await restoreStock(order.items, session);
+    }
+    return Order.findById(orderId).session(session);
+  });
+
+// Webhook entry point. The signature was already checked by the controller. The status is re-read from Midtrans here.
+export const processMidtransNotification = async (orderNumber) => {
+  const order = await Order.findOne({ orderNumber });
+  if (!order) {
+    throw ApiError.notFound('Order not found');
+  }
+
+  const statusBody = await getTransactionStatus(orderNumber);
+  if (statusBody.order_id !== orderNumber) {
+    throw ApiError.forbidden('Status does not match the order');
+  }
+  return applyPaymentStatus(order._id, statusBody);
+};
+
+// Customer-side fallback for local development, where Midtrans cannot reach the webhook.
+export const syncMyPaymentStatus = async (userId, orderId) => {
+  const order = await getMyOrder(userId, orderId);
+  if (order.status !== 'pending_payment' || order.paymentStatus !== 'unpaid') {
+    return order;
+  }
+
+  let statusBody;
+  try {
+    statusBody = await getTransactionStatus(order.orderNumber);
+  } catch (err) {
+    // 404 means the customer has not started a payment yet. Nothing to apply.
+    if (err.httpStatusCode === 404) return order;
+    throw new ApiError(502, 'Payment status could not be checked. Please try again.');
+  }
+  return applyPaymentStatus(order._id, statusBody);
+};
 
 // Shared by admin status changes and customer cancellation.
 // `ownerId` restricts the order to one customer. `allowedFrom` restricts the source statuses.
@@ -161,12 +377,15 @@ export const transitionOrder = ({ orderId, nextStatus, changedBy, ownerId, allow
       throw ApiError.badRequest(`Cannot change order status from "${order.status}" to "${nextStatus}"`);
     }
 
+    // Cancelling a paid order simulates a refund. No money moves in this sandbox.
+    const paymentChange = nextStatus === 'cancelled' && order.paymentStatus === 'paid' ? { paymentStatus: 'refunded' } : {};
+
     // Compare-and-set on the current status, so two concurrent updates cannot both succeed.
     const updateResult = await Order.updateOne(
       { _id: order._id, status: order.status },
       {
-        $set: { status: nextStatus },
-        $push: { statusHistory: { status: nextStatus, changedAt: new Date(), changedBy } },
+        $set: { status: nextStatus, ...paymentChange },
+        $push: { statusHistory: { status: nextStatus, changedAt: new Date(), changedBy: String(changedBy) } },
       },
       { session },
     );
@@ -221,7 +440,7 @@ export const listOrdersAdmin = async (query) => {
 };
 
 export const getOrderAdmin = async (orderId) => {
-  const order = await Order.findById(orderId).populate('user', 'name email').populate('statusHistory.changedBy', 'name');
+  const order = await Order.findById(orderId).populate('user', 'name email');
   if (!order) {
     throw ApiError.notFound('Order not found');
   }

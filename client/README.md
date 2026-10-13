@@ -59,7 +59,7 @@ src/
 - Token auth disimpan sebagai cookie httpOnly oleh server. Frontend tidak pernah menyimpan token di JavaScript.
 - Sesi dipulihkan dengan `GET /auth/me` saat aplikasi dibuka. Selama pengecekan itu, splash ditampilkan sehingga halaman yang dilindungi tidak berkedip.
 - Keranjang disinkronkan dari server. Perubahan jumlah dan penghapusan bersifat optimistik dan dikembalikan jika server menolak.
-- Rekening transfer hanya dikembalikan saat checkout. Frontend menyimpannya per pesanan di `sessionStorage` agar halaman sukses tetap menampilkannya setelah refresh.
+- Pembayaran memakai Midtrans Snap (sandbox). Checkout membuat pesanan, lalu membuka popup Snap. Setelah popup ditutup, halaman pesanan menyinkronkan status dari server.
 - Gambar produk dimuat dari `/uploads/<nama-file>`. Jika file belum ada, ditampilkan placeholder.
 
 ## Known limitations

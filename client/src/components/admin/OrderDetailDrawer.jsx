@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import OrderTimeline from '../order/OrderTimeline.jsx';
+import PaymentStatusPill from '../order/PaymentStatusPill.jsx';
 import Button from '../ui/Button.jsx';
 import ConfirmDialog from '../ui/ConfirmDialog.jsx';
 import Drawer from '../ui/Drawer.jsx';
@@ -87,7 +88,13 @@ export default function OrderDetailDrawer({ orderId, open, onClose, onChanged })
           <div className="flex flex-col gap-6">
             <div className="flex flex-col gap-2">
               <p className="font-mono text-sm text-cocoa">{order.orderNumber}</p>
-              <StatusPill status={order.status} className="self-start" />
+              <div className="flex flex-wrap gap-2">
+                <StatusPill status={order.status} />
+                <PaymentStatusPill paymentStatus={order.paymentStatus} />
+              </div>
+              {order.paymentStatus === 'paid' && order.payment?.paidAt && (
+                <p className="text-sm text-cocoa">Dibayar {formatDateTime(order.payment.paidAt)} via {order.payment.paymentType ?? 'Midtrans'}</p>
+              )}
               <p className="text-sm text-cocoa">Dibuat {formatDateTime(order.createdAt)}</p>
             </div>
 
@@ -159,7 +166,11 @@ export default function OrderDetailDrawer({ orderId, open, onClose, onChanged })
         onClose={() => setConfirming(false)}
         onConfirm={applyChange}
         title="Batalkan pesanan ini?"
-        description="Stok roti di pesanan ini akan dikembalikan ke katalog."
+        description={
+          order?.paymentStatus === 'paid'
+            ? 'Stok akan dikembalikan dan pembayaran ditandai "Dikembalikan". Ini simulasi sandbox, tidak ada dana yang dikirim.'
+            : 'Stok roti di pesanan ini akan dikembalikan ke katalog.'
+        }
         confirmLabel="Ya, batalkan"
         cancelLabel="Tidak"
         danger

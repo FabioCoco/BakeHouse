@@ -11,10 +11,10 @@ import Input from '../components/ui/Input.jsx';
 import Skeleton from '../components/ui/Skeleton.jsx';
 import useCart from '../hooks/useCart.js';
 import useFetch from '../hooks/useFetch.js';
+import useMidtransSnap from '../hooks/useMidtransSnap.js';
 import { addressService } from '../services/addressService.js';
 import { orderService } from '../services/orderService.js';
 import { useCartStore } from '../store/useCartStore.js';
-import { savePayment } from '../utils/paymentStorage.js';
 import { formatRupiah } from '../utils/formatRupiah.js';
 import { ADDRESS_EMPTY, mapServerErrors, toAddressPayload, validateAddress } from '../utils/validators.js';
 
@@ -23,6 +23,7 @@ export default function Checkout() {
   const cart = useCartStore((state) => state.cart);
   const cartStatus = useCartStore((state) => state.status);
   const { refresh } = useCart();
+  const { pay } = useMidtransSnap();
 
   const addresses = useFetch(() => addressService.list(), []);
   const savedAddresses = addresses.body?.data ?? [];
@@ -97,13 +98,22 @@ export default function Checkout() {
     if (note) payload.paymentNote = note;
 
     setSubmitting(true);
+    let created;
     try {
-      const { order, payment } = await orderService.checkout(payload);
-      savePayment(order._id, payment);
+      created = await orderService.checkout(payload);
       refresh();
-      navigate(`/checkout/success/${order._id}`, { replace: true });
     } catch (err) {
       handleCheckoutError(err);
+      setSubmitting(false);
+      return;
+    }
+
+    // The order exists now. Open the Midtrans popup. Its callbacks take the customer to the order page.
+    try {
+      await pay(created.snapToken, created.order._id);
+    } catch (err) {
+      toast.error(err.message);
+      navigate(`/orders/${created.order._id}`, { replace: true });
     } finally {
       setSubmitting(false);
     }
@@ -222,11 +232,12 @@ export default function Checkout() {
           <Card className="flex flex-col gap-4 p-6 md:p-8">
             <h2 className="text-2xl">Pembayaran</h2>
             <p className="text-cocoa">
-              Pembayaran dilakukan lewat transfer bank. Rincian rekening akan ditampilkan setelah pesanan dikonfirmasi.
+              Pembayaran diproses dengan aman oleh Midtrans. Kamu bisa membayar lewat transfer bank, kartu, atau
+              e-wallet. Pesanan menunggu pembayaran selama 24 jam.
             </p>
             <Input
-              label="Catatan transfer (opsional)"
-              hint="Misalnya nama pengirim atau waktu transfer."
+              label="Catatan untuk toko (opsional)"
+              hint="Misalnya permintaan khusus untuk pengiriman."
               value={paymentNote}
               maxLength={200}
               onChange={(event) => setPaymentNote(event.target.value)}
@@ -282,7 +293,7 @@ export default function Checkout() {
           </div>
 
           <Button size="lg" className="w-full" disabled={!canConfirm} onClick={handleConfirm}>
-            {submitting ? 'Memproses…' : 'Konfirmasi Pesanan'}
+            {submitting ? 'Memproses…' : 'Bayar Sekarang'}
           </Button>
         </Card>
       </div>

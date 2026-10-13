@@ -11,8 +11,9 @@ export const getDashboardSummary = async () => {
         $group: {
           _id: null,
           totalOrders: { $sum: 1 },
+          // Revenue counts only money that has actually been paid. Refunded orders drop out.
           totalRevenue: {
-            $sum: { $cond: [{ $ne: ['$status', 'cancelled'] }, '$total', 0] },
+            $sum: { $cond: [{ $eq: ['$paymentStatus', 'paid'] }, '$total', 0] },
           },
         },
       },
@@ -27,7 +28,7 @@ export const getDashboardSummary = async () => {
       .sort({ createdAt: -1 })
       .limit(LATEST_ORDERS_LIMIT)
       .populate('user', 'name email')
-      .select('orderNumber status total createdAt user')
+      .select('orderNumber status paymentStatus total createdAt user')
       .lean(),
   ]);
 

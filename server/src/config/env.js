@@ -1,6 +1,6 @@
 import 'dotenv/config';
 
-const REQUIRED_VARS = ['MONGODB_URI', 'JWT_SECRET'];
+const REQUIRED_VARS = ['MONGODB_URI', 'JWT_SECRET', 'MIDTRANS_SERVER_KEY', 'MIDTRANS_CLIENT_KEY'];
 
 const missing = REQUIRED_VARS.filter((name) => !process.env[name]);
 if (missing.length > 0) {
@@ -20,6 +20,15 @@ const readInt = (name, fallback) => {
     throw new Error(`${name} must be a non-negative integer`);
   }
   return value;
+};
+
+const readBoolean = (name, fallback) => {
+  const raw = process.env[name];
+  if (raw === undefined || raw === '') return fallback;
+  if (raw !== 'true' && raw !== 'false') {
+    throw new Error(`${name} must be "true" or "false"`);
+  }
+  return raw === 'true';
 };
 
 const nodeEnv = process.env.NODE_ENV || 'development';
@@ -53,9 +62,9 @@ export const env = Object.freeze({
     flatFee: readInt('SHIPPING_FEE', 15000),
     freeAbove: readInt('FREE_SHIPPING_THRESHOLD', 250000),
   },
-  bankAccount: {
-    bankName: process.env.BANK_NAME || '',
-    accountNumber: process.env.BANK_ACCOUNT_NUMBER || '',
-    accountHolder: process.env.BANK_ACCOUNT_HOLDER || '',
+  midtrans: {
+    serverKey: process.env.MIDTRANS_SERVER_KEY,
+    clientKey: process.env.MIDTRANS_CLIENT_KEY,
+    isProduction: readBoolean('MIDTRANS_IS_PRODUCTION', false),
   },
 });

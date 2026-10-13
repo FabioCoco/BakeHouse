@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Search } from 'lucide-react';
 import OrderDetailDrawer from '../../components/admin/OrderDetailDrawer.jsx';
+import PaymentStatusPill from '../../components/order/PaymentStatusPill.jsx';
 import Card from '../../components/ui/Card.jsx';
 import EmptyState from '../../components/ui/EmptyState.jsx';
 import Input from '../../components/ui/Input.jsx';
@@ -108,6 +109,7 @@ export default function AdminOrders() {
                   <th scope="col" className="px-5 py-3 font-medium">Tanggal</th>
                   <th scope="col" className="px-5 py-3 font-medium">Total</th>
                   <th scope="col" className="px-5 py-3 font-medium">Status</th>
+                  <th scope="col" className="px-5 py-3 font-medium">Pembayaran</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-line">
@@ -137,6 +139,9 @@ export default function AdminOrders() {
                     <td className="px-5 py-4 font-medium">{formatRupiah(order.total)}</td>
                     <td className="px-5 py-4">
                       <StatusPill status={order.status} />
+                    </td>
+                    <td className="px-5 py-4">
+                      <PaymentStatusPill paymentStatus={order.paymentStatus} />
                     </td>
                   </tr>
                 ))}
