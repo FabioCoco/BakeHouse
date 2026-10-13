@@ -31,6 +31,9 @@ const userSchema = new mongoose.Schema(
     password: { type: String, select: false },
     googleId: { type: String, unique: true, sparse: true },
     avatar: { type: String },
+    phone: { type: String, trim: true, maxlength: 20, default: '' },
+    // Stored because the password itself is never loaded by default. Lets the profile page hide the password form for Google-only accounts.
+    hasPassword: { type: Boolean, default: false },
     role: { type: String, enum: ['customer', 'admin'], default: 'customer' },
     addresses: { type: [addressSchema], default: [] },
   },
@@ -38,7 +41,9 @@ const userSchema = new mongoose.Schema(
 );
 
 userSchema.pre('save', async function hashPassword() {
-  if (!this.isModified('password') || !this.password) return;
+  if (!this.isModified('password')) return;
+  this.hasPassword = Boolean(this.password);
+  if (!this.password) return;
   this.password = await bcrypt.hash(this.password, BCRYPT_ROUNDS);
 });
 

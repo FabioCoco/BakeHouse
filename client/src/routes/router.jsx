@@ -47,6 +47,7 @@ export const router = createBrowserRouter([
           { path: 'categories', lazy: lazyPage(() => import('../pages/admin/AdminCategories.jsx')) },
           { path: 'orders', lazy: lazyPage(() => import('../pages/admin/AdminOrders.jsx')) },
           { path: 'reviews', lazy: lazyPage(() => import('../pages/admin/AdminReviews.jsx')) },
+          { path: 'settings', lazy: lazyPage(() => import('../pages/admin/AdminSettings.jsx')) },
         ],
       },
     ],

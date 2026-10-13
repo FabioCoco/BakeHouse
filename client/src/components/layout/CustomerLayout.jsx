@@ -1,5 +1,6 @@
 import { Outlet, ScrollRestoration } from 'react-router-dom';
 import Navbar from './Navbar.jsx';
+import AnnouncementBar from './AnnouncementBar.jsx';
 import Footer from './Footer.jsx';
 import CartDrawer from '../cart/CartDrawer.jsx';
 import CartSync from '../cart/CartSync.jsx';
@@ -13,6 +14,7 @@ export default function CustomerLayout() {
       >
         Lewati ke konten utama
       </a>
+      <AnnouncementBar />
       <Navbar />
       <main id="main" className="flex-1">
         <Outlet />

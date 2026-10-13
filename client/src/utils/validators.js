@@ -96,7 +96,7 @@ export const PRODUCT_EMPTY = {
   price: '',
   category: '',
   origin: 'Other',
-  images: '',
+  images: [],
   stock: '0',
   isActive: true,
   discountPercent: '0',
@@ -104,8 +104,6 @@ export const PRODUCT_EMPTY = {
   discountStartsAt: '',
   discountEndsAt: '',
 };
-
-const IMAGE_FILENAME = /^[A-Za-z0-9][A-Za-z0-9._-]*\.(jpg|jpeg|png|webp|avif)$/i;
 
 // Mirrors server/src/validators/product.js. `isCreate` also checks the initial stock.
 export const validateProduct = (values, { isCreate = false } = {}) => {
@@ -124,11 +122,8 @@ export const validateProduct = (values, { isCreate = false } = {}) => {
 
   if (!values.category) errors.category = 'Pilih kategori';
 
-  const images = parseImages(values.images);
-  if (images.length > 10) errors.images = 'Maksimal 10 gambar';
-  else if (images.some((file) => !IMAGE_FILENAME.test(file))) {
-    errors.images = 'Nama file harus seperti "croissant.jpg" (jpg, jpeg, png, webp, avif)';
-  }
+  // Images come from the uploader, so every entry is already a stored file name.
+  if (values.images.filter(Boolean).length > 10) errors.images = 'Maksimal 10 gambar';
 
   if (isCreate && values.stock.trim() !== '' && !/^\d+$/.test(values.stock.trim())) {
     errors.stock = 'Stok harus bilangan bulat, minimal 0';
@@ -148,13 +143,6 @@ export const validateProduct = (values, { isCreate = false } = {}) => {
   return errors;
 };
 
-// Accepts "a.jpg, b.jpg" or one per line. Empty entries are dropped.
-export const parseImages = (text) =>
-  text
-    .split(/[,\n]/)
-    .map((file) => file.trim())
-    .filter(Boolean);
-
 export const toProductPayload = (values, { isCreate = false } = {}) => {
   const payload = {
     name: values.name.trim(),
@@ -162,7 +150,7 @@ export const toProductPayload = (values, { isCreate = false } = {}) => {
     price: Number(values.price),
     category: values.category,
     origin: values.origin,
-    images: parseImages(values.images),
+    images: values.images.filter(Boolean),
     isActive: Boolean(values.isActive),
   };
   if (isCreate) {

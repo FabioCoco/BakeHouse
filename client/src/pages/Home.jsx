@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import HeroVideo from '../components/home/HeroVideo.jsx';
+import BannerCarousel from '../components/home/BannerCarousel.jsx';
 import CategoryStrip from '../components/home/CategoryStrip.jsx';
 import NewArrivals from '../components/home/NewArrivals.jsx';
 import OnSaleSection from '../components/home/OnSaleSection.jsx';
@@ -23,6 +24,7 @@ export default function Home() {
   return (
     <>
       <HeroVideo />
+      <BannerCarousel />
       <CategoryStrip />
       <OnSaleSection />
       <NewArrivals />

@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import Button from '../ui/Button.jsx';
+import ImageUploader from './ImageUploader.jsx';
 import Input from '../ui/Input.jsx';
 import Modal from '../ui/Modal.jsx';
 import Select from '../ui/Select.jsx';
@@ -35,7 +36,7 @@ export default function ProductFormModal({ open, onClose, product, categories, o
             price: String(product.price),
             category: product.category?._id ?? '',
             origin: product.origin,
-            images: (product.images ?? []).join(', '),
+            images: [...(product.images ?? [])],
             stock: String(product.stock),
             isActive: product.isActive,
             discountPercent: String(product.discountPercent ?? 0),
@@ -165,14 +166,28 @@ export default function ProductFormModal({ open, onClose, product, categories, o
           />
         </div>
 
-        <Textarea
-          label="Nama file gambar"
-          rows={2}
-          value={values.images}
-          onChange={(e) => set('images', e.target.value)}
-          error={errors.images}
-          hint="Pisahkan dengan koma. Contoh: croissant-butter.jpg. Unggah gambar belum tersedia."
-        />
+        <div className="flex flex-col gap-4">
+          <span className="text-sm font-medium text-espresso">Foto produk (maksimal 10)</span>
+          {values.images.map((filename, index) => (
+            <ImageUploader
+              key={`${index}-${filename}`}
+              kind="product"
+              label={`Foto ${index + 1}`}
+              value={filename}
+              onChange={(next) => set('images', values.images.map((f, i) => (i === index ? next : f)))}
+              onRemove={() => set('images', values.images.filter((_, i) => i !== index))}
+              hint={index === 0 ? 'Foto pertama dipakai sebagai gambar utama di katalog.' : undefined}
+            />
+          ))}
+          {values.images.length < 10 && (
+            <div>
+              <Button variant="outline" size="sm" onClick={() => set('images', [...values.images, ''])}>
+                Tambah foto
+              </Button>
+            </div>
+          )}
+          {errors.images && <p className="text-sm text-berry">{errors.images}</p>}
+        </div>
 
         <label className="flex items-center gap-3 text-sm text-espresso">
           <input

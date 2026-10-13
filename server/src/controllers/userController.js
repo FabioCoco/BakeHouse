@@ -1,6 +1,17 @@
+import * as profileService from '../services/profileService.js';
 import * as userService from '../services/userService.js';
 import { asyncHandler } from '../utils/asyncHandler.js';
 import { sendSuccess } from '../utils/response.js';
+
+export const updateProfile = asyncHandler(async (req, res) => {
+  const user = await profileService.updateProfile(req.user._id, req.body);
+  sendSuccess(res, user);
+});
+
+export const changePassword = asyncHandler(async (req, res) => {
+  await profileService.changePassword(req.user._id, req.body);
+  sendSuccess(res, { message: 'Password updated' });
+});
 
 export const listAddresses = asyncHandler(async (req, res) => {
   sendSuccess(res, userService.listAddresses(req.user));

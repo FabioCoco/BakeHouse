@@ -27,7 +27,8 @@
     "jsonwebtoken": "^9.0.3",
     "midtrans-client": "^1.4.3",
     "mongoose": "^8.24.5",
-    "morgan": "^1.12.1"
+    "morgan": "^1.12.1",
+    "multer": "^2.4.0"
   },
   "devDependencies": {
     "jest": "^30.5.2",

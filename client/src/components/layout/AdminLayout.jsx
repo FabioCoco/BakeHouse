@@ -1,5 +1,5 @@
 import { NavLink, Outlet, useNavigate } from 'react-router-dom';
-import { Home, LayoutDashboard, LogOut, MessageSquare, Package, ReceiptText, Shapes } from 'lucide-react';
+import { Home, LayoutDashboard, LogOut, MessageSquare, Package, ReceiptText, Settings, Shapes } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { authService } from '../../services/authService.js';
 import { useAuthStore } from '../../store/useAuthStore.js';
@@ -10,6 +10,7 @@ const ADMIN_LINKS = [
   { to: '/admin/categories', label: 'Kategori', icon: Shapes },
   { to: '/admin/orders', label: 'Pesanan', icon: ReceiptText },
   { to: '/admin/reviews', label: 'Ulasan', icon: MessageSquare },
+  { to: '/admin/settings', label: 'Pengaturan', icon: Settings },
 ];
 
 // Admin shell: sidebar on desktop, horizontal tabs on mobile. Both offer a way back to the storefront and a logout.
