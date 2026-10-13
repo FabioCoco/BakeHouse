@@ -1,0 +1,23 @@
+# Dependencies
+node_modules/
+
+# Environment 
+.env
+.env.*
+!.env.example
+
+# Logs & output
+*.log
+coverage/
+dist/
+build/
+
+# Tool & editor
+.claude/
+.vscode/
+.DS_Store
+Thumbs.db
+
+# Referensi desain (tidak di-commit)
+design-reference/
+

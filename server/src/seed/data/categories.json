@@ -1,0 +1,26 @@
+[
+  {
+    "name": "French Pastry",
+    "description": "Laminated butter pastries baked fresh each morning."
+  },
+  {
+    "name": "Japanese Soft Bread",
+    "description": "Pillowy milk breads and filled buns inspired by Japanese bakeries."
+  },
+  {
+    "name": "Sourdough",
+    "description": "Long-fermented loaves made with our wild yeast starter."
+  },
+  {
+    "name": "Cakes & Tarts",
+    "description": "Celebration cakes and crisp tarts for every occasion."
+  },
+  {
+    "name": "Cookies",
+    "description": "Small-batch cookies with simple, honest ingredients."
+  },
+  {
+    "name": "Savory Bread",
+    "description": "Savory breads and rolls for lunch, dinner, or a snack."
+  }
+]

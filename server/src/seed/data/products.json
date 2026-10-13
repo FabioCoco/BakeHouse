@@ -1,0 +1,194 @@
+[
+  {
+    "name": "Butter Croissant",
+    "category": "french-pastry",
+    "origin": "France",
+    "price": 22000,
+    "stock": 40,
+    "description": "Flaky, golden croissant laminated with 82% butterfat for a crisp, honeycomb interior. Best eaten warm on the day it is baked."
+  },
+  {
+    "name": "Pain au Chocolat",
+    "category": "french-pastry",
+    "origin": "France",
+    "price": 24000,
+    "stock": 35,
+    "description": "A buttery viennoiserie wrapped around two bars of dark chocolate. The layers shatter when you bite into them."
+  },
+  {
+    "name": "Almond Croissant",
+    "category": "french-pastry",
+    "origin": "France",
+    "price": 32000,
+    "stock": 4,
+    "description": "Day-old croissants soaked in almond syrup, filled with frangipane, and topped with toasted almond flakes. Rich and generously sweet."
+  },
+  {
+    "name": "Kouign-Amann",
+    "category": "french-pastry",
+    "origin": "France",
+    "price": 38000,
+    "stock": 0,
+    "description": "A Breton specialty of layered dough, butter, and sugar that caramelizes into a crackly, toffee-like crust. Made in small batches."
+  },
+  {
+    "name": "Shokupan Milk Bread",
+    "category": "japanese-soft-bread",
+    "origin": "Japan",
+    "price": 65000,
+    "stock": 20,
+    "description": "A soft, cloud-like sandwich loaf made with the tangzhong method. It stays moist for days and makes excellent toast."
+  },
+  {
+    "name": "Melon Pan",
+    "category": "japanese-soft-bread",
+    "origin": "Japan",
+    "price": 22000,
+    "stock": 30,
+    "description": "A sweet bun with a crisp, cookie-like top that cracks in a melon-rind pattern. The soft inside is lightly vanilla-scented."
+  },
+  {
+    "name": "Anpan",
+    "category": "japanese-soft-bread",
+    "origin": "Japan",
+    "price": 19000,
+    "stock": 3,
+    "description": "A soft bun filled with sweet red bean paste, a classic from Japanese bakeries. Light and not too sweet."
+  },
+  {
+    "name": "Hokkaido Milk Bun",
+    "category": "japanese-soft-bread",
+    "origin": "Japan",
+    "price": 28000,
+    "stock": 25,
+    "description": "A tender bun made with Hokkaido milk and a touch of butter. Pull-apart soft, with a mild sweetness."
+  },
+  {
+    "name": "Country Sourdough Loaf",
+    "category": "sourdough",
+    "origin": "France",
+    "price": 85000,
+    "stock": 15,
+    "description": "A rustic loaf with a deeply caramelized crust and an open, chewy crumb. Fermented 24 hours for a tangy flavor."
+  },
+  {
+    "name": "Whole Wheat Sourdough",
+    "category": "sourdough",
+    "origin": "Other",
+    "price": 95000,
+    "stock": 10,
+    "description": "Made with stone-ground whole wheat and our house starter, giving a nutty, earthy taste. Keeps well for several days."
+  },
+  {
+    "name": "Rye Sourdough Boule",
+    "category": "sourdough",
+    "origin": "Germany",
+    "price": 110000,
+    "stock": 4,
+    "description": "A dense, dark loaf inspired by German rye breads, with a hint of caraway and a moist crumb. Pairs well with cured meats and cheese."
+  },
+  {
+    "name": "Sourdough Baguette",
+    "category": "sourdough",
+    "origin": "France",
+    "price": 45000,
+    "stock": 0,
+    "description": "A slender baguette with a thin, crackling crust and an airy interior. Made with the same starter as our country loaf."
+  },
+  {
+    "name": "Matcha Basque Cheesecake",
+    "category": "cakes-tarts",
+    "origin": "Japan",
+    "price": 285000,
+    "stock": 8,
+    "description": "A burnt-top cheesecake with a creamy, custard-like center, flavored with ceremonial-grade matcha. Serves 8 to 10 people."
+  },
+  {
+    "name": "Lemon Tart",
+    "category": "cakes-tarts",
+    "origin": "France",
+    "price": 75000,
+    "stock": 12,
+    "description": "A buttery sablé shell filled with silky lemon curd and finished with a light torch. Sharp, bright, and refreshing."
+  },
+  {
+    "name": "Opera Cake",
+    "category": "cakes-tarts",
+    "origin": "France",
+    "price": 265000,
+    "stock": 5,
+    "description": "Layers of almond sponge soaked in coffee syrup, with ganache and coffee buttercream and a glossy chocolate top. Serves 8 people."
+  },
+  {
+    "name": "Tiramisu Cup",
+    "category": "cakes-tarts",
+    "origin": "Italy",
+    "price": 58000,
+    "stock": 18,
+    "description": "Espresso-soaked ladyfingers layered with mascarpone cream and dusted with cocoa. A single-serve cup, ready to enjoy."
+  },
+  {
+    "name": "Chocolate Chip Cookie",
+    "category": "cookies",
+    "origin": "Other",
+    "price": 26000,
+    "stock": 50,
+    "description": "A chewy cookie with browned butter, brown sugar, and generous chunks of dark chocolate. Crisp at the edges and soft in the middle."
+  },
+  {
+    "name": "Sablé Breton",
+    "category": "cookies",
+    "origin": "France",
+    "price": 34000,
+    "stock": 30,
+    "description": "A rich, crumbly butter cookie from Brittany made with salted butter and egg yolks. It melts on the tongue."
+  },
+  {
+    "name": "Hojicha Cookie",
+    "category": "cookies",
+    "origin": "Japan",
+    "price": 30000,
+    "stock": 22,
+    "description": "A tender cookie made with roasted green tea (hojicha) powder, giving a toasty, smoky flavor. Lightly sweetened."
+  },
+  {
+    "name": "Amaretti",
+    "category": "cookies",
+    "origin": "Italy",
+    "price": 42000,
+    "stock": 0,
+    "description": "Crisp, almond-flavored Italian cookies with a soft, chewy center. Traditionally served with coffee."
+  },
+  {
+    "name": "Ham and Gruyère Croissant",
+    "category": "savory-bread",
+    "origin": "France",
+    "price": 36000,
+    "stock": 14,
+    "description": "A savory croissant filled with smoked ham and melted Gruyère cheese. A satisfying breakfast or lunch."
+  },
+  {
+    "name": "Japanese Curry Bread",
+    "category": "savory-bread",
+    "origin": "Japan",
+    "price": 28000,
+    "stock": 2,
+    "description": "A bread roll filled with thick Japanese curry, coated in panko, and fried until golden. Mild and comforting."
+  },
+  {
+    "name": "Rosemary Focaccia",
+    "category": "savory-bread",
+    "origin": "Italy",
+    "price": 55000,
+    "stock": 16,
+    "description": "A pillowy Italian focaccia with olive oil, flaky sea salt, and fresh rosemary. Good on its own or with soup."
+  },
+  {
+    "name": "Pretzel Roll",
+    "category": "savory-bread",
+    "origin": "Germany",
+    "price": 24000,
+    "stock": 20,
+    "description": "A soft roll with a deep mahogany crust, lye-kissed for the classic pretzel flavor and sprinkled with coarse salt."
+  }
+]
