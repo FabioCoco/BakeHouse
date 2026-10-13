@@ -18,7 +18,7 @@ build/
 .DS_Store
 Thumbs.db
 
-# Referensi desain (tidak di-commit)
+# Referensi desain
 design-reference/
 
 #prompt

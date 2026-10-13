@@ -9,6 +9,7 @@ import Badge from '../components/ui/Badge.jsx';
 import Button from '../components/ui/Button.jsx';
 import QuantityStepper from '../components/ui/QuantityStepper.jsx';
 import Skeleton from '../components/ui/Skeleton.jsx';
+import useCart from '../hooks/useCart.js';
 import useFetch from '../hooks/useFetch.js';
 import { productService } from '../services/productService.js';
 import { ORIGIN_LABELS } from '../config/catalog.js';
@@ -21,6 +22,7 @@ export default function ProductDetail() {
 
   const detail = useFetch(() => productService.getBySlug(slug), [slug]);
   const product = detail.body?.data;
+  const { addToCart } = useCart();
   const categorySlug = product?.category?.slug;
 
   // Related items come from the same category, minus the current product.
@@ -124,16 +126,13 @@ export default function ProductDetail() {
             />
             <Button
               size="lg"
-              disabled
+              disabled={soldOut}
               className="flex-1"
-              aria-describedby="keranjang-note"
+              onClick={() => addToCart(product, quantityValue)}
             >
               {soldOut ? 'Stok habis' : 'Tambah ke Keranjang'}
             </Button>
           </div>
-          <p id="keranjang-note" className="text-sm text-cocoa">
-            Keranjang belanja dihubungkan pada phase 3.
-          </p>
         </div>
       </div>
 

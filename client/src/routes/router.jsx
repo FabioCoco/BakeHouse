@@ -22,7 +22,10 @@ export const router = createBrowserRouter([
       {
         // Any signed-in customer or admin.
         element: <ProtectedRoute />,
-        children: [{ path: 'account', lazy: lazyPage(() => import('../pages/Account.jsx')) }],
+        children: [
+          { path: 'account', lazy: lazyPage(() => import('../pages/Account.jsx')) },
+          { path: 'cart', lazy: lazyPage(() => import('../pages/Cart.jsx')) },
+        ],
       },
     ],
   },

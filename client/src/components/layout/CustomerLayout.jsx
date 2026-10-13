@@ -1,6 +1,8 @@
 import { Outlet, ScrollRestoration } from 'react-router-dom';
 import Navbar from './Navbar.jsx';
 import Footer from './Footer.jsx';
+import CartDrawer from '../cart/CartDrawer.jsx';
+import CartSync from '../cart/CartSync.jsx';
 
 export default function CustomerLayout() {
   return (
@@ -16,6 +18,8 @@ export default function CustomerLayout() {
         <Outlet />
       </main>
       <Footer />
+      <CartSync />
+      <CartDrawer />
       <ScrollRestoration />
     </div>
   );

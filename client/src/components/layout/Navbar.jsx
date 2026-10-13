@@ -24,6 +24,7 @@ export default function Navbar() {
   const setMobileNavOpen = useUIStore((state) => state.setMobileNavOpen);
   const isMobileNavOpen = useUIStore((state) => state.isMobileNavOpen);
   const openCart = useCartStore((state) => state.openCart);
+  const itemCount = useCartStore((state) => state.cart?.itemCount ?? 0);
   const user = useAuthStore((state) => state.user);
   const clearAuth = useAuthStore((state) => state.clearAuth);
 
@@ -106,10 +107,18 @@ export default function Navbar() {
           <button
             type="button"
             onClick={openCart}
-            aria-label="Buka keranjang"
-            className="rounded-full p-2 text-espresso transition hover:bg-sand/40"
+            aria-label={itemCount > 0 ? `Buka keranjang, ${itemCount} roti` : 'Buka keranjang'}
+            className="relative rounded-full p-2 text-espresso transition hover:bg-sand/40"
           >
             <ShoppingBag size={22} aria-hidden="true" />
+            {itemCount > 0 && (
+              <span
+                aria-hidden="true"
+                className="absolute -right-0.5 -top-0.5 flex h-5 min-w-5 items-center justify-center rounded-full bg-crust px-1 text-[11px] font-semibold text-surface"
+              >
+                {itemCount > 99 ? '99+' : itemCount}
+              </span>
+            )}
           </button>
         </div>
       </Container>
