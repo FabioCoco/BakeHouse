@@ -1,0 +1,67 @@
+@import "tailwindcss";
+
+/* Design tokens. Names match the palette in prompts/frontend.md. */
+@theme {
+  --color-cream: #F7EFE4;
+  --color-surface: #FFFAF3;
+  --color-sand: #D9C1A7;
+  --color-sand-dark: #C8A98A;
+  --color-espresso: #2B1A10;
+  --color-cocoa: #6B5444;
+  --color-line: #E8DCCB;
+  --color-crust: #8A4B1C;
+  --color-crust-hover: #723D16;
+  --color-golden: #E3A35C;
+  --color-sage: #6E7F5E;
+  --color-berry: #A3413A;
+  --color-honey: #F3D9B1;
+
+  --font-serif: "Fraunces", Georgia, serif;
+  --font-sans: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+
+  --shadow-soft: 0 8px 30px rgba(43, 26, 16, 0.08);
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-cream font-sans text-espresso text-base leading-relaxed antialiased;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    @apply font-serif tracking-tight text-espresso;
+    font-optical-sizing: auto;
+  }
+
+  :focus-visible {
+    @apply outline-none ring-2 ring-golden ring-offset-2 ring-offset-cream;
+  }
+}
+
+@layer components {
+  .eyebrow {
+    @apply text-xs font-semibold uppercase tracking-[0.2em] text-cocoa;
+  }
+}
+
+/* Motion is subtle by design. Everything is disabled for users who ask for less motion. */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

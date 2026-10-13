@@ -21,3 +21,6 @@ Thumbs.db
 # Referensi desain (tidak di-commit)
 design-reference/
 
+#prompt
+prompts/
+
