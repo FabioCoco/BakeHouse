@@ -90,6 +90,83 @@ export const toAddressPayload = (values) => {
   return payload;
 };
 
+export const PRODUCT_EMPTY = {
+  name: '',
+  description: '',
+  price: '',
+  category: '',
+  origin: 'Other',
+  images: '',
+  stock: '0',
+  isActive: true,
+};
+
+const IMAGE_FILENAME = /^[A-Za-z0-9][A-Za-z0-9._-]*\.(jpg|jpeg|png|webp|avif)$/i;
+
+// Mirrors server/src/validators/product.js. `isCreate` also checks the initial stock.
+export const validateProduct = (values, { isCreate = false } = {}) => {
+  const errors = {};
+  const name = values.name.trim();
+  if (!name) errors.name = 'Nama wajib diisi';
+  else if (name.length > 120) errors.name = 'Nama maksimal 120 karakter';
+
+  const description = values.description.trim();
+  if (!description) errors.description = 'Deskripsi wajib diisi';
+  else if (description.length > 2000) errors.description = 'Deskripsi maksimal 2000 karakter';
+
+  const price = values.price.trim();
+  if (price === '') errors.price = 'Harga wajib diisi';
+  else if (!/^\d+$/.test(price)) errors.price = 'Harga harus bilangan bulat (Rupiah)';
+
+  if (!values.category) errors.category = 'Pilih kategori';
+
+  const images = parseImages(values.images);
+  if (images.length > 10) errors.images = 'Maksimal 10 gambar';
+  else if (images.some((file) => !IMAGE_FILENAME.test(file))) {
+    errors.images = 'Nama file harus seperti "croissant.jpg" (jpg, jpeg, png, webp, avif)';
+  }
+
+  if (isCreate && values.stock.trim() !== '' && !/^\d+$/.test(values.stock.trim())) {
+    errors.stock = 'Stok harus bilangan bulat, minimal 0';
+  }
+
+  return errors;
+};
+
+// Accepts "a.jpg, b.jpg" or one per line. Empty entries are dropped.
+export const parseImages = (text) =>
+  text
+    .split(/[,\n]/)
+    .map((file) => file.trim())
+    .filter(Boolean);
+
+export const toProductPayload = (values, { isCreate = false } = {}) => {
+  const payload = {
+    name: values.name.trim(),
+    description: values.description.trim(),
+    price: Number(values.price),
+    category: values.category,
+    origin: values.origin,
+    images: parseImages(values.images),
+    isActive: Boolean(values.isActive),
+  };
+  if (isCreate) {
+    payload.stock = values.stock.trim() === '' ? 0 : Number(values.stock);
+  }
+  return payload;
+};
+
+export const CATEGORY_EMPTY = { name: '', description: '' };
+
+export const validateCategory = (values) => {
+  const errors = {};
+  const name = values.name.trim();
+  if (!name) errors.name = 'Nama wajib diisi';
+  else if (name.length > 60) errors.name = 'Nama maksimal 60 karakter';
+  if (values.description.trim().length > 300) errors.description = 'Deskripsi maksimal 300 karakter';
+  return errors;
+};
+
 // Maps API validation errors ([{ field, message }]) to a { field: message } object for inline display.
 export const mapServerErrors = (errors = []) =>
   errors.reduce((acc, { field, message }) => {
