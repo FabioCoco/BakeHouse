@@ -16,6 +16,21 @@ export const checkoutRules = () => [
     return true;
   }),
   body('address').optional().isObject({ strict: true }).withMessage('address must be an object'),
+  // Optional. When present, the order holds only this product and the cart is left alone.
+  body('buyNow')
+    .optional({ values: 'null' })
+    .custom((value) => {
+      if (typeof value !== 'object' || Array.isArray(value)) {
+        throw new Error('buyNow must be an object with productId and quantity');
+      }
+      if (!OBJECT_ID.test(String(value.productId))) {
+        throw new Error('buyNow.productId must be a valid id');
+      }
+      if (!Number.isInteger(value.quantity) || value.quantity < 1 || value.quantity > 99) {
+        throw new Error('buyNow.quantity must be an integer between 1 and 99');
+      }
+      return true;
+    }),
   ...checkoutAddressRules(),
   body('paymentNote')
     .optional({ values: 'null' })

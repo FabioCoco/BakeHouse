@@ -15,6 +15,7 @@ export const SORT_OPTIONS = [
   { value: 'price_asc', label: 'Harga terendah' },
   { value: 'price_desc', label: 'Harga tertinggi' },
   { value: 'name', label: 'Nama A–Z' },
+  { value: 'discount', label: 'Diskon terbesar' },
 ];
 
 export const PRODUCTS_PER_PAGE = 12;

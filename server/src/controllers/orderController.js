@@ -4,8 +4,14 @@ import { sendSuccess } from '../utils/response.js';
 
 // The client opens Snap with snapToken. The order is returned so the page can show it right away.
 export const checkout = asyncHandler(async (req, res) => {
-  const { addressId, address, paymentNote } = req.body;
-  const result = await orderService.checkout({ userId: req.user._id, addressId, address, paymentNote });
+  const { addressId, address, paymentNote, buyNow } = req.body;
+  const result = await orderService.checkout({
+    userId: req.user._id,
+    addressId,
+    address,
+    paymentNote,
+    buyNow: buyNow ?? undefined,
+  });
 
   sendSuccess(res, result, { statusCode: 201 });
 });

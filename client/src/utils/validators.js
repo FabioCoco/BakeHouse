@@ -99,6 +99,10 @@ export const PRODUCT_EMPTY = {
   images: '',
   stock: '0',
   isActive: true,
+  discountPercent: '0',
+  // Local date and time from <input type="datetime-local">. Empty means no limit.
+  discountStartsAt: '',
+  discountEndsAt: '',
 };
 
 const IMAGE_FILENAME = /^[A-Za-z0-9][A-Za-z0-9._-]*\.(jpg|jpeg|png|webp|avif)$/i;
@@ -130,6 +134,17 @@ export const validateProduct = (values, { isCreate = false } = {}) => {
     errors.stock = 'Stok harus bilangan bulat, minimal 0';
   }
 
+  const percent = values.discountPercent.trim();
+  if (percent !== '' && (!/^\d+$/.test(percent) || Number(percent) > 90)) {
+    errors.discountPercent = 'Diskon harus bilangan bulat 0 sampai 90';
+  }
+
+  const start = values.discountStartsAt;
+  const end = values.discountEndsAt;
+  if (start && end && new Date(end) <= new Date(start)) {
+    errors.discountEndsAt = 'Waktu berakhir harus setelah waktu mulai';
+  }
+
   return errors;
 };
 
@@ -153,6 +168,12 @@ export const toProductPayload = (values, { isCreate = false } = {}) => {
   if (isCreate) {
     payload.stock = values.stock.trim() === '' ? 0 : Number(values.stock);
   }
+
+  // Empty discount values are sent as null, so a previously set discount can be cleared on edit.
+  const percent = values.discountPercent.trim();
+  payload.discountPercent = percent === '' ? 0 : Number(percent);
+  payload.discountStartsAt = values.discountStartsAt ? new Date(values.discountStartsAt).toISOString() : null;
+  payload.discountEndsAt = values.discountEndsAt ? new Date(values.discountEndsAt).toISOString() : null;
   return payload;
 };
 

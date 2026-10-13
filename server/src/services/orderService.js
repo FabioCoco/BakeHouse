@@ -73,7 +73,9 @@ const definedOnly = (object) => Object.fromEntries(Object.entries(object).filter
 
 // Checkout: prices come from the DB, stock is decremented atomically, and the cart is cleared.
 // After the commit, a Snap transaction is created. If Midtrans fails, the order is cancelled and everything is restored.
-export const checkout = async ({ userId, addressId, address, paymentNote }) => {
+export const checkout = async ({ userId, addressId, address, paymentNote, buyNow }) => {
+  const source = buyNow ? 'buy_now' : 'cart';
+
   const order = await runInTransaction(async (session) => {
     let shipping;
     if (addressId) {
@@ -87,18 +89,27 @@ export const checkout = async ({ userId, addressId, address, paymentNote }) => {
       shipping = toShippingSnapshot(address);
     }
 
-    const cart = await Cart.findOne({ user: userId }).session(session);
-    if (!cart || cart.items.length === 0) {
-      throw ApiError.badRequest('Your cart is empty');
+    // Buy now checks out one product and never reads or changes the cart.
+    let cart = null;
+    let lines;
+    if (buyNow) {
+      lines = [{ product: buyNow.productId, quantity: buyNow.quantity }];
+    } else {
+      cart = await Cart.findOne({ user: userId }).session(session);
+      if (!cart || cart.items.length === 0) {
+        throw ApiError.badRequest('Your cart is empty');
+      }
+      lines = cart.items;
     }
 
-    const products = await Product.find({ _id: { $in: cart.items.map((i) => i.product) } }).session(session);
+    const products = await Product.find({ _id: { $in: lines.map((i) => i.product) } }).session(session);
     const productById = new Map(products.map((p) => [String(p._id), p]));
 
     const items = [];
     let subtotal = 0;
+    const now = new Date();
 
-    for (const line of cart.items) {
+    for (const line of lines) {
       const product = productById.get(String(line.product));
       if (!product || !product.isActive) {
         throw ApiError.conflict('Some items are no longer available', [
@@ -116,18 +127,21 @@ export const checkout = async ({ userId, addressId, address, paymentNote }) => {
         throw outOfStockError(product, line.quantity);
       }
 
+      // The discount is computed here from the server clock. The client's price is never used.
+      const unitPrice = product.effectivePrice;
       items.push({
         product: product._id,
         name: product.name,
-        price: product.price,
+        price: unitPrice,
+        originalPrice: product.price,
+        discountPercent: product.isOnSale ? product.discountPercent : 0,
         quantity: line.quantity,
         image: product.images[0],
       });
-      subtotal += product.price * line.quantity;
+      subtotal += unitPrice * line.quantity;
     }
 
     const shippingFee = subtotal >= env.shipping.freeAbove ? 0 : env.shipping.flatFee;
-    const now = new Date();
 
     const [created] = await Order.create(
       [
@@ -140,6 +154,7 @@ export const checkout = async ({ userId, addressId, address, paymentNote }) => {
           shippingFee,
           total: subtotal + shippingFee,
           paymentNote,
+          source,
           status: 'pending_payment',
           paymentStatus: 'unpaid',
           paymentExpiresAt: new Date(now.getTime() + PAYMENT_WINDOW_HOURS * 60 * 60 * 1000),
@@ -149,7 +164,9 @@ export const checkout = async ({ userId, addressId, address, paymentNote }) => {
       { session },
     );
 
-    await Cart.updateOne({ _id: cart._id }, { $set: { items: [] } }, { session });
+    if (cart) {
+      await Cart.updateOne({ _id: cart._id }, { $set: { items: [] } }, { session });
+    }
 
     return created;
   });
@@ -229,11 +246,15 @@ const cancelFailedCheckout = (order) =>
     if (result.matchedCount === 0) return;
 
     await restoreStock(order.items, session);
-    await Cart.updateOne(
-      { user: order.user },
-      { $set: { items: order.items.map((item) => ({ product: item.product, quantity: item.quantity })) } },
-      { upsert: true, session },
-    );
+
+    // Buy now never emptied the cart, so there is nothing to put back.
+    if (order.source === 'cart') {
+      await Cart.updateOne(
+        { user: order.user },
+        { $set: { items: order.items.map((item) => ({ product: item.product, quantity: item.quantity })) } },
+        { upsert: true, session },
+      );
+    }
   });
 
 // Returns the existing Snap token so the customer can resume an unpaid order.

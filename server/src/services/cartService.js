@@ -2,7 +2,8 @@ import { Cart } from '../models/Cart.js';
 import { Product } from '../models/Product.js';
 import { ApiError } from '../utils/ApiError.js';
 
-const PRODUCT_FIELDS = 'name slug price images stock isActive';
+// Discount fields are needed so the effectivePrice virtual can be computed.
+const PRODUCT_FIELDS = 'name slug price images stock isActive discountPercent discountStartsAt discountEndsAt';
 
 export const getOrCreateCart = (userId) =>
   Cart.findOneAndUpdate(
@@ -34,7 +35,8 @@ const toCartView = (cart) => {
 
     if (issues.length) hasIssues = true;
 
-    const lineTotal = product && product.isActive ? product.price * item.quantity : 0;
+    // The discounted price is what the customer pays, so totals use it.
+    const lineTotal = product && product.isActive ? product.effectivePrice * item.quantity : 0;
     subtotal += lineTotal;
     itemCount += item.quantity;
 

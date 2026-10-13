@@ -3,6 +3,7 @@ import { useLocation } from 'react-router-dom';
 import HeroVideo from '../components/home/HeroVideo.jsx';
 import CategoryStrip from '../components/home/CategoryStrip.jsx';
 import NewArrivals from '../components/home/NewArrivals.jsx';
+import OnSaleSection from '../components/home/OnSaleSection.jsx';
 import OriginStory from '../components/home/OriginStory.jsx';
 import HowToOrder from '../components/home/HowToOrder.jsx';
 
@@ -23,6 +24,7 @@ export default function Home() {
     <>
       <HeroVideo />
       <CategoryStrip />
+      <OnSaleSection />
       <NewArrivals />
       <OriginStory />
       <HowToOrder />

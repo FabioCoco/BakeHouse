@@ -21,7 +21,7 @@ export default function CartItemRow({ line, onQuantityChange, onRemove }) {
     );
   }
 
-  const { name, slug, price, stock, images } = product;
+  const { name, slug, price, effectivePrice, isOnSale, stock, images } = product;
   const unavailable = issues.includes('unavailable');
   const maxQuantity = Math.min(MAX_QUANTITY, Math.max(stock, 1));
 
@@ -37,7 +37,10 @@ export default function CartItemRow({ line, onQuantityChange, onRemove }) {
             <Link to={`/products/${slug}`} className="font-serif text-lg text-espresso hover:underline underline-offset-4">
               {name}
             </Link>
-            <p className="text-sm text-cocoa">{formatRupiah(price)}</p>
+            <p className="text-sm text-cocoa">
+              {formatRupiah(isOnSale ? effectivePrice : price)}
+              {isOnSale && <s className="ml-2">{formatRupiah(price)}</s>}
+            </p>
           </div>
           <button
             type="button"

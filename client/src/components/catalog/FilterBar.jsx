@@ -61,6 +61,11 @@ export default function FilterBar({ params, categories, onChange, onReset }) {
           onClick={() => onChange({ category: undefined, page: undefined })}
           label="Semua"
         />
+        <CategoryChip
+          active={Boolean(params.onSale)}
+          onClick={() => onChange({ onSale: params.onSale ? undefined : 'true', page: undefined })}
+          label="Promo"
+        />
         {categories.map((category) => (
           <CategoryChip
             key={category._id}

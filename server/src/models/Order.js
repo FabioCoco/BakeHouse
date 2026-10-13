@@ -8,7 +8,10 @@ const orderItemSchema = new mongoose.Schema(
   {
     product: { type: mongoose.Schema.Types.ObjectId, ref: 'Product', required: true },
     name: { type: String, required: true },
+    // Final unit price after any discount. This is what the customer paid per item.
     price: { type: Number, required: true, min: 0 },
+    originalPrice: { type: Number, min: 0 },
+    discountPercent: { type: Number, default: 0, min: 0, max: 90 },
     quantity: { type: Number, required: true, min: 1 },
     image: { type: String },
   },
@@ -64,6 +67,8 @@ const orderSchema = new mongoose.Schema(
     shippingFee: { type: Number, required: true, min: 0 },
     total: { type: Number, required: true, min: 0 },
     paymentNote: { type: String, trim: true, maxlength: 200 },
+    // 'cart' for a normal checkout, 'buy_now' for a single-product purchase that leaves the cart untouched.
+    source: { type: String, enum: ['cart', 'buy_now'], default: 'cart' },
     status: { type: String, enum: ORDER_STATUSES, default: 'pending_payment' },
     paymentStatus: { type: String, enum: PAYMENT_STATUSES, default: 'unpaid' },
     payment: { type: paymentSchema, default: () => ({}) },

@@ -3,11 +3,12 @@ import Badge from '../ui/Badge.jsx';
 import Card from '../ui/Card.jsx';
 import ProductImage from './ProductImage.jsx';
 import StockBadge from './StockBadge.jsx';
-import { formatRupiah } from '../../utils/formatRupiah.js';
+import PriceTag from './PriceTag.jsx';
+import SaleBadge from './SaleBadge.jsx';
 import { ORIGIN_LABELS } from '../../config/catalog.js';
 
 export default function ProductCard({ product, priority = false }) {
-  const { name, slug, price, stock, origin, images } = product;
+  const { name, slug, price, effectivePrice, isOnSale, discountPercent, stock, origin, images } = product;
 
   return (
     <Card as="article" className="group flex h-full flex-col overflow-hidden transition duration-200 motion-safe:hover:-translate-y-0.5 hover:shadow-lg">
@@ -24,11 +25,17 @@ export default function ProductCard({ product, priority = false }) {
         </div>
         <div className="flex flex-1 flex-col gap-2 p-5">
           <div className="flex flex-wrap items-center gap-2">
+            {isOnSale && <SaleBadge discountPercent={discountPercent} />}
             <Badge tone="honey">{ORIGIN_LABELS[origin] ?? origin}</Badge>
             <StockBadge stock={stock} />
           </div>
           <h3 className="text-xl">{name}</h3>
-          <p className="mt-auto pt-2 font-serif text-lg text-espresso">{formatRupiah(price)}</p>
+          <PriceTag
+            className="mt-auto pt-2"
+            price={price}
+            effectivePrice={effectivePrice}
+            isOnSale={isOnSale}
+          />
         </div>
       </Link>
     </Card>

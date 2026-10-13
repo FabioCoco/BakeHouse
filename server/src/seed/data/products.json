@@ -6,7 +6,7 @@
     "price": 22000,
     "stock": 40,
     "description": "Flaky, golden croissant laminated with 82% butterfat for a crisp, honeycomb interior. Best eaten warm on the day it is baked.",
-    "discountPercent": 0
+    "discountPercent": 20
   },
   {
     "name": "Pain au Chocolat",
@@ -69,7 +69,7 @@
     "price": 75000,
     "stock": 12,
     "description": "A buttery sablé shell filled with silky lemon curd and finished with a light torch. Sharp, bright, and refreshing.",
-    "discountPercent": 0
+    "discountPercent": 15
   },
   {
     "name": "Brown Butter Chocolate Chip Cookie",
@@ -87,7 +87,7 @@
     "price": 30000,
     "stock": 22,
     "description": "A tender cookie made with roasted green tea (hojicha) powder, giving a toasty, smoky flavor. Lightly sweetened.",
-    "discountPercent": 0
+    "discountPercent": 10
   },
   {
     "name": "Japanese Curry Bread",

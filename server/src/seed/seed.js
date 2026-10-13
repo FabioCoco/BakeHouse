@@ -92,6 +92,8 @@ const importData = async () => {
       price: p.price,
       stock: p.stock,
       origin: p.origin,
+      // Seed discounts have no dates, so they stay active until an admin changes them.
+      discountPercent: p.discountPercent ?? 0,
       category: categoryId,
       // Image files are added by hand, named after the product slug.
       images: [`${slug}.jpg`],

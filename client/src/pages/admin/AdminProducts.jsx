@@ -185,7 +185,15 @@ export default function AdminProducts() {
                     <td className="px-5 py-3">
                       <Badge>{product.category?.name ?? '—'}</Badge>
                     </td>
-                    <td className="px-5 py-3 font-medium">{formatRupiah(product.price)}</td>
+                    <td className="px-5 py-3 font-medium">
+                      {formatRupiah(product.isOnSale ? product.effectivePrice : product.price)}
+                      {product.isOnSale && (
+                        <span className="ml-2 inline-flex items-center gap-2">
+                          <s className="text-xs text-cocoa">{formatRupiah(product.price)}</s>
+                          <span className="text-xs font-semibold text-crust">-{product.discountPercent}%</span>
+                        </span>
+                      )}
+                    </td>
                     <td className="px-5 py-3">
                       <StockEditor product={product} onSaved={handleStockSaved} />
                     </td>

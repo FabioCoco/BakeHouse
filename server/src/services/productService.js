@@ -3,12 +3,14 @@ import { Product } from '../models/Product.js';
 import { ApiError } from '../utils/ApiError.js';
 import { buildMeta, parsePagination } from '../utils/pagination.js';
 import { slugify } from '../utils/slugify.js';
+import { onSaleFilter } from '../utils/pricing.js';
 
 const SORT_OPTIONS = {
   newest: { createdAt: -1 },
   price_asc: { price: 1 },
   price_desc: { price: -1 },
   name: { name: 1 },
+  discount: { discountPercent: -1, createdAt: -1 },
 };
 
 const CATEGORY_FIELDS = 'name slug';
@@ -50,6 +52,10 @@ export const listProducts = async (query) => {
     filter.stock = { $gt: 0 };
   }
 
+  if (query.onSale === true) {
+    Object.assign(filter, onSaleFilter());
+  }
+
   const sort = SORT_OPTIONS[query.sort] ?? SORT_OPTIONS.newest;
 
   const [products, total] = await Promise.all([
@@ -88,6 +94,13 @@ export const updateProduct = async (id, data) => {
   }
 
   Object.assign(product, data);
+
+  // A partial update can change only one date, so the pair is checked against the stored values.
+  if (product.discountStartsAt && product.discountEndsAt && product.discountEndsAt <= product.discountStartsAt) {
+    throw ApiError.badRequest('Validation failed', [
+      { field: 'discountEndsAt', message: 'discountEndsAt must be after discountStartsAt' },
+    ]);
+  }
   return product.save();
 };
 

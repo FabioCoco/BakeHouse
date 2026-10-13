@@ -9,6 +9,14 @@ import { productService } from '../../services/productService.js';
 import { ORIGINS, ORIGIN_LABELS } from '../../config/catalog.js';
 import { mapServerErrors, PRODUCT_EMPTY, toProductPayload, validateProduct } from '../../utils/validators.js';
 
+// Formats an ISO date as the local "YYYY-MM-DDTHH:mm" value that <input type="datetime-local"> expects.
+const toLocalInput = (iso) => {
+  if (!iso) return '';
+  const d = new Date(iso);
+  const pad = (n) => String(n).padStart(2, '0');
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+};
+
 // Create (product = null) or edit a product. Stock is not edited here: it has its own inline editor.
 export default function ProductFormModal({ open, onClose, product, categories, onSaved }) {
   const isCreate = !product;
@@ -30,6 +38,9 @@ export default function ProductFormModal({ open, onClose, product, categories, o
             images: (product.images ?? []).join(', '),
             stock: String(product.stock),
             isActive: product.isActive,
+            discountPercent: String(product.discountPercent ?? 0),
+            discountStartsAt: toLocalInput(product.discountStartsAt),
+            discountEndsAt: toLocalInput(product.discountEndsAt),
           }
         : { ...PRODUCT_EMPTY, category: categories[0]?._id ?? '' },
     );
@@ -126,6 +137,32 @@ export default function ProductFormModal({ open, onClose, product, categories, o
               error={errors.stock}
             />
           )}
+        </div>
+
+        <div className="grid gap-5 sm:grid-cols-3">
+          <Input
+            label="Diskon (%)"
+            inputMode="numeric"
+            value={values.discountPercent}
+            onChange={(e) => set('discountPercent', e.target.value)}
+            error={errors.discountPercent}
+            hint="0 berarti tanpa diskon."
+          />
+          <Input
+            label="Mulai promo"
+            type="datetime-local"
+            value={values.discountStartsAt}
+            onChange={(e) => set('discountStartsAt', e.target.value)}
+            hint="Kosongkan untuk langsung aktif."
+          />
+          <Input
+            label="Berakhir promo"
+            type="datetime-local"
+            value={values.discountEndsAt}
+            onChange={(e) => set('discountEndsAt', e.target.value)}
+            error={errors.discountEndsAt}
+            hint="Kosongkan untuk tanpa batas."
+          />
         </div>
 
         <Textarea

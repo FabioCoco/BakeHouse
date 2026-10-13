@@ -1,10 +1,12 @@
 import { useEffect, useState } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import Container from '../components/layout/Container.jsx';
 import ProductCard from '../components/product/ProductCard.jsx';
 import ProductCardSkeleton from '../components/product/ProductCardSkeleton.jsx';
 import ProductImage from '../components/product/ProductImage.jsx';
 import StockBadge from '../components/product/StockBadge.jsx';
+import PriceTag from '../components/product/PriceTag.jsx';
+import SaleBadge from '../components/product/SaleBadge.jsx';
 import Badge from '../components/ui/Badge.jsx';
 import Button from '../components/ui/Button.jsx';
 import QuantityStepper from '../components/ui/QuantityStepper.jsx';
@@ -23,6 +25,7 @@ export default function ProductDetail() {
   const detail = useFetch(() => productService.getBySlug(slug), [slug]);
   const product = detail.body?.data;
   const { addToCart } = useCart();
+  const navigate = useNavigate();
   const categorySlug = product?.category?.slug;
 
   // Related items come from the same category, minus the current product.
@@ -59,7 +62,7 @@ export default function ProductDetail() {
     );
   }
 
-  const { name, description, price, stock, origin, images, category } = product;
+  const { name, description, price, effectivePrice, isOnSale, discountPercent, stock, origin, images, category } = product;
   const soldOut = stock <= 0;
   const quantityValue = soldOut ? 0 : Math.min(Math.max(quantity, 1), stock);
   const relatedItems = related.body?.data ?? [];
@@ -103,12 +106,13 @@ export default function ProductDetail() {
 
         <div className="flex flex-col gap-6">
           <div className="flex flex-wrap items-center gap-2">
+            {isOnSale && <SaleBadge discountPercent={discountPercent} />}
             {category && <Badge>{category.name}</Badge>}
             <Badge tone="honey">{ORIGIN_LABELS[origin] ?? origin}</Badge>
           </div>
 
           <h1 className="text-5xl md:text-6xl">{name}</h1>
-          <p className="font-serif text-3xl text-espresso">{formatRupiah(price)}</p>
+          <PriceTag price={price} effectivePrice={effectivePrice} isOnSale={isOnSale} size="lg" />
           <div>
             <StockBadge stock={stock} />
           </div>
@@ -131,6 +135,15 @@ export default function ProductDetail() {
               onClick={() => addToCart(product, quantityValue)}
             >
               {soldOut ? 'Stok habis' : 'Tambah ke Keranjang'}
+            </Button>
+            <Button
+              size="lg"
+              variant="outline"
+              disabled={soldOut}
+              className="flex-1"
+              onClick={() => navigate(`/checkout?buyNow=${product.slug}&qty=${quantityValue}`)}
+            >
+              Beli Sekarang
             </Button>
           </div>
         </div>

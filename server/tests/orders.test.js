@@ -307,3 +307,74 @@ describe('order status transitions', () => {
     expect((await Order.findById(orderId)).status).toBe('processing');
   });
 });
+
+describe('POST /api/orders/checkout with buyNow', () => {
+  const buyNow = (product, quantity) => ({ productId: String(product._id), quantity });
+
+  it('orders only the chosen product and leaves the cart untouched', async () => {
+    const inCart = await createProduct(category, { name: 'Cart Item', price: 10000, stock: 10 });
+    const target = await createProduct(category, { name: 'Buy Now Item', price: 40000, stock: 10 });
+    await addToCart(inCart, 1);
+
+    const res = await checkout({ buyNow: buyNow(target, 2) });
+
+    expect(res.status).toBe(201);
+    expect(res.body.data.order.items).toHaveLength(1);
+    expect(res.body.data.order.items[0]).toMatchObject({ name: 'Buy Now Item', quantity: 2, price: 40000 });
+    expect(res.body.data.order.source).toBe('buy_now');
+    expect(await stockOf(target)).toBe(8);
+    expect(await stockOf(inCart)).toBe(10);
+
+    const cart = await request(app).get('/api/cart').set('Cookie', customerCookie);
+    expect(cart.body.data.items).toHaveLength(1);
+    expect(cart.body.data.items[0].quantity).toBe(1);
+  });
+
+  it('uses the discounted price', async () => {
+    const target = await createProduct(category, { price: 50000, stock: 5, discountPercent: 10 });
+
+    const res = await checkout({ buyNow: buyNow(target, 1) });
+
+    expect(res.body.data.order.items[0]).toMatchObject({ price: 45000, originalPrice: 50000, discountPercent: 10 });
+  });
+
+  it('rejects a quantity above the available stock and creates nothing', async () => {
+    const target = await createProduct(category, { price: 20000, stock: 1 });
+
+    const res = await checkout({ buyNow: buyNow(target, 2) });
+
+    expect(res.status).toBe(409);
+    expect(await stockOf(target)).toBe(1);
+    expect(await Order.countDocuments({})).toBe(0);
+  });
+
+  it('rejects an invalid quantity or product id', async () => {
+    const target = await createProduct(category, { stock: 5 });
+
+    expect((await checkout({ buyNow: { productId: String(target._id), quantity: 0 } })).status).toBe(400);
+    expect((await checkout({ buyNow: { productId: 'not-an-id', quantity: 1 } })).status).toBe(400);
+  });
+
+  it('works without any cart at all', async () => {
+    const target = await createProduct(category, { price: 20000, stock: 5 });
+
+    const res = await checkout({ buyNow: buyNow(target, 1) });
+
+    expect(res.status).toBe(201);
+  });
+
+  it('leaves the cart alone when Midtrans fails for a buy-now order', async () => {
+    const inCart = await createProduct(category, { name: 'Keep Me', price: 10000, stock: 10 });
+    const target = await createProduct(category, { name: 'Buy Now Fails', price: 20000, stock: 4 });
+    await addToCart(inCart, 3);
+    midtrans.snapFails = true;
+
+    const res = await checkout({ buyNow: buyNow(target, 1) });
+
+    expect(res.status).toBe(502);
+    expect(await stockOf(target)).toBe(4);
+    const cart = await request(app).get('/api/cart').set('Cookie', customerCookie);
+    expect(cart.body.data.items).toHaveLength(1);
+    expect(cart.body.data.items[0].quantity).toBe(3);
+  });
+});

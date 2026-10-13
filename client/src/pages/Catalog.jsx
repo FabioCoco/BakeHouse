@@ -13,7 +13,7 @@ import { categoryService } from '../services/categoryService.js';
 import { productService } from '../services/productService.js';
 import { PRODUCTS_PER_PAGE } from '../config/catalog.js';
 
-const RESET = { search: undefined, category: undefined, origin: undefined, sort: undefined, page: undefined };
+const RESET = { search: undefined, category: undefined, origin: undefined, sort: undefined, onSale: undefined, page: undefined };
 
 // All filters live in the URL, so a filtered view can be shared or reloaded.
 export default function Catalog() {
@@ -24,6 +24,7 @@ export default function Catalog() {
     category: searchParams.get('category') || undefined,
     origin: searchParams.get('origin') || undefined,
     sort: searchParams.get('sort') || undefined,
+    onSale: searchParams.get('onSale') === 'true' ? true : undefined,
     page: Number(searchParams.get('page')) || 1,
   };
   const queryKey = searchParams.toString();
@@ -41,7 +42,7 @@ export default function Catalog() {
 
   const items = products.body?.data ?? [];
   const meta = products.body?.meta;
-  const hasFilters = Boolean(params.search || params.category || params.origin || params.sort);
+  const hasFilters = Boolean(params.search || params.category || params.origin || params.sort || params.onSale);
 
   const handleChange = (updates) => setParams(updates);
 

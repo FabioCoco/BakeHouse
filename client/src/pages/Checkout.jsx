@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { AlertTriangle, ShoppingBag } from 'lucide-react';
 import toast from 'react-hot-toast';
 import Container from '../components/layout/Container.jsx';
@@ -14,6 +14,7 @@ import useFetch from '../hooks/useFetch.js';
 import useMidtransSnap from '../hooks/useMidtransSnap.js';
 import { addressService } from '../services/addressService.js';
 import { orderService } from '../services/orderService.js';
+import { productService } from '../services/productService.js';
 import { useCartStore } from '../store/useCartStore.js';
 import { formatRupiah } from '../utils/formatRupiah.js';
 import { ADDRESS_EMPTY, mapServerErrors, toAddressPayload, validateAddress } from '../utils/validators.js';
@@ -40,6 +41,33 @@ export default function Checkout() {
 
   const activeMode = savedAddresses.length === 0 ? 'new' : mode;
   const activeId = selectedId ?? defaultAddressId;
+
+  // "Beli Sekarang" opens /checkout?buyNow=<slug>&qty=<n>. That order holds only this product and never reads the cart.
+  const [searchParams] = useSearchParams();
+  const buyNowSlug = searchParams.get('buyNow');
+  const buyNowRequested = Math.max(1, Number.parseInt(searchParams.get('qty') ?? '1', 10) || 1);
+  const isBuyNow = Boolean(buyNowSlug);
+  const buyNowFetch = useFetch(
+    () => (buyNowSlug ? productService.getBySlug(buyNowSlug) : Promise.resolve(null)),
+    [buyNowSlug],
+  );
+  const buyNowProduct = buyNowFetch.body?.data ?? null;
+  const buyNowQuantity = buyNowProduct ? Math.min(buyNowRequested, Math.max(0, buyNowProduct.stock)) : 0;
+
+  // The summary uses the same shape for both modes, so the rest of the page does not need to know which one it is.
+  const summary = isBuyNow
+    ? buyNowProduct && {
+        items: [
+          {
+            product: buyNowProduct,
+            quantity: buyNowQuantity,
+            lineTotal: buyNowProduct.effectivePrice * buyNowQuantity,
+          },
+        ],
+        subtotal: buyNowProduct.effectivePrice * buyNowQuantity,
+        hasIssues: buyNowQuantity === 0,
+      }
+    : cart;
 
   useEffect(() => {
     document.title = 'Checkout · BakeHouse';
@@ -94,6 +122,10 @@ export default function Checkout() {
       payload = { address: toAddressPayload(newAddress) };
     }
 
+    if (isBuyNow) {
+      payload.buyNow = { productId: buyNowProduct._id, quantity: buyNowQuantity };
+    }
+
     const note = paymentNote.trim();
     if (note) payload.paymentNote = note;
 
@@ -119,7 +151,7 @@ export default function Checkout() {
     }
   };
 
-  if (cartStatus === 'loading' && !cart) {
+  if (isBuyNow && buyNowFetch.loading) {
     return (
       <Container className="py-12" aria-busy="true">
         <Skeleton className="h-96 w-full" />
@@ -127,7 +159,32 @@ export default function Checkout() {
     );
   }
 
-  if (!cart || cart.items.length === 0) {
+  if (isBuyNow && (buyNowFetch.error || !buyNowProduct)) {
+    return (
+      <Container className="py-16">
+        <EmptyState
+          icon={ShoppingBag}
+          title="Produk tidak ditemukan"
+          description="Roti yang ingin kamu beli tidak tersedia lagi."
+          action={
+            <Button as={Link} to="/products" variant="outline">
+              Lihat Menu
+            </Button>
+          }
+        />
+      </Container>
+    );
+  }
+
+  if (!isBuyNow && cartStatus === 'loading' && !cart) {
+    return (
+      <Container className="py-12" aria-busy="true">
+        <Skeleton className="h-96 w-full" />
+      </Container>
+    );
+  }
+
+  if (!isBuyNow && (!cart || cart.items.length === 0)) {
     return (
       <Container className="py-16">
         <EmptyState
@@ -144,7 +201,7 @@ export default function Checkout() {
     );
   }
 
-  const canConfirm = !submitting && !cart.hasIssues && !addresses.loading;
+  const canConfirm = !submitting && !summary.hasIssues && !addresses.loading;
 
   return (
     <Container className="flex flex-col gap-10 py-12 md:py-16">
@@ -248,13 +305,23 @@ export default function Checkout() {
         <Card className="flex flex-col gap-5 p-6 lg:sticky lg:top-24">
           <h2 className="text-2xl">Ringkasan Pesanan</h2>
 
-          {cart.hasIssues && (
+          {isBuyNow && (
+            <p className="text-sm text-cocoa">Pesanan ini hanya berisi roti yang kamu pilih. Keranjangmu tidak berubah.</p>
+          )}
+
+          {!isBuyNow && summary.hasIssues && (
             <p role="alert" className="flex items-start gap-2 rounded-xl bg-berry/10 p-3 text-sm text-berry">
               <AlertTriangle size={16} aria-hidden="true" className="mt-0.5 shrink-0" />
               Ada roti di keranjang yang perlu diperbarui.{' '}
               <Link to="/cart" className="font-medium underline underline-offset-4">
                 Buka keranjang
               </Link>
+            </p>
+          )}
+
+          {isBuyNow && summary.hasIssues && (
+            <p role="alert" className="rounded-xl bg-berry/10 p-3 text-sm text-berry">
+              Stok roti ini sudah habis.
             </p>
           )}
 
@@ -268,7 +335,7 @@ export default function Checkout() {
           )}
 
           <ul className="flex flex-col gap-3 text-sm">
-            {cart.items.map((line, index) =>
+            {summary.items.map((line, index) =>
               line.product ? (
                 <li key={line.product._id} className="flex justify-between gap-4">
                   <span className="text-espresso">
@@ -287,7 +354,7 @@ export default function Checkout() {
           <div className="flex flex-col gap-2 border-t border-line pt-4 text-sm">
             <div className="flex justify-between">
               <span className="text-cocoa">Subtotal</span>
-              <span className="font-medium">{formatRupiah(cart.subtotal)}</span>
+              <span className="font-medium">{formatRupiah(summary.subtotal)}</span>
             </div>
             <p className="text-xs text-cocoa">Ongkos kirim dihitung saat pesanan dibuat dan ditampilkan di halaman konfirmasi.</p>
           </div>
