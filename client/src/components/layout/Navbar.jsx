@@ -1,7 +1,9 @@
-import { Link, NavLink, useNavigate } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom';
 import { Menu, ShoppingBag } from 'lucide-react';
 import toast from 'react-hot-toast';
 import Button from '../ui/Button.jsx';
+import Drawer from '../ui/Drawer.jsx';
 import Container from './Container.jsx';
 import { authService } from '../../services/authService.js';
 import { useAuthStore } from '../../store/useAuthStore.js';
@@ -13,13 +15,26 @@ const NAV_LINKS = [
   { to: '/#cara-pesan', label: 'Cara Pesan' },
 ];
 
-// Placeholder navbar. Transparent over the hero and cream after scrolling, styled in phase 2.
+// Over the home hero the bar is transparent. It turns cream once the page scrolls 24px, and on every other page.
 export default function Navbar() {
   const navigate = useNavigate();
+  const { pathname } = useLocation();
+  const [scrolled, setScrolled] = useState(false);
+
   const setMobileNavOpen = useUIStore((state) => state.setMobileNavOpen);
+  const isMobileNavOpen = useUIStore((state) => state.isMobileNavOpen);
   const openCart = useCartStore((state) => state.openCart);
   const user = useAuthStore((state) => state.user);
   const clearAuth = useAuthStore((state) => state.clearAuth);
+
+  const overHero = pathname === '/' && !scrolled;
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 24);
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
 
   const handleLogout = async () => {
     try {
@@ -28,12 +43,21 @@ export default function Navbar() {
       // Clear the local session even if the request fails.
     }
     clearAuth();
+    setMobileNavOpen(false);
     toast.success('Kamu sudah keluar.');
     navigate('/');
   };
 
+  const closeMobileNav = () => setMobileNavOpen(false);
+
+  // The drawer sits outside the header. The header's backdrop-blur would otherwise trap its fixed positioning.
   return (
-    <header className="sticky top-0 z-40 border-b border-line bg-cream/90 backdrop-blur">
+    <>
+    <header
+      className={`sticky top-0 z-40 transition duration-300 ${
+        overHero ? 'border-b border-transparent bg-transparent' : 'border-b border-line bg-cream/90 backdrop-blur'
+      }`}
+    >
       <Container as="nav" aria-label="Utama" className="flex h-16 items-center justify-between">
         <div className="flex items-center gap-3">
           <button
@@ -52,10 +76,7 @@ export default function Navbar() {
         <ul className="hidden items-center gap-8 md:flex">
           {NAV_LINKS.map((link) => (
             <li key={link.to}>
-              <NavLink
-                to={link.to}
-                className="text-sm font-medium text-cocoa transition duration-200 hover:text-espresso"
-              >
+              <NavLink to={link.to} className="text-sm font-medium text-cocoa transition duration-200 hover:text-espresso">
                 {link.label}
               </NavLink>
             </li>
@@ -73,12 +94,12 @@ export default function Navbar() {
               <Link to="/account" className="hidden rounded-full px-3 py-2 text-sm font-medium text-cocoa hover:text-espresso sm:block">
                 Akun
               </Link>
-              <Button variant="ghost" size="sm" onClick={handleLogout}>
+              <Button variant="ghost" size="sm" onClick={handleLogout} className="hidden sm:inline-flex">
                 Keluar
               </Button>
             </>
           ) : (
-            <Button as={Link} to="/login" variant="outline" size="sm">
+            <Button as={Link} to="/login" variant="outline" size="sm" className="hidden sm:inline-flex">
               Masuk
             </Button>
           )}
@@ -93,5 +114,39 @@ export default function Navbar() {
         </div>
       </Container>
     </header>
+
+      <Drawer open={isMobileNavOpen} onClose={closeMobileNav} title="Menu" width="max-w-xs">
+        <nav aria-label="Menu mobile" className="flex flex-col gap-1">
+          <NavLink to="/" end onClick={closeMobileNav} className="rounded-xl px-3 py-3 text-base font-medium hover:bg-sand/40">
+            Beranda
+          </NavLink>
+          {NAV_LINKS.map((link) => (
+            <NavLink key={link.to} to={link.to} onClick={closeMobileNav} className="rounded-xl px-3 py-3 text-base font-medium hover:bg-sand/40">
+              {link.label}
+            </NavLink>
+          ))}
+          <div className="my-3 border-t border-line" />
+          {user ? (
+            <>
+              {user.role === 'admin' && (
+                <NavLink to="/admin" onClick={closeMobileNav} className="rounded-xl px-3 py-3 text-base font-medium hover:bg-sand/40">
+                  Admin
+                </NavLink>
+              )}
+              <NavLink to="/account" onClick={closeMobileNav} className="rounded-xl px-3 py-3 text-base font-medium hover:bg-sand/40">
+                Akun
+              </NavLink>
+              <button type="button" onClick={handleLogout} className="rounded-xl px-3 py-3 text-left text-base font-medium text-berry hover:bg-berry/10">
+                Keluar
+              </button>
+            </>
+          ) : (
+            <NavLink to="/login" onClick={closeMobileNav} className="rounded-xl px-3 py-3 text-base font-medium hover:bg-sand/40">
+              Masuk
+            </NavLink>
+          )}
+        </nav>
+      </Drawer>
+    </>
   );
 }

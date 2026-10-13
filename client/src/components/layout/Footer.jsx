@@ -1,13 +1,52 @@
+import { Link } from 'react-router-dom';
 import Container from './Container.jsx';
+import { SHOP } from '../../config/shop.js';
 
-// Placeholder footer for phase 0. Address, hours and payment note are filled in phase 2.
 export default function Footer() {
   return (
-    <footer className="mt-24 border-t border-line bg-cream">
-      <Container className="py-10 text-sm text-cocoa">
-        <p className="font-serif text-lg text-espresso">BakeHouse</p>
-        <p>© {new Date().getFullYear()} BakeHouse. Semua hak dilindungi.</p>
+    <footer className="border-t border-line bg-cream">
+      <Container className="grid gap-10 py-14 text-sm text-cocoa sm:grid-cols-2 lg:grid-cols-4">
+        <div className="flex flex-col gap-3">
+          <p className="font-serif text-2xl text-espresso">{SHOP.name}</p>
+          <p className="max-w-xs">Roti artisan yang dipanggang setiap pagi dan dikirim ke seluruh Indonesia.</p>
+        </div>
+
+        <div className="flex flex-col gap-3">
+          <h2 className="eyebrow">Alamat</h2>
+          {SHOP.address.map((line) => (
+            <p key={line}>{line}</p>
+          ))}
+        </div>
+
+        <div className="flex flex-col gap-3">
+          <h2 className="eyebrow">Jam Buka</h2>
+          {SHOP.hours.map((item) => (
+            <p key={item.days} className="flex justify-between gap-4">
+              <span>{item.days}</span>
+              <span className="font-medium text-espresso">{item.time}</span>
+            </p>
+          ))}
+        </div>
+
+        <div className="flex flex-col gap-3">
+          <h2 className="eyebrow">Pembayaran</h2>
+          <p>{SHOP.paymentNote}</p>
+          <nav aria-label="Footer" className="mt-2 flex flex-col gap-2">
+            <Link to="/products" className="w-fit transition hover:text-espresso">
+              Menu
+            </Link>
+            <Link to="/#cara-pesan" className="w-fit transition hover:text-espresso">
+              Cara Pesan
+            </Link>
+          </nav>
+        </div>
       </Container>
+
+      <div className="border-t border-line">
+        <Container className="py-6 text-xs text-cocoa">
+          © {new Date().getFullYear()} {SHOP.name}. Semua hak dilindungi.
+        </Container>
+      </div>
     </footer>
   );
 }

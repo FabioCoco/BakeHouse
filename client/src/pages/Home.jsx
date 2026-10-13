@@ -1,20 +1,31 @@
 import { useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import Container from '../components/layout/Container.jsx';
+import { useLocation } from 'react-router-dom';
+import HeroVideo from '../components/home/HeroVideo.jsx';
+import CategoryStrip from '../components/home/CategoryStrip.jsx';
+import NewArrivals from '../components/home/NewArrivals.jsx';
+import OriginStory from '../components/home/OriginStory.jsx';
+import HowToOrder from '../components/home/HowToOrder.jsx';
 
-// Placeholder for phase 0. The hero and home sections are built in phase 2.
 export default function Home() {
+  const { hash } = useLocation();
+
   useEffect(() => {
     document.title = 'BakeHouse · Roti Artisan';
   }, []);
 
+  // Client-side navigation to /#cara-pesan does not scroll on its own, so scroll to the anchor here.
+  useEffect(() => {
+    if (!hash) return;
+    document.getElementById(hash.slice(1))?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, [hash]);
+
   return (
-    <Container className="flex flex-col items-center gap-4 py-32 text-center">
-      <p className="eyebrow">Phase 0</p>
-      <h1 className="text-5xl md:text-6xl">Beranda akan dibangun di phase 2.</h1>
-      <Link to="/styleguide" className="mt-4 font-medium text-crust underline underline-offset-4">
-        Buka styleguide
-      </Link>
-    </Container>
+    <>
+      <HeroVideo />
+      <CategoryStrip />
+      <NewArrivals />
+      <OriginStory />
+      <HowToOrder />
+    </>
   );
 }
