@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import Badge from '../components/ui/Badge.jsx';
 import Card from '../components/ui/Card.jsx';
 import Container from '../components/layout/Container.jsx';
@@ -38,6 +39,16 @@ export default function Account() {
           </div>
         </dl>
       </Card>
+      <nav aria-label="Akun" className="grid gap-4 sm:grid-cols-2">
+        <Link to="/orders" className="rounded-2xl border border-line bg-surface p-6 transition hover:border-sand-dark hover:shadow-soft">
+          <span className="font-serif text-2xl text-espresso">Pesanan Saya</span>
+          <span className="mt-1 block text-sm text-cocoa">Lihat status dan riwayat pesanan.</span>
+        </Link>
+        <Link to="/account/addresses" className="rounded-2xl border border-line bg-surface p-6 transition hover:border-sand-dark hover:shadow-soft">
+          <span className="font-serif text-2xl text-espresso">Alamat</span>
+          <span className="mt-1 block text-sm text-cocoa">Kelola alamat pengiriman.</span>
+        </Link>
+      </nav>
     </Container>
   );
 }

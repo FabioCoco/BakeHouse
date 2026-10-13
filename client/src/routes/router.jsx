@@ -25,6 +25,11 @@ export const router = createBrowserRouter([
         children: [
           { path: 'account', lazy: lazyPage(() => import('../pages/Account.jsx')) },
           { path: 'cart', lazy: lazyPage(() => import('../pages/Cart.jsx')) },
+          { path: 'checkout', lazy: lazyPage(() => import('../pages/Checkout.jsx')) },
+          { path: 'checkout/success/:id', lazy: lazyPage(() => import('../pages/CheckoutSuccess.jsx')) },
+          { path: 'orders', lazy: lazyPage(() => import('../pages/Orders.jsx')) },
+          { path: 'orders/:id', lazy: lazyPage(() => import('../pages/OrderDetail.jsx')) },
+          { path: 'account/addresses', lazy: lazyPage(() => import('../pages/AccountAddresses.jsx')) },
         ],
       },
     ],
