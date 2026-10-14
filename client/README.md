@@ -62,13 +62,6 @@ src/
 - Pembayaran memakai Midtrans Snap (sandbox). Checkout membuat pesanan, lalu membuka popup Snap. Setelah popup ditutup, halaman pesanan menyinkronkan status dari server.
 - Gambar produk dimuat dari `/uploads/<nama-file>`. Jika file belum ada, ditampilkan placeholder.
 
-## Known limitations
-
-- Daftar produk admin hanya menampilkan produk aktif, karena `GET /products` memang hanya mengembalikan produk aktif. Produk yang disembunyikan tidak bisa dikelola lagi dari UI sampai ada endpoint admin untuk semua produk.
-- Ongkos kirim dan total belum tersedia di cart. Keduanya baru dihitung oleh server saat pesanan dibuat.
-- Unggah gambar belum tersedia. Nama file gambar diisi manual.
-- Alamat pesanan dari checkout tidak otomatis disimpan ke buku alamat.
-
 ## Verifikasi
 
 - `npm run build` berhasil.
