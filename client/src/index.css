@@ -50,6 +50,19 @@
   }
 }
 
+/* Fades all four edges of the hero video frame into transparency, so the sand background shows through and no box is visible.
+   The two gradients are intersected, so a corner fades on both axes. The first 12% and last 12% of each axis fade out. */
+.hero-frame-mask {
+  -webkit-mask-image:
+    linear-gradient(to right, transparent 0%, #000 12%, #000 88%, transparent 100%),
+    linear-gradient(to bottom, transparent 0%, #000 12%, #000 88%, transparent 100%);
+  mask-image:
+    linear-gradient(to right, transparent 0%, #000 12%, #000 88%, transparent 100%),
+    linear-gradient(to bottom, transparent 0%, #000 12%, #000 88%, transparent 100%);
+  -webkit-mask-composite: source-in;
+  mask-composite: intersect;
+}
+
 /* Motion is subtle by design. Everything is disabled for users who ask for less motion. */
 @media (prefers-reduced-motion: reduce) {
   html {

@@ -6,9 +6,6 @@ import useInView from '../../hooks/useInView.js';
 import usePrefersReducedMotion from '../../hooks/usePrefersReducedMotion.js';
 import { HERO_MEDIA } from '../../config/hero.js';
 
-// The video edges fade into the sand background, so the section has no visible box.
-const EDGE_MASK = 'radial-gradient(ellipse 80% 85% at 50% 50%, #000 62%, transparent 100%)';
-
 export default function HeroVideo() {
   const videoRef = useRef(null);
   const [videoReady, setVideoReady] = useState(false);
@@ -34,53 +31,62 @@ export default function HeroVideo() {
   }, [inView, videoReady]);
 
   return (
+    // Desktop: a vertical stack (headline, video, copy). Mobile keeps its own stacked layout.
     <section
       aria-labelledby="hero-title"
-      className="relative isolate -mt-16 overflow-hidden bg-sand lg:h-svh"
+      className="relative isolate -mt-16 overflow-hidden bg-[#D8BDA2] lg:h-[min(100svh,920px)]"
     >
-      <div className="flex flex-col lg:block lg:h-full">
-        {/* Top band (desktop): eyebrow and headline sit in the empty sand above the croissant. */}
-        <div className="z-10 px-4 pt-28 pb-6 text-center lg:absolute lg:inset-x-0 lg:top-0 lg:h-1/4 lg:pb-0 lg:pt-20">
+      <div className="flex flex-col lg:h-full">
+        {/* Eyebrow and headline at the top. The -mt-16 on the section starts the hero under the navbar, so the top padding clears it. */}
+        <div className="z-10 px-4 pt-28 pb-6 text-center lg:shrink-0 lg:px-6 lg:pt-24 lg:pb-10">
           {/* Sits on the sand background, where the cocoa eyebrow colour falls below AA contrast. */}
           <p className="eyebrow text-espresso">Roti artisan · Setiap pagi</p>
-          <h1 id="hero-title" className="mx-auto mt-4 max-w-3xl text-4xl sm:text-5xl lg:text-5xl">
+          <h1
+            id="hero-title"
+            className="mx-auto mt-4 max-w-3xl text-4xl sm:text-5xl lg:mt-5 lg:max-w-[1400px] lg:text-[clamp(2.5rem,4vw,3.5rem)] lg:leading-[1.08]"
+          >
             Dipanggang Pagi Ini, dari Paris hingga Tokyo.
           </h1>
         </div>
 
-        <div ref={mediaRef} className="relative aspect-video w-full lg:absolute lg:inset-0 lg:aspect-auto">
-          <img
-            src={HERO_MEDIA.poster}
-            alt=""
-            aria-hidden="true"
-            fetchPriority="high"
-            className={`absolute inset-0 h-full w-full object-contain transition-opacity duration-700 lg:object-cover ${
-              videoReady && !reducedMotion ? 'opacity-0' : 'opacity-100'
-            }`}
-          />
-          {!reducedMotion && (
-            <video
-              ref={videoRef}
-              autoPlay
-              loop
-              playsInline
-              preload="metadata"
-              poster={HERO_MEDIA.poster}
+        {/* The frame is exactly the video's 16:9 box, so the edge fade (hero-frame-mask in index.css) lands on the video's own edges. */}
+        <div className="w-full lg:flex lg:min-h-0 lg:flex-1 lg:justify-center">
+          <div
+            ref={mediaRef}
+            className="hero-frame-mask relative aspect-video w-full lg:aspect-video lg:h-full lg:w-auto lg:max-w-[1400px]"
+          >
+            <img
+              src={HERO_MEDIA.poster}
+              alt=""
               aria-hidden="true"
-              onCanPlay={() => setVideoReady(true)}
-              style={{ maskImage: EDGE_MASK, WebkitMaskImage: EDGE_MASK }}
-              className={`absolute inset-0 h-full w-full object-contain transition-opacity duration-700 lg:object-cover ${
-                videoReady ? 'opacity-100' : 'opacity-0'
+              fetchPriority="high"
+              className={`absolute inset-0 h-full w-full object-contain transition-opacity duration-700 ${
+                videoReady && !reducedMotion ? 'opacity-0' : 'opacity-100'
               }`}
-            >
-              <source src={HERO_MEDIA.webm} type="video/webm" />
-              <source src={HERO_MEDIA.mp4} type="video/mp4" />
-            </video>
-          )}
+            />
+            {!reducedMotion && (
+              <video
+                ref={videoRef}
+                autoPlay
+                loop
+                playsInline
+                preload="metadata"
+                poster={HERO_MEDIA.poster}
+                aria-hidden="true"
+                onCanPlay={() => setVideoReady(true)}
+                className={`absolute inset-0 h-full w-full object-contain transition-opacity duration-700 ${
+                  videoReady ? 'opacity-100' : 'opacity-0'
+                }`}
+              >
+                <source src={HERO_MEDIA.webm} type="video/webm" />
+                <source src={HERO_MEDIA.mp4} type="video/mp4" />
+              </video>
+            )}
+          </div>
         </div>
 
-        {/* Bottom band (desktop): call to action sits in the empty sand below the croissant. */}
-        <div className="z-10 flex flex-col items-center gap-6 px-4 py-8 text-center lg:absolute lg:inset-x-0 lg:bottom-0 lg:h-1/4 lg:justify-end lg:gap-4 lg:py-6">
+        {/* Copy and CTAs sit below the video box. The 24px top padding keeps them clear of the croissant and its shadow. */}
+        <div className="z-10 flex flex-col items-center gap-6 px-4 py-8 text-center lg:shrink-0 lg:gap-4 lg:px-6 lg:pt-6 lg:pb-4">
           <p className="max-w-xl text-lg text-espresso">
             Croissant, sourdough, dan kue dari dapur kecil kami, dikirim hangat ke pintumu.
           </p>
