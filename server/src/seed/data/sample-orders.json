@@ -7,9 +7,9 @@
       { "product": "Rosemary Focaccia", "quantity": 1 }
     ],
     "reviews": [
-      { "product": "Butter Croissant", "rating": 5, "comment": "Lapisannya renyah dan aromanya mentega sekali. Masih hangat keesokan paginya." },
-      { "product": "Lemon Tart", "rating": 4, "comment": "Isian lemonnya segar dan tidak terlalu manis. Kulitnya bisa sedikit lebih renyah." },
-      { "product": "Rosemary Focaccia", "rating": 5, "comment": "Aroma rosemary-nya pas, bagian atasnya lembut dengan garam yang seimbang." }
+      { "product": "Butter Croissant", "rating": 5, "comment": "Crisp, buttery layers. Still warm the next morning." },
+      { "product": "Lemon Tart", "rating": 4, "comment": "Fresh lemon filling, not too sweet. The crust could be a little crispier." },
+      { "product": "Rosemary Focaccia", "rating": 5, "comment": "The rosemary aroma is just right, and the top is soft with well-balanced salt." }
     ]
   },
   {
@@ -21,10 +21,10 @@
       { "product": "Rye Sourdough Boule", "quantity": 1 }
     ],
     "reviews": [
-      { "product": "Country Sourdough Loaf", "rating": 5, "comment": "Remah terbuka, kulit asam yang pas, dan tetap segar sampai tiga hari." },
-      { "product": "Hojicha Cookie", "rating": 4, "comment": "Aroma hojicha-nya terasa sekali, teksturnya lembut di tengah dan renyah di pinggir." },
-      { "product": "Matcha Basque Cheesecake", "rating": 4, "comment": "Permukaannya gosong cantik dan bagian dalamnya creamy. Porsinya agak besar untuk satu orang." },
-      { "product": "Rye Sourdough Boule", "rating": 4, "comment": "Rasa rye-nya kuat tapi tidak pahit. Cocok untuk sandwich keju." }
+      { "product": "Country Sourdough Loaf", "rating": 5, "comment": "Open crumb, a pleasant sourdough tang, and still fresh three days later." },
+      { "product": "Hojicha Cookie", "rating": 4, "comment": "Strong hojicha flavor, soft in the middle and crisp at the edges." },
+      { "product": "Matcha Basque Cheesecake", "rating": 4, "comment": "Nicely charred top and a creamy center. The portion is a bit big for one person." },
+      { "product": "Rye Sourdough Boule", "rating": 4, "comment": "The rye flavor is strong but not bitter. Good for a cheese sandwich." }
     ]
   },
   {
@@ -36,10 +36,10 @@
       { "product": "Matcha Basque Cheesecake", "quantity": 1 }
     ],
     "reviews": [
-      { "product": "Lemon Tart", "rating": 3, "comment": "Enak, tapi karamelnya terlalu tebal dan menutupi rasa lemon." },
-      { "product": "Shokupan Milk Bread", "rating": 5, "comment": "Lembut seperti awan dan sisa dua hari masih empuk. Ini roti favorit keluarga kami." },
-      { "product": "Country Sourdough Loaf", "rating": 4, "comment": "Kulitnya tebal dan renyah, rasa asamnya pas untuk dipadukan dengan selai." },
-      { "product": "Matcha Basque Cheesecake", "rating": 5, "comment": "Matcha-nya tidak terlalu pahit dan teksturnya lumer. Pantas dibeli lagi." }
+      { "product": "Lemon Tart", "rating": 3, "comment": "Tasty, but the caramel is too thick and covers the lemon flavor." },
+      { "product": "Shokupan Milk Bread", "rating": 5, "comment": "Light as a cloud, and still soft two days later. This is our family's favorite bread." },
+      { "product": "Country Sourdough Loaf", "rating": 4, "comment": "Thick, crisp crust, and the tang pairs well with jam." },
+      { "product": "Matcha Basque Cheesecake", "rating": 5, "comment": "The matcha is not too bitter and the texture is melty. Worth buying again." }
     ]
   },
   {
@@ -51,10 +51,10 @@
       { "product": "Matcha Basque Cheesecake", "quantity": 1 }
     ],
     "reviews": [
-      { "product": "Butter Croissant", "rating": 4, "comment": "Bagus, meski sedikit lebih dingin saat sampai. Kualitas laminasinya tetap terasa." },
-      { "product": "Hojicha Cookie", "rating": 3, "comment": "Rasanya unik, tapi menurut saya kurang kuat aroma hojicha-nya." },
-      { "product": "Shokupan Milk Bread", "rating": 5, "comment": "Potongannya rapi dan sangat lembut. Cocok untuk roti tawar bakar." },
-      { "product": "Matcha Basque Cheesecake", "rating": 5, "comment": "Kue terenak yang saya beli bulan ini. Kemasannya juga rapi." }
+      { "product": "Butter Croissant", "rating": 4, "comment": "Good, though it arrived a little cold. The lamination quality still shows." },
+      { "product": "Hojicha Cookie", "rating": 3, "comment": "Unique taste, but I think the hojicha aroma could be stronger." },
+      { "product": "Shokupan Milk Bread", "rating": 5, "comment": "Neatly sliced and very soft. Good for toasting." },
+      { "product": "Matcha Basque Cheesecake", "rating": 5, "comment": "The best cake I bought this month. The packaging was neat too." }
     ]
   },
   {
@@ -66,10 +66,10 @@
       { "product": "Brown Butter Chocolate Chip Cookie", "quantity": 2 }
     ],
     "reviews": [
-      { "product": "Butter Croissant", "rating": 5, "comment": "Sempurna untuk sarapan. Bagian dalamnya berongga seperti sarang lebah." },
-      { "product": "Melon Pan", "rating": 3, "comment": "Kulit cookie-nya tipis dan renyah, tetapi bagian rotinya agak kering." },
-      { "product": "Shokupan Milk Bread", "rating": 4, "comment": "Enak dan lembut, hanya saja saya berharap ukurannya sedikit lebih besar." },
-      { "product": "Brown Butter Chocolate Chip Cookie", "rating": 5, "comment": "Aroma brown butter-nya kuat dan cokelatnya banyak. Anak saya sampai minta tambah." }
+      { "product": "Butter Croissant", "rating": 5, "comment": "Perfect for breakfast. The inside is airy like a honeycomb." },
+      { "product": "Melon Pan", "rating": 3, "comment": "The cookie crust is thin and crisp, but the bread part is a bit dry." },
+      { "product": "Shokupan Milk Bread", "rating": 4, "comment": "Tasty and soft, I just wish it were a little bigger." },
+      { "product": "Brown Butter Chocolate Chip Cookie", "rating": 5, "comment": "Strong brown butter aroma and lots of chocolate. My kid asked for seconds." }
     ]
   },
   {
@@ -82,11 +82,11 @@
       { "product": "Country Sourdough Loaf", "quantity": 1 }
     ],
     "reviews": [
-      { "product": "Pain au Chocolat", "rating": 1, "comment": "Bagian bawahnya gosong dan cokelatnya sudah mengeras. Sangat kecewa dengan kualitas hari ini." },
-      { "product": "Butter Croissant", "rating": 2, "comment": "Terlalu asin dan agak keras. Mungkin hanya kebetulan, tapi sayang untuk harganya." },
-      { "product": "Rosemary Focaccia", "rating": 4, "comment": "Pori-porinya bagus dan minyak zaitunnya terasa. Sedikit lebih banyak rosemary akan lebih baik." },
-      { "product": "Brown Butter Chocolate Chip Cookie", "rating": 3, "comment": "Cukup enak, tetapi kurang renyah di pinggir dibanding yang saya harapkan." },
-      { "product": "Country Sourdough Loaf", "rating": 4, "comment": "Roti yang jujur dan kenyang. Saya suka aroma fermentasinya." }
+      { "product": "Pain au Chocolat", "rating": 1, "comment": "The bottom is burnt and the chocolate has hardened. Very disappointed with today's quality." },
+      { "product": "Butter Croissant", "rating": 2, "comment": "Too salty and a bit tough. Maybe just bad luck, but a shame for the price." },
+      { "product": "Rosemary Focaccia", "rating": 4, "comment": "Nice pores and you can taste the olive oil. A little more rosemary would be better." },
+      { "product": "Brown Butter Chocolate Chip Cookie", "rating": 3, "comment": "Pretty good, but less crisp at the edges than I expected." },
+      { "product": "Country Sourdough Loaf", "rating": 4, "comment": "An honest, filling bread. I like the fermentation aroma." }
     ]
   },
   {
@@ -96,8 +96,8 @@
       { "product": "Rye Sourdough Boule", "quantity": 1 }
     ],
     "reviews": [
-      { "product": "Japanese Curry Bread", "rating": 2, "comment": "Kari di dalamnya terlalu encer dan rotinya cepat dingin. Mungkin saya perlu mencoba varian lain." },
-      { "product": "Rye Sourdough Boule", "rating": 4, "comment": "Roti rye yang mantap. Cocok untuk dibuat sandwich dan awet di kulkas." }
+      { "product": "Japanese Curry Bread", "rating": 2, "comment": "The curry filling was too runny and the bread went cold quickly. I may try another variant." },
+      { "product": "Rye Sourdough Boule", "rating": 4, "comment": "A solid rye bread. Good for sandwiches and stays fresh in the fridge." }
     ]
   }
 ]

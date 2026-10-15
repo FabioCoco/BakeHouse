@@ -16,7 +16,7 @@ export default function NewArrivals() {
     <section aria-labelledby="baru-title" className="py-20">
       <Container className="flex flex-col gap-10">
         <RevealOnScroll>
-          <SectionHeading eyebrow="Menu terbaru" title="Baru Keluar dari Oven" titleId="baru-title" linkTo="/products" />
+          <SectionHeading eyebrow="Latest menu" title="Fresh from the oven" titleId="baru-title" linkTo="/products" />
         </RevealOnScroll>
 
         {loading && (
@@ -27,10 +27,10 @@ export default function NewArrivals() {
           </div>
         )}
 
-        {error && <p className="text-cocoa">Menu belum bisa dimuat. Coba muat ulang halaman.</p>}
+        {error && <p className="text-cocoa">The menu could not be loaded. Try reloading the page.</p>}
 
         {!loading && !error && products.length === 0 && (
-          <EmptyState title="Menu sedang disiapkan" description="Roti baru akan segera tampil di sini." />
+          <EmptyState title="Menu coming soon" description="New bread will appear here soon." />
         )}
 
         {!loading && !error && products.length > 0 && (

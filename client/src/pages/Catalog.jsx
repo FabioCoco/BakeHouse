@@ -55,7 +55,7 @@ export default function Catalog() {
     <Container className="flex flex-col gap-10 py-12 md:py-16">
       <header className="flex flex-col gap-3">
         <p className="eyebrow">Katalog</p>
-        <h1 className="text-5xl md:text-6xl">Menu Roti Kami</h1>
+        <h1 className="text-5xl md:text-6xl">Our Bread Menu</h1>
       </header>
 
       <FilterBar
@@ -67,7 +67,7 @@ export default function Catalog() {
 
       {!products.loading && !products.error && meta && (
         <p className="text-sm text-cocoa" aria-live="polite">
-          {meta.total} roti ditemukan
+          {meta.total} breads found
         </p>
       )}
 
@@ -82,11 +82,11 @@ export default function Catalog() {
       {products.error && (
         <EmptyState
           icon={PackageSearch}
-          title="Menu belum bisa dimuat"
+          title="Menu could not be loaded"
           description={products.error.message}
           action={
             <Button variant="outline" onClick={() => setRetryCount((count) => count + 1)}>
-              Coba lagi
+              Try again
             </Button>
           }
         />
@@ -95,8 +95,8 @@ export default function Catalog() {
       {!products.loading && !products.error && items.length === 0 && (
         <EmptyState
           icon={PackageSearch}
-          title="Tidak ada roti yang cocok"
-          description="Coba ubah kata kunci atau reset filter."
+          title="No breads match"
+          description="Try a different keyword or reset the filters."
           action={
             hasFilters ? (
               <Button variant="outline" onClick={() => setParams(RESET)}>

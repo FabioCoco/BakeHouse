@@ -12,7 +12,7 @@ import { useCartStore } from '../../store/useCartStore.js';
 
 const NAV_LINKS = [
   { to: '/products', label: 'Menu' },
-  { to: '/#cara-pesan', label: 'Cara Pesan' },
+  { to: '/#cara-pesan', label: 'How to order' },
 ];
 
 const linkClass = 'text-sm font-medium text-cocoa transition duration-200 hover:text-espresso';
@@ -50,7 +50,7 @@ export default function Navbar() {
     }
     clearAuth();
     closeMobileNav();
-    toast.success('Kamu sudah keluar.');
+    toast.success('You have signed out.');
     navigate('/');
   };
 
@@ -61,12 +61,12 @@ export default function Navbar() {
           overHero ? 'border-b border-transparent bg-transparent' : 'border-b border-line bg-cream/90 backdrop-blur'
         }`}
       >
-        <Container as="nav" aria-label="Utama" className="flex h-16 items-center justify-between">
+        <Container as="nav" aria-label="Main" className="flex h-16 items-center justify-between">
           <div className="flex items-center gap-3">
             <button
               type="button"
               onClick={() => setMobileNavOpen(true)}
-              aria-label="Buka menu"
+              aria-label="Open menu"
               className="rounded-full p-2 text-espresso transition hover:bg-sand/40 md:hidden"
             >
               <Menu size={22} aria-hidden="true" />
@@ -95,25 +95,25 @@ export default function Navbar() {
                   </Link>
                 )}
                 <Link to="/orders" className="hidden rounded-full px-3 py-2 text-sm font-medium text-cocoa hover:text-espresso sm:block">
-                  Pesanan
+                  Orders
                 </Link>
                 <Link to="/account" className="hidden rounded-full px-3 py-2 text-sm font-medium text-cocoa hover:text-espresso sm:block">
-                  Akun
+                  Account
                 </Link>
                 <Button variant="ghost" size="sm" onClick={handleLogout} className="hidden sm:inline-flex">
-                  Keluar
+                  Sign out
                 </Button>
               </>
             ) : (
               <Button as={Link} to="/login" variant="outline" size="sm" className="hidden sm:inline-flex">
-                Masuk
+                Sign in
               </Button>
             )}
 
             <button
               type="button"
               onClick={openCart}
-              aria-label={itemCount > 0 ? `Buka keranjang, ${itemCount} roti` : 'Buka keranjang'}
+              aria-label={itemCount > 0 ? `Open cart, ${itemCount} items` : 'Open cart'}
               className="relative rounded-full p-2 text-espresso transition hover:bg-sand/40"
             >
               <ShoppingBag size={22} aria-hidden="true" />
@@ -132,9 +132,9 @@ export default function Navbar() {
 
       {/* Outside the header: its backdrop-blur would otherwise trap the drawer's fixed positioning. */}
       <Drawer open={isMobileNavOpen} onClose={closeMobileNav} title="Menu" width="max-w-xs">
-        <nav aria-label="Menu mobile" className="flex flex-col gap-1">
+        <nav aria-label="Mobile menu" className="flex flex-col gap-1">
           <NavLink to="/" end onClick={closeMobileNav} className={mobileLinkClass}>
-            Beranda
+            Home
           </NavLink>
           {NAV_LINKS.map((link) => (
             <NavLink key={link.to} to={link.to} onClick={closeMobileNav} className={mobileLinkClass}>
@@ -150,18 +150,18 @@ export default function Navbar() {
                 </NavLink>
               )}
               <NavLink to="/orders" onClick={closeMobileNav} className={mobileLinkClass}>
-                Pesanan Saya
+                My orders
               </NavLink>
               <NavLink to="/account" onClick={closeMobileNav} className={mobileLinkClass}>
-                Akun
+                Account
               </NavLink>
               <button type="button" onClick={handleLogout} className={`${mobileLinkClass} text-left text-berry hover:bg-berry/10`}>
-                Keluar
+                Sign out
               </button>
             </>
           ) : (
             <NavLink to="/login" onClick={closeMobileNav} className={mobileLinkClass}>
-              Masuk
+              Sign in
             </NavLink>
           )}
         </nav>

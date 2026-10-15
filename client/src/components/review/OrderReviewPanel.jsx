@@ -18,7 +18,7 @@ export default function OrderReviewPanel({ productSlug, productName }) {
   }
 
   if (mine.error) {
-    return <p className="text-sm text-cocoa">Ulasan untuk {productName} belum bisa dimuat.</p>;
+    return <p className="text-sm text-cocoa">Reviews for {productName} could not be loaded.</p>;
   }
 
   return (
@@ -28,7 +28,7 @@ export default function OrderReviewPanel({ productSlug, productName }) {
         {review && (
           <div className="flex items-center gap-3">
             <StarRating value={review.rating} size={14} />
-            <span className="text-sm text-cocoa">Ulasanmu sudah terkirim</span>
+            <span className="text-sm text-cocoa">Your review has been submitted</span>
           </div>
         )}
       </div>

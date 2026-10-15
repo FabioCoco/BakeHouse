@@ -39,7 +39,7 @@ export default function Modal({ open, onClose, title, children, footer }) {
           <button
             type="button"
             onClick={onClose}
-            aria-label="Tutup"
+            aria-label="Close"
             className="rounded-full p-2 text-cocoa transition hover:bg-sand/40"
           >
             <X size={20} />

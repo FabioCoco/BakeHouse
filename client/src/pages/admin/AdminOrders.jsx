@@ -18,7 +18,7 @@ import { formatDateTime } from '../../utils/formatDate.js';
 import { formatRupiah } from '../../utils/formatRupiah.js';
 
 const STATUS_OPTIONS = [
-  { value: '', label: 'Semua status' },
+  { value: '', label: 'All statuses' },
   ...Object.entries(ORDER_STATUS_MAP).map(([value, { label }]) => ({ value, label })),
 ];
 
@@ -58,7 +58,7 @@ export default function AdminOrders() {
   const meta = orders.body?.meta;
 
   useEffect(() => {
-    document.title = 'Pesanan · Admin BakeHouse';
+    document.title = 'Orders · Admin BakeHouse';
   }, []);
 
   const handlePageChange = (next) => {
@@ -70,12 +70,12 @@ export default function AdminOrders() {
     <div className="flex flex-col gap-6">
       <header className="flex flex-col gap-1">
         <p className="eyebrow">Operasional</p>
-        <h1 className="text-4xl">Pesanan</h1>
+        <h1 className="text-4xl">Orders</h1>
       </header>
 
       <Card className="grid gap-4 p-5 md:grid-cols-[1fr_220px] md:items-end">
         <Input
-          label="Cari nomor pesanan"
+          label="Search order number"
           type="search"
           icon={Search}
           placeholder="BH-20260101-0001"
@@ -95,7 +95,7 @@ export default function AdminOrders() {
       {orders.error && <p className="text-cocoa">{orders.error.message}</p>}
 
       {!orders.loading && !orders.error && items.length === 0 && (
-        <EmptyState title="Tidak ada pesanan" description="Coba ubah filter atau kata pencarian." />
+        <EmptyState title="No orders found" description="Try changing the filter or search term." />
       )}
 
       {!orders.loading && items.length > 0 && (
@@ -104,12 +104,12 @@ export default function AdminOrders() {
             <table className="w-full min-w-[640px] text-left text-sm">
               <thead className="border-b border-line bg-sand/20 text-cocoa">
                 <tr>
-                  <th scope="col" className="px-5 py-3 font-medium">Nomor</th>
-                  <th scope="col" className="px-5 py-3 font-medium">Pelanggan</th>
+                  <th scope="col" className="px-5 py-3 font-medium">Number</th>
+                  <th scope="col" className="px-5 py-3 font-medium">Customer</th>
                   <th scope="col" className="px-5 py-3 font-medium">Tanggal</th>
                   <th scope="col" className="px-5 py-3 font-medium">Total</th>
                   <th scope="col" className="px-5 py-3 font-medium">Status</th>
-                  <th scope="col" className="px-5 py-3 font-medium">Pembayaran</th>
+                  <th scope="col" className="px-5 py-3 font-medium">Payment</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-line">
@@ -132,7 +132,7 @@ export default function AdminOrders() {
                       </button>
                     </td>
                     <td className="px-5 py-4">
-                      <span className="block text-espresso">{order.user?.name ?? 'Akun dihapus'}</span>
+                      <span className="block text-espresso">{order.user?.name ?? 'Account deleted'}</span>
                       <span className="text-xs text-cocoa">{order.user?.email}</span>
                     </td>
                     <td className="px-5 py-4 text-cocoa">{formatDateTime(order.createdAt)}</td>

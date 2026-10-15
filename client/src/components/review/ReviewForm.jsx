@@ -17,10 +17,10 @@ export default function ReviewForm({ productSlug, productName, existing, onChang
   const handleSubmit = async (event) => {
     event.preventDefault();
     const clientErrors = {};
-    if (!rating) clientErrors.rating = 'Pilih rating dulu';
+    if (!rating) clientErrors.rating = 'Choose a rating first';
     const text = comment.trim();
-    if (text.length < 10) clientErrors.comment = 'Ulasan minimal 10 karakter';
-    if (text.length > 500) clientErrors.comment = 'Ulasan maksimal 500 karakter';
+    if (text.length < 10) clientErrors.comment = 'Review must be at least 10 characters';
+    if (text.length > 500) clientErrors.comment = 'Review must be at most 500 characters';
     setErrors(clientErrors);
     if (Object.keys(clientErrors).length) return;
 
@@ -30,7 +30,7 @@ export default function ReviewForm({ productSlug, productName, existing, onChang
       const saved = existing
         ? await reviewService.update(productSlug, payload)
         : await reviewService.create(productSlug, payload);
-      toast.success(existing ? 'Ulasan diperbarui.' : 'Terima kasih atas ulasanmu!');
+      toast.success(existing ? 'Review updated.' : 'Thank you for your review!');
       onChanged(saved);
     } catch (err) {
       const fieldErrors = mapServerErrors(err.errors);
@@ -45,7 +45,7 @@ export default function ReviewForm({ productSlug, productName, existing, onChang
     setSaving(true);
     try {
       await reviewService.remove(productSlug);
-      toast.success('Ulasan dihapus.');
+      toast.success('Review deleted.');
       onChanged(null);
     } catch (err) {
       toast.error(err.message);
@@ -57,28 +57,28 @@ export default function ReviewForm({ productSlug, productName, existing, onChang
   return (
     <form onSubmit={handleSubmit} noValidate className="flex flex-col gap-4">
       <div className="flex flex-col gap-2">
-        <span className="text-sm font-medium text-espresso">Rating untuk {productName}</span>
-        <StarRating value={rating} onChange={setRating} label={`Rating untuk ${productName}`} />
+        <span className="text-sm font-medium text-espresso">Rating for {productName}</span>
+        <StarRating value={rating} onChange={setRating} label={`Rating for ${productName}`} />
         {errors.rating && <p className="text-sm text-berry">{errors.rating}</p>}
       </div>
 
       <Textarea
-        label="Ulasanmu"
+        label="Your review"
         value={comment}
         onChange={(event) => setComment(event.target.value)}
         error={errors.comment}
         maxLength={500}
         rows={3}
-        hint="10 sampai 500 karakter. Ceritakan rasa dan teksturnya."
+        hint="10 to 500 characters. Describe the taste and texture."
       />
 
       <div className="flex flex-wrap gap-3">
         <Button type="submit" disabled={saving}>
-          {saving ? 'Menyimpan…' : existing ? 'Simpan Perubahan' : 'Kirim Ulasan'}
+          {saving ? 'Saving…' : existing ? 'Save changes' : 'Submit review'}
         </Button>
         {existing && (
           <Button type="button" variant="ghost" onClick={handleDelete} disabled={saving} className="text-berry hover:bg-berry/10">
-            Hapus Ulasan
+            Delete review
           </Button>
         )}
       </div>

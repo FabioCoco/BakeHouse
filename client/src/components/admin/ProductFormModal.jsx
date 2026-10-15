@@ -64,7 +64,7 @@ export default function ProductFormModal({ open, onClose, product, categories, o
       const saved = isCreate
         ? await productService.create(payload)
         : await productService.update(product._id, payload);
-      toast.success(isCreate ? `${saved.name} ditambahkan.` : `${saved.name} disimpan.`);
+      toast.success(isCreate ? `${saved.name} added.` : `${saved.name} saved.`);
       onSaved(saved);
     } catch (err) {
       const fieldErrors = mapServerErrors(err.errors);
@@ -79,14 +79,14 @@ export default function ProductFormModal({ open, onClose, product, categories, o
     <Modal
       open={open}
       onClose={onClose}
-      title={isCreate ? 'Tambah produk' : 'Ubah produk'}
+      title={isCreate ? 'Add product' : 'Edit product'}
       footer={
         <div className="flex flex-wrap justify-end gap-3">
           <Button variant="ghost" onClick={onClose} disabled={saving}>
-            Batal
+            Cancel
           </Button>
           <Button type="submit" form="product-form" disabled={saving}>
-            {saving ? 'Menyimpan…' : 'Simpan'}
+            {saving ? 'Saving…' : 'Save'}
           </Button>
         </div>
       }
@@ -94,7 +94,7 @@ export default function ProductFormModal({ open, onClose, product, categories, o
       <form id="product-form" onSubmit={handleSubmit} noValidate className="flex flex-col gap-5">
         {errors.form && <p role="alert" className="rounded-xl bg-berry/10 p-3 text-sm text-berry">{errors.form}</p>}
 
-        <Input label="Nama roti" value={values.name} onChange={(e) => set('name', e.target.value)} error={errors.name} maxLength={120} />
+        <Input label="Product name" value={values.name} onChange={(e) => set('name', e.target.value)} error={errors.name} maxLength={120} />
 
         <Textarea
           label="Deskripsi"
@@ -106,7 +106,7 @@ export default function ProductFormModal({ open, onClose, product, categories, o
 
         <div className="grid gap-5 sm:grid-cols-2">
           <Input
-            label="Harga (Rp)"
+            label="Price (IDR)"
             inputMode="numeric"
             value={values.price}
             onChange={(e) => set('price', e.target.value)}
@@ -114,12 +114,12 @@ export default function ProductFormModal({ open, onClose, product, categories, o
             hint="Bilangan bulat, tanpa titik."
           />
           <Select
-            label="Kategori"
+            label="Category"
             value={values.category}
             onChange={(e) => set('category', e.target.value)}
             error={errors.category}
             options={[
-              { value: '', label: 'Pilih kategori', disabled: true },
+              { value: '', label: 'Choose a category', disabled: true },
               ...categories.map((c) => ({ value: c._id, label: c.name })),
             ]}
           />
@@ -131,7 +131,7 @@ export default function ProductFormModal({ open, onClose, product, categories, o
           />
           {isCreate && (
             <Input
-              label="Stok awal"
+              label="Initial stock"
               inputMode="numeric"
               value={values.stock}
               onChange={(e) => set('stock', e.target.value)}
@@ -142,7 +142,7 @@ export default function ProductFormModal({ open, onClose, product, categories, o
 
         <div className="grid gap-5 sm:grid-cols-3">
           <Input
-            label="Diskon (%)"
+            label="Discount (%)"
             inputMode="numeric"
             value={values.discountPercent}
             onChange={(e) => set('discountPercent', e.target.value)}
@@ -150,39 +150,39 @@ export default function ProductFormModal({ open, onClose, product, categories, o
             hint="0 berarti tanpa diskon."
           />
           <Input
-            label="Mulai promo"
+            label="Sale starts"
             type="datetime-local"
             value={values.discountStartsAt}
             onChange={(e) => set('discountStartsAt', e.target.value)}
-            hint="Kosongkan untuk langsung aktif."
+            hint="Leave empty to start right away."
           />
           <Input
-            label="Berakhir promo"
+            label="Sale ends"
             type="datetime-local"
             value={values.discountEndsAt}
             onChange={(e) => set('discountEndsAt', e.target.value)}
             error={errors.discountEndsAt}
-            hint="Kosongkan untuk tanpa batas."
+            hint="Leave empty for no end date."
           />
         </div>
 
         <div className="flex flex-col gap-4">
-          <span className="text-sm font-medium text-espresso">Foto produk (maksimal 10)</span>
+          <span className="text-sm font-medium text-espresso">Product photos (up to 10)</span>
           {values.images.map((filename, index) => (
             <ImageUploader
               key={`${index}-${filename}`}
               kind="product"
-              label={`Foto ${index + 1}`}
+              label={`Photo ${index + 1}`}
               value={filename}
               onChange={(next) => set('images', values.images.map((f, i) => (i === index ? next : f)))}
               onRemove={() => set('images', values.images.filter((_, i) => i !== index))}
-              hint={index === 0 ? 'Foto pertama dipakai sebagai gambar utama di katalog.' : undefined}
+              hint={index === 0 ? 'The first photo is the main image in the catalog.' : undefined}
             />
           ))}
           {values.images.length < 10 && (
             <div>
               <Button variant="outline" size="sm" onClick={() => set('images', [...values.images, ''])}>
-                Tambah foto
+                Add photo
               </Button>
             </div>
           )}
@@ -196,7 +196,7 @@ export default function ProductFormModal({ open, onClose, product, categories, o
             onChange={(e) => set('isActive', e.target.checked)}
             className="h-4 w-4 accent-crust"
           />
-          Tampilkan di toko
+          Show in shop
         </label>
       </form>
     </Modal>

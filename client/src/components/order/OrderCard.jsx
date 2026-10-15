@@ -13,7 +13,7 @@ export default function OrderCard({ order }) {
         <div className="flex flex-col gap-1">
           <p className="font-mono text-sm text-cocoa">{order.orderNumber}</p>
           <p className="text-sm text-cocoa">{formatDateTime(order.createdAt)}</p>
-          <p className="text-sm text-espresso">{itemCount} roti</p>
+          <p className="text-sm text-espresso">{itemCount} loaves</p>
         </div>
         <div className="flex items-center gap-4 sm:flex-col sm:items-end">
           <StatusPill status={order.status} />

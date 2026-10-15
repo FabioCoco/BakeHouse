@@ -12,7 +12,7 @@ export default function CustomerLayout() {
         href="#main"
         className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded-full focus:bg-surface focus:px-4 focus:py-2 focus:shadow-soft"
       >
-        Lewati ke konten utama
+        Skip to main content
       </a>
       <AnnouncementBar />
       <Navbar />

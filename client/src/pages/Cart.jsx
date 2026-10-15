@@ -21,7 +21,7 @@ export default function Cart() {
   const [clearing, setClearing] = useState(false);
 
   useEffect(() => {
-    document.title = 'Keranjang · BakeHouse';
+    document.title = 'Cart · BakeHouse';
   }, []);
 
   const handleClear = async () => {
@@ -29,7 +29,7 @@ export default function Cart() {
     await clearCart();
     setClearing(false);
     setConfirmClear(false);
-    toast.success('Keranjang dikosongkan.');
+    toast.success('Cart cleared.');
   };
 
   if (status === 'loading' && !cart) {
@@ -48,11 +48,11 @@ export default function Cart() {
     return (
       <Container className="py-16">
         <EmptyState
-          title="Keranjang belum bisa dimuat"
-          description="Periksa koneksi lalu coba lagi."
+          title="Cart could not be loaded"
+          description="Check your connection and try again."
           action={
             <Button variant="outline" onClick={refresh}>
-              Coba lagi
+              Try again
             </Button>
           }
         />
@@ -66,17 +66,17 @@ export default function Cart() {
     <Container className="flex flex-col gap-10 py-12 md:py-16">
       <header className="flex flex-col gap-2">
         <p className="eyebrow">Belanja</p>
-        <h1 className="text-5xl">Keranjang Belanja</h1>
+        <h1 className="text-5xl">Shopping Cart</h1>
       </header>
 
       {isEmpty ? (
         <EmptyState
           icon={ShoppingBag}
-          title="Keranjangmu masih kosong"
-          description="Pilih roti favoritmu dari menu kami."
+          title="Your cart is empty"
+          description="Pick your favorite bread from our menu."
           action={
             <Button as={Link} to="/products" variant="outline">
-              Lihat Menu
+              View menu
             </Button>
           }
         />
@@ -86,7 +86,7 @@ export default function Cart() {
             {cart.hasIssues && (
               <p role="alert" className="mt-6 flex items-start gap-2 rounded-xl bg-berry/10 p-3 text-sm text-berry">
                 <AlertTriangle size={16} aria-hidden="true" className="mt-0.5 shrink-0" />
-                Ada roti yang perlu diperbarui sebelum checkout.
+                Some loaves need updating before checkout.
               </p>
             )}
             <ul className="divide-y divide-line">
@@ -105,16 +105,16 @@ export default function Cart() {
                 onClick={() => setConfirmClear(true)}
                 className="text-sm font-medium text-berry underline-offset-4 hover:underline"
               >
-                Kosongkan keranjang
+                Clear cart
               </button>
             </div>
           </Card>
 
           <Card className="flex flex-col gap-5 p-6 lg:sticky lg:top-24">
-            <h2 className="text-2xl">Ringkasan</h2>
+            <h2 className="text-2xl">Summary</h2>
             <dl className="flex flex-col gap-3 text-sm">
               <div className="flex justify-between">
-                <dt className="text-cocoa">Jumlah roti</dt>
+                <dt className="text-cocoa">Total loaves</dt>
                 <dd className="font-medium">{cart.itemCount}</dd>
               </div>
               <div className="flex justify-between">
@@ -122,14 +122,14 @@ export default function Cart() {
                 <dd className="font-serif text-xl text-espresso">{formatRupiah(cart.subtotal)}</dd>
               </div>
             </dl>
-            <p className="text-xs text-cocoa">Ongkos kirim dan total dihitung saat checkout.</p>
+            <p className="text-xs text-cocoa">Shipping and total are calculated at checkout.</p>
             {cart.hasIssues ? (
               <Button disabled size="lg" className="w-full">
-                Perbaiki keranjang dulu
+                Fix your cart first
               </Button>
             ) : (
               <Button as={Link} to="/checkout" size="lg" className="w-full">
-                Lanjut ke Checkout
+                Continue to Checkout
               </Button>
             )}
           </Card>
@@ -140,8 +140,8 @@ export default function Cart() {
         open={confirmClear}
         onClose={() => setConfirmClear(false)}
         onConfirm={handleClear}
-        title="Kosongkan keranjang?"
-        description="Semua roti di keranjang akan dihapus."
+        title="Clear cart?"
+        description="All loaves in your cart will be removed."
         confirmLabel="Ya, kosongkan"
         danger
         loading={clearing}

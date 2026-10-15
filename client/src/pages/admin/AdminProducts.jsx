@@ -65,7 +65,7 @@ export default function AdminProducts() {
   const [busyId, setBusyId] = useState(null);
 
   useEffect(() => {
-    document.title = 'Produk · Admin BakeHouse';
+    document.title = 'Products · Admin BakeHouse';
   }, []);
 
   const openCreate = () => {
@@ -85,7 +85,7 @@ export default function AdminProducts() {
     setBusyId(product._id);
     try {
       await productService.update(product._id, { isActive: false });
-      toast.success(`${product.name} disembunyikan dari toko.`, { duration: 5000 });
+      toast.success(`${product.name} hidden from the shop.`, { duration: 5000 });
       refresh();
     } catch (err) {
       toast.error(err.message);
@@ -118,16 +118,16 @@ export default function AdminProducts() {
       <header className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div className="flex flex-col gap-1">
           <p className="eyebrow">Katalog</p>
-          <h1 className="text-4xl">Produk</h1>
+          <h1 className="text-4xl">Products</h1>
         </div>
         <Button onClick={openCreate}>
-          <Plus size={16} aria-hidden="true" /> Tambah Produk
+          <Plus size={16} aria-hidden="true" /> Add Product
         </Button>
       </header>
 
       <Card className="grid gap-4 p-5 md:grid-cols-[1fr_220px] md:items-end">
         <Input
-          label="Cari produk"
+          label="Search products"
           type="search"
           icon={Search}
           value={searchInput}
@@ -135,23 +135,22 @@ export default function AdminProducts() {
           maxLength={100}
         />
         <Select
-          label="Kategori"
+          label="Category"
           value={category}
           onChange={(event) => setParams({ category: event.target.value || undefined, page: undefined })}
-          options={[{ value: '', label: 'Semua kategori' }, ...categoryList.map((c) => ({ value: c.slug, label: c.name }))]}
+          options={[{ value: '', label: 'All categories' }, ...categoryList.map((c) => ({ value: c.slug, label: c.name }))]}
         />
       </Card>
 
       <p role="note" className="rounded-xl border border-honey bg-honey/40 p-4 text-sm text-espresso">
-        Produk yang disembunyikan atau dinonaktifkan tidak tampil di daftar ini. Daftar admin untuk semua produk
-        belum tersedia di server.
+        Hidden or deactivated products do not appear in this list. An admin list of all products is not yet available on the server.
       </p>
 
       {products.loading && <Skeleton className="h-96 w-full" />}
       {products.error && <p className="text-cocoa">{products.error.message}</p>}
 
       {!products.loading && !products.error && items.length === 0 && (
-        <EmptyState title="Belum ada produk" description="Tambahkan produk pertama atau ubah filter." />
+        <EmptyState title="No products yet" description="Add your first product or change the filter." />
       )}
 
       {!products.loading && items.length > 0 && (
@@ -160,11 +159,11 @@ export default function AdminProducts() {
             <table className="w-full min-w-[760px] text-left text-sm">
               <thead className="border-b border-line bg-sand/20 text-cocoa">
                 <tr>
-                  <th scope="col" className="px-5 py-3 font-medium">Produk</th>
-                  <th scope="col" className="px-5 py-3 font-medium">Kategori</th>
-                  <th scope="col" className="px-5 py-3 font-medium">Harga</th>
-                  <th scope="col" className="px-5 py-3 font-medium">Stok</th>
-                  <th scope="col" className="px-5 py-3 font-medium">Tampil</th>
+                  <th scope="col" className="px-5 py-3 font-medium">Product</th>
+                  <th scope="col" className="px-5 py-3 font-medium">Category</th>
+                  <th scope="col" className="px-5 py-3 font-medium">Price</th>
+                  <th scope="col" className="px-5 py-3 font-medium">Stock</th>
+                  <th scope="col" className="px-5 py-3 font-medium">Visible</th>
                   <th scope="col" className="px-5 py-3 text-right font-medium">Aksi</th>
                 </tr>
               </thead>
@@ -202,7 +201,7 @@ export default function AdminProducts() {
                         type="button"
                         role="switch"
                         aria-checked={product.isActive}
-                        aria-label={`Tampilkan ${product.name} di toko`}
+                        aria-label={`Show ${product.name} in shop`}
                         disabled={busyId === product._id}
                         onClick={() => hideFromStore(product)}
                         className={`relative h-6 w-11 rounded-full transition duration-200 disabled:opacity-50 ${
@@ -221,7 +220,7 @@ export default function AdminProducts() {
                         <button
                           type="button"
                           onClick={() => openEdit(product)}
-                          aria-label={`Ubah ${product.name}`}
+                          aria-label={`Edit ${product.name}`}
                           className="rounded-full p-2 text-cocoa transition hover:bg-sand/40 hover:text-espresso"
                         >
                           <Pencil size={16} aria-hidden="true" />
@@ -267,15 +266,15 @@ export default function AdminProducts() {
         open={confirmDelete !== null}
         onClose={() => setConfirmDelete(null)}
         onConfirm={handleDelete}
-        title="Nonaktifkan produk ini?"
-        description="Produk tidak akan tampil di toko. Riwayat pesanan yang sudah ada tetap aman."
+        title="Deactivate this product?"
+        description="The product will no longer appear in the shop. Existing order history is kept."
         confirmLabel="Ya, nonaktifkan"
         danger
         loading={busyId !== null && confirmDelete !== null}
       />
 
       <p className="text-sm text-cocoa">
-        Kategori baru? <Link to="/admin/categories" className="font-medium text-crust hover:underline">Kelola kategori</Link>.
+        New category? <Link to="/admin/categories" className="font-medium text-crust hover:underline">Manage categories</Link>.
       </p>
     </div>
   );

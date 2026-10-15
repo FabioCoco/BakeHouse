@@ -16,7 +16,7 @@ let loadPromise = null;
 export const loadSnap = () => {
   if (window.snap) return Promise.resolve(window.snap);
   if (!CLIENT_KEY) {
-    return Promise.reject(new Error('Pembayaran belum dikonfigurasi. Hubungi toko.'));
+    return Promise.reject(new Error('Payments are not configured yet. Please contact the store.'));
   }
 
   if (!loadPromise) {
@@ -29,7 +29,7 @@ export const loadSnap = () => {
         // Allow a retry on the next call instead of caching the failure.
         loadPromise = null;
         script.remove();
-        reject(new Error('Gagal memuat halaman pembayaran. Periksa koneksi lalu coba lagi.'));
+        reject(new Error('Could not load the payment page. Check your connection and try again.'));
       };
       document.head.appendChild(script);
     });
@@ -53,22 +53,22 @@ export default function useMidtransSnap() {
       snap.pay(snapToken, {
         onSuccess: async () => {
           await syncStatus();
-          toast.success('Pembayaran berhasil. Terima kasih!');
+          toast.success('Payment successful. Thank you!');
           openOrder();
         },
         onPending: async () => {
           await syncStatus();
-          toast('Pembayaran menunggu konfirmasi. Kami beri tahu saat sudah diterima.');
+          toast('Payment is awaiting confirmation. We will let you know once it is received.');
           openOrder();
         },
         onError: async () => {
           await syncStatus();
-          toast.error('Pembayaran gagal. Kamu bisa mencoba lagi dari halaman pesanan.');
+          toast.error('Payment failed. You can try again from the order page.');
           openOrder();
         },
         onClose: async () => {
           await syncStatus();
-          toast('Pembayaran belum selesai. Lanjutkan dari halaman pesanan.');
+          toast('Payment is not finished. Continue from the order page.');
           openOrder();
         },
       });

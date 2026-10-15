@@ -5,16 +5,16 @@ import RevealOnScroll from './RevealOnScroll.jsx';
 
 const STEPS = [
   {
-    title: 'Pilih roti',
-    copy: 'Tambahkan roti favoritmu ke keranjang. Stok diperbarui secara langsung.',
+    title: 'Choose your bread',
+    copy: 'Add your favorite bread to the cart. Stock updates instantly.',
   },
   {
-    title: 'Transfer bank',
-    copy: 'Konfirmasi pesanan, lalu transfer ke rekening BakeHouse yang ditampilkan saat checkout.',
+    title: 'Pay securely',
+    copy: 'Review your order and pay securely through Midtrans at checkout.',
   },
   {
-    title: 'Kami antar',
-    copy: 'Setelah pembayaran diterima, roti kami siapkan dan antarkan ke alamatmu.',
+    title: 'We deliver',
+    copy: 'Once payment is confirmed, we bake and deliver to your address.',
   },
 ];
 
@@ -23,7 +23,7 @@ export default function HowToOrder() {
     <section id="cara-pesan" aria-labelledby="cara-pesan-title" className="scroll-mt-24 bg-surface py-20">
       <Container className="flex flex-col gap-10">
         <RevealOnScroll>
-          <SectionHeading eyebrow="Mudah" title="Cara Pesan" titleId="cara-pesan-title" />
+          <SectionHeading eyebrow="Simple" title="How to order" titleId="cara-pesan-title" />
         </RevealOnScroll>
 
         <ol className="grid gap-6 md:grid-cols-3">

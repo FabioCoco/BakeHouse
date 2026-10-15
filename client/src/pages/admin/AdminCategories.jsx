@@ -21,14 +21,14 @@ export default function AdminCategories() {
   const [deleting, setDeleting] = useState(false);
 
   useEffect(() => {
-    document.title = 'Kategori · Admin BakeHouse';
+    document.title = 'Categories · Admin BakeHouse';
   }, []);
 
   const handleDelete = async () => {
     setDeleting(true);
     try {
       await categoryService.remove(confirmDelete._id);
-      toast.success(`${confirmDelete.name} dihapus.`);
+      toast.success(`${confirmDelete.name} deleted.`);
       setConfirmDelete(null);
       setVersion((v) => v + 1);
     } catch (err) {
@@ -45,7 +45,7 @@ export default function AdminCategories() {
       <header className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div className="flex flex-col gap-1">
           <p className="eyebrow">Katalog</p>
-          <h1 className="text-4xl">Kategori</h1>
+          <h1 className="text-4xl">Categories</h1>
         </div>
         <Button
           onClick={() => {
@@ -53,7 +53,7 @@ export default function AdminCategories() {
             setFormOpen(true);
           }}
         >
-          <Plus size={16} aria-hidden="true" /> Tambah Kategori
+          <Plus size={16} aria-hidden="true" /> Add Category
         </Button>
       </header>
 
@@ -61,7 +61,7 @@ export default function AdminCategories() {
       {categories.error && <p className="text-cocoa">{categories.error.message}</p>}
 
       {!categories.loading && !categories.error && items.length === 0 && (
-        <EmptyState title="Belum ada kategori" description="Tambahkan kategori pertama untuk produkmu." />
+        <EmptyState title="No categories yet" description="Add your first category for your products." />
       )}
 
       {items.length > 0 && (
@@ -71,7 +71,7 @@ export default function AdminCategories() {
               <li key={category._id} className="flex items-center justify-between gap-4 px-5 py-4">
                 <div className="flex min-w-0 flex-col">
                   <span className="font-medium text-espresso">{category.name}</span>
-                  <span className="truncate text-sm text-cocoa">{category.description || 'Tanpa deskripsi'}</span>
+                  <span className="truncate text-sm text-cocoa">{category.description || 'No description'}</span>
                   <span className="font-mono text-xs text-cocoa">{category.slug}</span>
                 </div>
                 <div className="flex shrink-0 gap-1">
@@ -81,7 +81,7 @@ export default function AdminCategories() {
                       setEditing(category);
                       setFormOpen(true);
                     }}
-                    aria-label={`Ubah kategori ${category.name}`}
+                    aria-label={`Edit category ${category.name}`}
                     className="rounded-full p-2 text-cocoa transition hover:bg-sand/40 hover:text-espresso"
                   >
                     <Pencil size={16} aria-hidden="true" />
@@ -89,7 +89,7 @@ export default function AdminCategories() {
                   <button
                     type="button"
                     onClick={() => setConfirmDelete(category)}
-                    aria-label={`Hapus kategori ${category.name}`}
+                    aria-label={`Delete category ${category.name}`}
                     className="rounded-full p-2 text-cocoa transition hover:bg-berry/10 hover:text-berry"
                   >
                     <Trash2 size={16} aria-hidden="true" />
@@ -115,8 +115,8 @@ export default function AdminCategories() {
         open={confirmDelete !== null}
         onClose={() => setConfirmDelete(null)}
         onConfirm={handleDelete}
-        title="Hapus kategori ini?"
-        description="Kategori hanya bisa dihapus jika tidak punya produk."
+        title="Delete this category?"
+        description="A category can only be deleted if it has no products."
         confirmLabel="Ya, hapus"
         danger
         loading={deleting}

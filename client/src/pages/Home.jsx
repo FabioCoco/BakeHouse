@@ -12,7 +12,7 @@ export default function Home() {
   const { hash } = useLocation();
 
   useEffect(() => {
-    document.title = 'BakeHouse · Roti Artisan';
+    document.title = 'BakeHouse · Artisan Bread';
   }, []);
 
   // Client-side navigation to /#cara-pesan does not scroll on its own, so scroll to the anchor here.

@@ -28,11 +28,11 @@ export default function ImageUploader({ kind = 'product', value, onChange, onRem
     if (!file) return;
 
     if (!ACCEPTED_TYPES.includes(file.type)) {
-      setLocalError('Pilih file JPG, PNG, WebP, atau AVIF.');
+      setLocalError('Choose a JPG, PNG, WebP, or AVIF file.');
       return;
     }
     if (file.size > MAX_BYTES) {
-      setLocalError('Ukuran gambar maksimal 2 MB.');
+      setLocalError('Image must be 2 MB or smaller.');
       return;
     }
 
@@ -60,7 +60,7 @@ export default function ImageUploader({ kind = 'product', value, onChange, onRem
       <div className="flex items-start gap-4">
         <div className="flex h-28 w-24 shrink-0 items-center justify-center overflow-hidden rounded-xl border border-line bg-sand/30">
           {src ? (
-            <img src={src} alt="Pratinjau gambar" className="h-full w-full object-cover" />
+            <img src={src} alt="Image preview" className="h-full w-full object-cover" />
           ) : (
             <ImagePlus size={24} aria-hidden="true" className="text-cocoa" />
           )}
@@ -78,11 +78,11 @@ export default function ImageUploader({ kind = 'product', value, onChange, onRem
             tabIndex={-1}
           />
           <Button variant="outline" size="sm" disabled={uploading} onClick={() => inputRef.current?.click()}>
-            {uploading ? 'Mengunggah…' : value ? 'Ganti gambar' : 'Unggah gambar'}
+            {uploading ? 'Uploading…' : value ? 'Replace image' : 'Upload image'}
           </Button>
           {onRemove && (
             <button type="button" onClick={onRemove} className="flex w-fit items-center gap-1 text-sm font-medium text-berry">
-              <X size={14} aria-hidden="true" /> Hapus gambar
+              <X size={14} aria-hidden="true" /> Remove image
             </button>
           )}
           {hint && <p className="text-xs text-cocoa">{hint}</p>}

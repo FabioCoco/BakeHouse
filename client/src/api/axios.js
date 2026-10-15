@@ -22,7 +22,7 @@ api.interceptors.response.use(
     }
 
     const normalized = {
-      message: payload?.message || error.message || 'Terjadi kesalahan, coba lagi.',
+      message: payload?.message || error.message || 'Something went wrong. Please try again.',
       errors: payload?.errors || [],
       status: status ?? null,
     };

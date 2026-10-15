@@ -21,7 +21,7 @@ export default function Login() {
   const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
-    document.title = 'Masuk · BakeHouse';
+    document.title = 'Sign in · BakeHouse';
   }, []);
 
   // Returns to the page the user came from. Without one, admins land on the dashboard and customers on the home page.
@@ -85,13 +85,13 @@ export default function Login() {
   return (
     <AuthShell
       eyebrow="Selamat datang"
-      title="Masuk ke akunmu"
-      description="Lanjutkan belanja roti favoritmu."
+      title="Sign in to your account"
+      description="Continue shopping for your favorite breads."
       footer={
         <>
-          Belum punya akun?{' '}
+          No account yet?{' '}
           <Link to="/register" state={location.state} className="font-medium text-crust underline underline-offset-4">
-            Daftar sekarang
+            Sign up now
           </Link>
         </>
       }
@@ -107,7 +107,7 @@ export default function Login() {
           error={errors.email}
         />
         <Input
-          label="Kata sandi"
+          label="Password"
           name="password"
           type="password"
           autoComplete="current-password"
@@ -116,7 +116,7 @@ export default function Login() {
           error={errors.password}
         />
         <Button type="submit" size="lg" disabled={submitting} className="w-full">
-          {submitting ? 'Memproses…' : 'Masuk'}
+          {submitting ? 'Processing…' : 'Sign in'}
         </Button>
       </form>
 

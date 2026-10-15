@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 
 // Eyebrow, serif title, and optional "see all" link used across the home sections.
-export default function SectionHeading({ eyebrow, title, titleId, linkTo, linkLabel = 'Lihat semua' }) {
+export default function SectionHeading({ eyebrow, title, titleId, linkTo, linkLabel = 'View all' }) {
   return (
     <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
       <div className="flex flex-col gap-2">

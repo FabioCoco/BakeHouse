@@ -10,7 +10,7 @@ import useFetch from '../../hooks/useFetch.js';
 import { reviewService } from '../../services/reviewService.js';
 
 const SORT_OPTIONS = [
-  { value: 'newest', label: 'Terbaru' },
+  { value: 'newest', label: 'Newest' },
   { value: 'highest', label: 'Rating tertinggi' },
 ];
 
@@ -26,9 +26,9 @@ export default function ReviewsSection({ slug }) {
   return (
     <section aria-labelledby="reviews-title" className="flex flex-col gap-8">
       <div className="flex flex-col gap-2">
-        <p className="eyebrow">Ulasan pembeli</p>
+        <p className="eyebrow">Customer reviews</p>
         <h2 id="reviews-title" className="text-4xl">
-          Apa kata pelanggan
+          What customers say
         </h2>
       </div>
 
@@ -40,10 +40,10 @@ export default function ReviewsSection({ slug }) {
       {meta && meta.total > 0 && (
         <div className="flex flex-col gap-4">
           <div className="flex items-center justify-between gap-4">
-            <p className="text-sm text-cocoa">{meta.total} ulasan ditampilkan</p>
+            <p className="text-sm text-cocoa">{meta.total} reviews shown</p>
             <div className="w-56">
               <Select
-                label="Urutkan ulasan"
+                label="Sort reviews"
                 hideLabel
                 value={sort}
                 onChange={(event) => {
@@ -60,10 +60,10 @@ export default function ReviewsSection({ slug }) {
       )}
 
       {meta && meta.total === 0 && (
-        <EmptyState title="Belum ada ulasan" description="Jadilah yang pertama mengulas roti ini setelah pesananmu selesai." />
+        <EmptyState title="No reviews yet" description="Be the first to review this bread once your order is complete." />
       )}
 
-      {reviews.error && <p className="text-cocoa">Ulasan belum bisa dimuat.</p>}
+      {reviews.error && <p className="text-cocoa">Reviews could not be loaded.</p>}
     </section>
   );
 }

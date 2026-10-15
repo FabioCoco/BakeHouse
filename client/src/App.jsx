@@ -10,7 +10,7 @@ function SessionSplash() {
   return (
     <div role="status" aria-live="polite" className="flex min-h-svh items-center justify-center bg-cream">
       <p className="font-serif text-3xl text-espresso">BakeHouse</p>
-      <span className="sr-only">Memuat sesi…</span>
+      <span className="sr-only">Loading your session…</span>
     </div>
   );
 }

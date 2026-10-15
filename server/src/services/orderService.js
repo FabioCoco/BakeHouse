@@ -102,6 +102,14 @@ export const checkout = async ({ userId, addressId, address, paymentNote, buyNow
       lines = cart.items;
     }
 
+    // One line per product. Two lines for the same product would each try to reserve stock separately.
+    const merged = new Map();
+    for (const line of lines) {
+      const key = String(line.product);
+      merged.set(key, { product: line.product, quantity: (merged.get(key)?.quantity ?? 0) + line.quantity });
+    }
+    lines = [...merged.values()];
+
     const products = await Product.find({ _id: { $in: lines.map((i) => i.product) } }).session(session);
     const productById = new Map(products.map((p) => [String(p._id), p]));
 
@@ -124,7 +132,9 @@ export const checkout = async ({ userId, addressId, address, paymentNote, buyNow
         { session },
       );
       if (result.matchedCount === 0) {
-        throw outOfStockError(product, line.quantity);
+        // Report the stock as it is now, not the value read at the start of the transaction.
+        const current = await Product.findById(product._id).session(session);
+        throw outOfStockError({ _id: product._id, name: product.name, stock: current?.stock ?? 0 }, line.quantity);
       }
 
       // The discount is computed here from the server clock. The client's price is never used.
@@ -179,7 +189,7 @@ export const checkout = async ({ userId, addressId, address, paymentNote, buyNow
   } catch (err) {
     console.error('Snap transaction failed for', order.orderNumber, err.message);
     await cancelFailedCheckout(order);
-    throw new ApiError(502, 'Pembayaran belum bisa dibuat. Pesanan dibatalkan, silakan coba lagi.');
+    throw new ApiError(502, 'The payment could not be created. The order was cancelled, please try again.');
   }
 
   await Order.updateOne(

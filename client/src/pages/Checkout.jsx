@@ -42,7 +42,7 @@ export default function Checkout() {
   const activeMode = savedAddresses.length === 0 ? 'new' : mode;
   const activeId = selectedId ?? defaultAddressId;
 
-  // "Beli Sekarang" opens /checkout?buyNow=<slug>&qty=<n>. That order holds only this product and never reads the cart.
+  // "Buy Now" opens /checkout?buyNow=<slug>&qty=<n>. That order holds only this product and never reads the cart.
   const [searchParams] = useSearchParams();
   const buyNowSlug = searchParams.get('buyNow');
   const buyNowRequested = Math.max(1, Number.parseInt(searchParams.get('qty') ?? '1', 10) || 1);
@@ -86,11 +86,11 @@ export default function Checkout() {
         if (issue.requested !== undefined) {
           return `${name}: diminta ${issue.requested}, tersisa ${issue.available}.`;
         }
-        return `${name ?? 'Sebuah roti'} sudah tidak tersedia.`;
+        return `${name ?? 'A loaf'} is no longer available.`;
       });
       setStockIssues(messages);
       refresh();
-      toast.error('Keranjang sudah berubah. Periksa kembali pesananmu.');
+      toast.error('Your cart has changed. Please review your order.');
       return;
     }
 
@@ -111,7 +111,7 @@ export default function Checkout() {
 
     if (activeMode === 'saved') {
       if (!activeId) {
-        toast.error('Pilih alamat pengiriman dulu.');
+        toast.error('Please choose a shipping address first.');
         return;
       }
       payload = { addressId: activeId };
@@ -164,11 +164,11 @@ export default function Checkout() {
       <Container className="py-16">
         <EmptyState
           icon={ShoppingBag}
-          title="Produk tidak ditemukan"
-          description="Roti yang ingin kamu beli tidak tersedia lagi."
+          title="Product not found"
+          description="The loaf you want to buy is no longer available."
           action={
             <Button as={Link} to="/products" variant="outline">
-              Lihat Menu
+              View menu
             </Button>
           }
         />
@@ -189,11 +189,11 @@ export default function Checkout() {
       <Container className="py-16">
         <EmptyState
           icon={ShoppingBag}
-          title="Tidak ada yang perlu di-checkout"
-          description="Keranjangmu masih kosong."
+          title="Nothing to check out"
+          description="Your cart is empty."
           action={
             <Button as={Link} to="/products" variant="outline">
-              Lihat Menu
+              View menu
             </Button>
           }
         />
@@ -207,20 +207,20 @@ export default function Checkout() {
     <Container className="flex flex-col gap-10 py-12 md:py-16">
       <header className="flex flex-col gap-2">
         <p className="eyebrow">Checkout</p>
-        <h1 className="text-5xl">Konfirmasi Pesanan</h1>
+        <h1 className="text-5xl">Confirm Order</h1>
       </header>
 
       <div className="grid items-start gap-8 lg:grid-cols-[1fr_380px]">
         <div className="flex flex-col gap-6">
           <Card className="flex flex-col gap-6 p-6 md:p-8">
-            <h2 className="text-2xl">Alamat Pengiriman</h2>
+            <h2 className="text-2xl">Shipping Address</h2>
 
             {addresses.loading && <Skeleton className="h-24 w-full" />}
-            {addresses.error && <p className="text-cocoa">Alamat belum bisa dimuat. Muat ulang halaman.</p>}
+            {addresses.error && <p className="text-cocoa">Addresses could not be loaded. Reload the page.</p>}
 
             {!addresses.loading && savedAddresses.length > 0 && (
               <fieldset className="flex flex-col gap-3">
-                <legend className="sr-only">Pilih alamat</legend>
+                <legend className="sr-only">Choose address</legend>
                 {savedAddresses.map((address) => {
                   const checked = activeMode === 'saved' && activeId === address._id;
                   return (
@@ -244,7 +244,7 @@ export default function Checkout() {
                       <span className="flex flex-col gap-0.5 text-sm">
                         <span className="font-medium text-espresso">
                           {address.label} · {address.recipientName}
-                          {address.isDefault && <span className="ml-2 text-xs text-crust">Utama</span>}
+                          {address.isDefault && <span className="ml-2 text-xs text-crust">Default</span>}
                         </span>
                         <span className="text-cocoa">{address.phone}</span>
                         <span className="text-cocoa">
@@ -259,7 +259,7 @@ export default function Checkout() {
                   onClick={() => setMode('new')}
                   className="w-fit text-sm font-medium text-crust underline-offset-4 hover:underline"
                 >
-                  + Gunakan alamat baru
+                  + Use a new address
                 </button>
               </fieldset>
             )}
@@ -272,7 +272,7 @@ export default function Checkout() {
                     onClick={() => setMode('saved')}
                     className="w-fit text-sm font-medium text-crust underline-offset-4 hover:underline"
                   >
-                    ← Kembali ke alamat tersimpan
+                    ← Back to saved addresses
                   </button>
                 )}
                 <AddressFields
@@ -287,14 +287,13 @@ export default function Checkout() {
           </Card>
 
           <Card className="flex flex-col gap-4 p-6 md:p-8">
-            <h2 className="text-2xl">Pembayaran</h2>
+            <h2 className="text-2xl">Payment</h2>
             <p className="text-cocoa">
-              Pembayaran diproses dengan aman oleh Midtrans. Kamu bisa membayar lewat transfer bank, kartu, atau
-              e-wallet. Pesanan menunggu pembayaran selama 24 jam.
+              Payment is processed securely by Midtrans. You can pay by bank transfer, card, or e-wallet. The order waits for payment for 24 hours.
             </p>
             <Input
-              label="Catatan untuk toko (opsional)"
-              hint="Misalnya permintaan khusus untuk pengiriman."
+              label="Note for the shop (optional)"
+              hint="For example, special delivery instructions."
               value={paymentNote}
               maxLength={200}
               onChange={(event) => setPaymentNote(event.target.value)}
@@ -303,31 +302,31 @@ export default function Checkout() {
         </div>
 
         <Card className="flex flex-col gap-5 p-6 lg:sticky lg:top-24">
-          <h2 className="text-2xl">Ringkasan Pesanan</h2>
+          <h2 className="text-2xl">Order Summary</h2>
 
           {isBuyNow && (
-            <p className="text-sm text-cocoa">Pesanan ini hanya berisi roti yang kamu pilih. Keranjangmu tidak berubah.</p>
+            <p className="text-sm text-cocoa">This order only contains the loaves you selected. Your cart is unchanged.</p>
           )}
 
           {!isBuyNow && summary.hasIssues && (
             <p role="alert" className="flex items-start gap-2 rounded-xl bg-berry/10 p-3 text-sm text-berry">
               <AlertTriangle size={16} aria-hidden="true" className="mt-0.5 shrink-0" />
-              Ada roti di keranjang yang perlu diperbarui.{' '}
+              Some loaves in your cart need updating.{' '}
               <Link to="/cart" className="font-medium underline underline-offset-4">
-                Buka keranjang
+                Open cart
               </Link>
             </p>
           )}
 
           {isBuyNow && summary.hasIssues && (
             <p role="alert" className="rounded-xl bg-berry/10 p-3 text-sm text-berry">
-              Stok roti ini sudah habis.
+              This loaf is sold out.
             </p>
           )}
 
           {stockIssues.length > 0 && (
             <div role="alert" className="flex flex-col gap-1 rounded-xl bg-berry/10 p-3 text-sm text-berry">
-              <p className="font-medium">Pesanan belum dibuat. Ada perubahan:</p>
+              <p className="font-medium">The order was not created. Some things changed:</p>
               {stockIssues.map((message) => (
                 <p key={message}>{message}</p>
               ))}
@@ -345,7 +344,7 @@ export default function Checkout() {
                 </li>
               ) : (
                 <li key={`missing-${index}`} className="text-berry">
-                  Produk tidak tersedia
+                  Product unavailable
                 </li>
               ),
             )}
@@ -356,11 +355,11 @@ export default function Checkout() {
               <span className="text-cocoa">Subtotal</span>
               <span className="font-medium">{formatRupiah(summary.subtotal)}</span>
             </div>
-            <p className="text-xs text-cocoa">Ongkos kirim dihitung saat pesanan dibuat dan ditampilkan di halaman konfirmasi.</p>
+            <p className="text-xs text-cocoa">Shipping is calculated when the order is placed and shown on the confirmation page.</p>
           </div>
 
           <Button size="lg" className="w-full" disabled={!canConfirm} onClick={handleConfirm}>
-            {submitting ? 'Memproses…' : 'Bayar Sekarang'}
+            {submitting ? 'Processing…' : 'Pay Now'}
           </Button>
         </Card>
       </div>

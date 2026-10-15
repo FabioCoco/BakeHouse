@@ -20,7 +20,7 @@ export default function Orders() {
   const meta = orders.body?.meta;
 
   useEffect(() => {
-    document.title = 'Pesanan Saya · BakeHouse';
+    document.title = 'My orders · BakeHouse';
   }, []);
 
   const handlePageChange = (next) => {
@@ -31,8 +31,8 @@ export default function Orders() {
   return (
     <Container className="flex flex-col gap-10 py-12 md:py-16">
       <header className="flex flex-col gap-2">
-        <p className="eyebrow">Akun</p>
-        <h1 className="text-5xl">Pesanan Saya</h1>
+        <p className="eyebrow">Account</p>
+        <h1 className="text-5xl">My orders</h1>
       </header>
 
       {orders.loading && (
@@ -45,11 +45,11 @@ export default function Orders() {
 
       {orders.error && (
         <EmptyState
-          title="Pesanan belum bisa dimuat"
+          title="Orders could not be loaded"
           description={orders.error.message}
           action={
             <Button variant="outline" onClick={() => window.location.reload()}>
-              Muat ulang
+              Reload
             </Button>
           }
         />
@@ -58,11 +58,11 @@ export default function Orders() {
       {!orders.loading && !orders.error && items.length === 0 && (
         <EmptyState
           icon={ReceiptText}
-          title="Belum ada pesanan"
-          description="Pesanan yang kamu buat akan muncul di sini."
+          title="No orders yet"
+          description="Orders you place will appear here."
           action={
             <Button as={Link} to="/products" variant="outline">
-              Lihat Menu
+              View menu
             </Button>
           }
         />

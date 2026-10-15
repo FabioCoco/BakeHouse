@@ -23,7 +23,7 @@ export default function Register() {
   const target = safeRedirect(location.state?.from);
 
   useEffect(() => {
-    document.title = 'Daftar · BakeHouse';
+    document.title = 'Sign up · BakeHouse';
   }, []);
 
   if (user) {
@@ -32,7 +32,7 @@ export default function Register() {
 
   const signedIn = (newUser) => {
     setUser(newUser);
-    toast.success('Akun berhasil dibuat. Selamat datang!');
+    toast.success('Account created. Welcome!');
     navigate(target, { replace: true });
   };
 
@@ -87,20 +87,20 @@ export default function Register() {
   return (
     <AuthShell
       eyebrow="Bergabung"
-      title="Buat akun baru"
-      description="Simpan alamat dan pantau pesananmu di satu tempat."
+      title="Create a new account"
+      description="Save your addresses and track your orders in one place."
       footer={
         <>
-          Sudah punya akun?{' '}
+          Already have an account?{' '}
           <Link to="/login" state={location.state} className="font-medium text-crust underline underline-offset-4">
-            Masuk
+            Sign in
           </Link>
         </>
       }
     >
       <form onSubmit={handleSubmit} noValidate className="flex flex-col gap-5">
         <Input
-          label="Nama lengkap"
+          label="Full name"
           name="name"
           autoComplete="name"
           value={form.name}
@@ -117,17 +117,17 @@ export default function Register() {
           error={errors.email}
         />
         <Input
-          label="Kata sandi"
+          label="Password"
           name="password"
           type="password"
           autoComplete="new-password"
           value={form.password}
           onChange={handleChange}
           error={errors.password}
-          hint="8 sampai 72 karakter, mengandung huruf dan angka."
+          hint="8 to 72 characters, including letters and numbers."
         />
         <Button type="submit" size="lg" disabled={submitting} className="w-full">
-          {submitting ? 'Memproses…' : 'Daftar'}
+          {submitting ? 'Processing…' : 'Sign up'}
         </Button>
       </form>
 

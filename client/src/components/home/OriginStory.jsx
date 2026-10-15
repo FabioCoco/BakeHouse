@@ -7,22 +7,22 @@ import RevealOnScroll from './RevealOnScroll.jsx';
 const ORIGINS = [
   {
     key: 'france',
-    title: 'Prancis',
-    copy: 'Croissant dan viennoiserie berlapis mentega, dilaminasi dengan tangan dan dipanggang setiap pagi.',
+    title: 'France',
+    copy: 'Butter-laminated croissants and viennoiserie, hand-folded and baked every morning.',
     to: '/products?origin=France',
     tone: 'bg-honey',
   },
   {
     key: 'japan',
-    title: 'Jepang',
-    copy: 'Milk bread yang lembut dan roti isi yang terinspirasi dari toko roti kecil di Tokyo.',
+    title: 'Japan',
+    copy: 'Soft milk bread and filled buns inspired by small bakeries in Tokyo.',
     to: '/products?origin=Japan',
     tone: 'bg-sand',
   },
   {
     key: 'europe',
-    title: 'Eropa',
-    copy: 'Sourdough dan cookie dari Jerman dan Italia, dibuat dengan resep yang sabar dan jujur.',
+    title: 'Europe',
+    copy: 'Sourdough and cookies from Germany and Italy, made with patient, honest recipes.',
     to: '/products',
     tone: 'bg-sand-dark/50',
   },
@@ -33,7 +33,7 @@ export default function OriginStory() {
     <section aria-labelledby="asal-title" className="py-20">
       <Container className="flex flex-col gap-10">
         <RevealOnScroll>
-          <SectionHeading eyebrow="Inspirasi kami" title="Asal Roti Kami" titleId="asal-title" />
+          <SectionHeading eyebrow="Our inspiration" title="Where our bread comes from" titleId="asal-title" />
         </RevealOnScroll>
 
         <div className="grid gap-6 md:grid-cols-3">
@@ -49,7 +49,7 @@ export default function OriginStory() {
                   to={origin.to}
                   className="mt-auto pt-2 text-sm font-medium text-crust underline-offset-4 transition hover:text-crust-hover hover:underline"
                 >
-                  Lihat roti {origin.title} →
+                  See {origin.title} bread →
                 </Link>
               </Card>
             </RevealOnScroll>

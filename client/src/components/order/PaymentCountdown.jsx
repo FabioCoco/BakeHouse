@@ -11,7 +11,7 @@ export default function PaymentCountdown({ expiresAt }) {
 
   const remaining = new Date(expiresAt).getTime() - now;
   if (remaining <= 0) {
-    return <p className="text-sm font-medium text-berry">Waktu pembayaran sudah habis.</p>;
+    return <p className="text-sm font-medium text-berry">Payment time has run out.</p>;
   }
 
   const totalSeconds = Math.floor(remaining / 1000);
@@ -22,7 +22,7 @@ export default function PaymentCountdown({ expiresAt }) {
 
   return (
     <p className="text-sm text-cocoa" aria-live="off">
-      Selesaikan pembayaran dalam{' '}
+      Complete payment within{' '}
       <time className="font-mono font-semibold text-espresso tabular-nums">
         {pad(hours)}:{pad(minutes)}:{pad(seconds)}
       </time>

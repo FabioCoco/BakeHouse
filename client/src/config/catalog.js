@@ -2,20 +2,20 @@
 export const ORIGINS = ['France', 'Japan', 'Germany', 'Italy', 'Other'];
 
 export const ORIGIN_LABELS = {
-  France: 'Prancis',
-  Japan: 'Jepang',
-  Germany: 'Jerman',
-  Italy: 'Italia',
-  Other: 'Lainnya',
+  France: 'France',
+  Japan: 'Japan',
+  Germany: 'Germany',
+  Italy: 'Italy',
+  Other: 'Other',
 };
 
 // Sort values must match PRODUCT_SORTS in server/src/validators/product.js.
 export const SORT_OPTIONS = [
-  { value: 'newest', label: 'Terbaru' },
-  { value: 'price_asc', label: 'Harga terendah' },
-  { value: 'price_desc', label: 'Harga tertinggi' },
-  { value: 'name', label: 'Nama A–Z' },
-  { value: 'discount', label: 'Diskon terbesar' },
+  { value: 'newest', label: 'Newest' },
+  { value: 'price_asc', label: 'Price: low to high' },
+  { value: 'price_desc', label: 'Price: high to low' },
+  { value: 'name', label: 'Name A–Z' },
+  { value: 'discount', label: 'Biggest discount' },
 ];
 
 export const PRODUCTS_PER_PAGE = 12;

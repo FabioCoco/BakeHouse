@@ -27,7 +27,7 @@ export default function StarRating({ value = 0, onChange, size = 16, className =
   return (
     <span
       role="img"
-      aria-label={`Rating ${value ? value.toFixed(1) : 'belum ada'} dari 5`}
+      aria-label={`Rating ${value ? value.toFixed(1) : 'none yet'} out of 5`}
       className={`inline-flex items-center gap-0.5 text-golden ${className}`}
     >
       {[1, 2, 3, 4, 5].map((star) => (

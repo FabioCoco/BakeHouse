@@ -16,13 +16,13 @@ export default function AddressFields({ values, errors = {}, onChange, idPrefix 
 
   return (
     <div className="grid gap-5 sm:grid-cols-2">
-      {showLabel && field('label', 'Label alamat (opsional)', { placeholder: 'Rumah, Kantor…', maxLength: 40, className: 'sm:col-span-2' })}
-      {field('recipientName', 'Nama penerima', { autoComplete: 'name', maxLength: 100 })}
-      {field('phone', 'Nomor telepon', { type: 'tel', autoComplete: 'tel', maxLength: 20 })}
-      {field('street', 'Alamat lengkap', { autoComplete: 'street-address', maxLength: 200, className: 'sm:col-span-2' })}
-      {field('city', 'Kota', { autoComplete: 'address-level2', maxLength: 100 })}
-      {field('province', 'Provinsi', { autoComplete: 'address-level1', maxLength: 100 })}
-      {field('postalCode', 'Kode pos', { autoComplete: 'postal-code', maxLength: 10 })}
+      {showLabel && field('label', 'Address label (optional)', { placeholder: 'Home, Office…', maxLength: 40, className: 'sm:col-span-2' })}
+      {field('recipientName', 'Recipient name', { autoComplete: 'name', maxLength: 100 })}
+      {field('phone', 'Phone number', { type: 'tel', autoComplete: 'tel', maxLength: 20 })}
+      {field('street', 'Street address', { autoComplete: 'street-address', maxLength: 200, className: 'sm:col-span-2' })}
+      {field('city', 'City', { autoComplete: 'address-level2', maxLength: 100 })}
+      {field('province', 'Province', { autoComplete: 'address-level1', maxLength: 100 })}
+      {field('postalCode', 'Postal code', { autoComplete: 'postal-code', maxLength: 10 })}
     </div>
   );
 }

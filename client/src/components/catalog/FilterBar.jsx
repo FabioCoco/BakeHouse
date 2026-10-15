@@ -30,7 +30,7 @@ export default function FilterBar({ params, categories, onChange, onReset }) {
     <div className="flex flex-col gap-6">
       <div className="grid gap-4 md:grid-cols-[1fr_auto_auto] md:items-end">
         <Input
-          label="Cari roti"
+          label="Search bread"
           type="search"
           name="search"
           icon={Search}
@@ -44,27 +44,27 @@ export default function FilterBar({ params, categories, onChange, onReset }) {
           label="Asal"
           value={params.origin ?? ''}
           onChange={(event) => onChange({ origin: event.target.value || undefined, page: undefined })}
-          options={[{ value: '', label: 'Semua asal' }, ...ORIGINS.map((o) => ({ value: o, label: ORIGIN_LABELS[o] }))]}
+          options={[{ value: '', label: 'All origins' }, ...ORIGINS.map((o) => ({ value: o, label: ORIGIN_LABELS[o] }))]}
         />
 
         <Select
-          label="Urutkan"
+          label="Sort"
           value={params.sort ?? 'newest'}
           onChange={(event) => onChange({ sort: event.target.value === 'newest' ? undefined : event.target.value, page: undefined })}
           options={SORT_OPTIONS}
         />
       </div>
 
-      <div className="flex flex-wrap items-center gap-2" role="group" aria-label="Kategori">
+      <div className="flex flex-wrap items-center gap-2" role="group" aria-label="Categories">
         <CategoryChip
           active={!params.category}
           onClick={() => onChange({ category: undefined, page: undefined })}
-          label="Semua"
+          label="All"
         />
         <CategoryChip
           active={Boolean(params.onSale)}
           onClick={() => onChange({ onSale: params.onSale ? undefined : 'true', page: undefined })}
-          label="Promo"
+          label="On sale"
         />
         {categories.map((category) => (
           <CategoryChip

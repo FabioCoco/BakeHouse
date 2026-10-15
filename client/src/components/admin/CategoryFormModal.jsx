@@ -36,7 +36,7 @@ export default function CategoryFormModal({ open, onClose, category, onSaved }) 
       const saved = isCreate
         ? await categoryService.create(payload)
         : await categoryService.update(category._id, payload);
-      toast.success(isCreate ? 'Kategori ditambahkan.' : 'Kategori disimpan.');
+      toast.success(isCreate ? 'Category added.' : 'Category saved.');
       onSaved(saved);
     } catch (err) {
       const fieldErrors = mapServerErrors(err.errors);
@@ -51,23 +51,23 @@ export default function CategoryFormModal({ open, onClose, category, onSaved }) 
     <Modal
       open={open}
       onClose={onClose}
-      title={isCreate ? 'Tambah kategori' : 'Ubah kategori'}
+      title={isCreate ? 'Add category' : 'Edit category'}
       footer={
         <div className="flex justify-end gap-3">
           <Button variant="ghost" onClick={onClose} disabled={saving}>
-            Batal
+            Cancel
           </Button>
           <Button type="submit" form="category-form" disabled={saving}>
-            {saving ? 'Menyimpan…' : 'Simpan'}
+            {saving ? 'Saving…' : 'Save'}
           </Button>
         </div>
       }
     >
       <form id="category-form" onSubmit={handleSubmit} noValidate className="flex flex-col gap-5">
         {errors.form && <p role="alert" className="rounded-xl bg-berry/10 p-3 text-sm text-berry">{errors.form}</p>}
-        <Input label="Nama kategori" value={values.name} onChange={(e) => set('name', e.target.value)} error={errors.name} maxLength={60} />
+        <Input label="Category name" value={values.name} onChange={(e) => set('name', e.target.value)} error={errors.name} maxLength={60} />
         <Textarea
-          label="Deskripsi (opsional)"
+          label="Description (optional)"
           rows={3}
           value={values.description}
           onChange={(e) => set('description', e.target.value)}

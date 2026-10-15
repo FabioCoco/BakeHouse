@@ -1,4 +1,5 @@
 import request from 'supertest';
+import { Cart } from '../src/models/Cart.js';
 import { Order } from '../src/models/Order.js';
 import { Product } from '../src/models/Product.js';
 import { clearTestDb, startTestDb, stopTestDb } from './helpers/db.js';
@@ -83,6 +84,42 @@ describe('cart', () => {
   });
 });
 
+describe('parallel cart updates', () => {
+  it('keeps one line per product when several add requests arrive at once', async () => {
+    const product = await createProduct(category, { price: 15000, stock: 20 });
+
+    const results = await Promise.all(Array.from({ length: 6 }, () => addToCart(product, 1)));
+    expect(results.every((r) => r.status === 200)).toBe(true);
+
+    const cart = await request(app).get('/api/cart').set('Cookie', customerCookie);
+    expect(cart.body.data.items).toHaveLength(1);
+    expect(cart.body.data.items[0].quantity).toBe(6);
+  });
+
+  it('merges duplicate lines left by earlier races before checkout and reports real stock', async () => {
+    const product = await createProduct(category, { name: 'Dup Bun', price: 10000, stock: 3 });
+    const dupUser = await createUser({ email: 'dup-buyer2@example.com' });
+    const dupCookie = await loginCookie(request(app), dupUser.email);
+    await Cart.create({
+      user: dupUser._id,
+      items: [
+        { product: product._id, quantity: 2 },
+        { product: product._id, quantity: 2 },
+      ],
+    });
+
+    // Merged quantity is 4, but only 3 are in stock.
+    const res = await checkout({}, dupCookie);
+    expect(res.status).toBe(409);
+    expect(res.body.errors[0]).toMatchObject({ name: 'Dup Bun', requested: 4, available: 3 });
+    expect(await stockOf(product)).toBe(3);
+
+    const cart = await request(app).get('/api/cart').set('Cookie', dupCookie);
+    expect(cart.body.data.items).toHaveLength(1);
+    expect(cart.body.data.items[0].quantity).toBe(4);
+  });
+});
+
 describe('POST /api/orders/checkout', () => {
   it('prices from the database, reserves stock, clears the cart and creates a Snap transaction', async () => {
     const croissant = await createProduct(category, { name: 'Croissant', price: 22000, stock: 10 });
@@ -158,7 +195,7 @@ describe('POST /api/orders/checkout', () => {
     const res = await checkout();
 
     expect(res.status).toBe(502);
-    expect(res.body.message).toMatch(/Pesanan dibatalkan/);
+    expect(res.body.message).toMatch(/The order was cancelled/);
     expect(await stockOf(croissant)).toBe(10);
 
     const order = await Order.findOne({});

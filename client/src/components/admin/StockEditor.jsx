@@ -35,7 +35,7 @@ export default function StockEditor({ product, onSaved }) {
 
     const next = Number(value);
     if (!Number.isInteger(next) || next < 0) {
-      toast.error('Stok harus bilangan bulat, minimal 0.');
+      toast.error('Stock must be a whole number, 0 or more.');
       return;
     }
     if (next === product.stock) {
@@ -47,7 +47,7 @@ export default function StockEditor({ product, onSaved }) {
     setSaving(true);
     try {
       const updated = await productService.setStock(product._id, { stock: next });
-      toast.success(`Stok ${updated.name} sekarang ${updated.stock}.`);
+      toast.success(`Stock for ${updated.name} is now ${updated.stock}.`);
       onSaved(updated);
       close();
     } catch (err) {
@@ -71,7 +71,7 @@ export default function StockEditor({ product, onSaved }) {
       <button
         type="button"
         onClick={() => setEditing(true)}
-        aria-label={`Ubah stok ${product.name}, sekarang ${product.stock}`}
+        aria-label={`Edit stock for ${product.name}, currently ${product.stock}`}
         className="min-w-12 rounded-lg px-2 py-1 text-left font-medium tabular-nums text-espresso transition hover:bg-sand/40"
       >
         {product.stock}
@@ -88,7 +88,7 @@ export default function StockEditor({ product, onSaved }) {
       step={1}
       value={value}
       disabled={saving}
-      aria-label={`Stok baru untuk ${product.name}`}
+      aria-label={`New stock for ${product.name}`}
       onChange={(event) => setValue(event.target.value)}
       onBlur={handleBlur}
       onKeyDown={(event) => {

@@ -23,18 +23,18 @@ export default function CartDrawer() {
         <span className="text-cocoa">Subtotal</span>
         <span className="font-serif text-2xl text-espresso">{formatRupiah(cart.subtotal)}</span>
       </div>
-      <p className="text-xs text-cocoa">Ongkos kirim dan total dihitung saat checkout.</p>
+      <p className="text-xs text-cocoa">Shipping and total are calculated at checkout.</p>
       <div className="flex flex-col gap-3 sm:flex-row">
         <Button as={Link} to="/cart" variant="outline" className="flex-1" onClick={closeCart}>
-          Lihat Keranjang
+          View Cart
         </Button>
         {cart.hasIssues ? (
           <Button disabled className="flex-1">
-            Perbaiki keranjang dulu
+            Fix your cart first
           </Button>
         ) : (
           <Button as={Link} to="/checkout" onClick={closeCart} className="flex-1">
-            Lanjut ke Checkout
+            Continue to Checkout
           </Button>
         )}
       </div>
@@ -42,7 +42,7 @@ export default function CartDrawer() {
   );
 
   return (
-    <Drawer open={isOpen} onClose={closeCart} title="Keranjang" footer={footer}>
+    <Drawer open={isOpen} onClose={closeCart} title="Cart" footer={footer}>
       {status === 'loading' && !cart && (
         <div className="flex flex-col gap-4" aria-busy="true">
           <Skeleton className="h-24 w-full" />
@@ -52,9 +52,9 @@ export default function CartDrawer() {
 
       {status === 'error' && (
         <div className="flex flex-col items-start gap-3">
-          <p className="text-cocoa">Keranjang belum bisa dimuat.</p>
+          <p className="text-cocoa">Your cart could not be loaded.</p>
           <Button variant="outline" size="sm" onClick={refresh}>
-            Coba lagi
+            Try again
           </Button>
         </div>
       )}
@@ -62,11 +62,11 @@ export default function CartDrawer() {
       {cart && cart.items.length === 0 && (
         <EmptyState
           icon={ShoppingBag}
-          title="Keranjangmu masih kosong"
-          description="Pilih roti favoritmu dari menu kami."
+          title="Your cart is empty"
+          description="Pick your favorite bread from our menu."
           action={
             <Button as={Link} to="/products" variant="outline" onClick={closeCart}>
-              Lihat Menu
+              View menu
             </Button>
           }
         />
@@ -77,7 +77,7 @@ export default function CartDrawer() {
           {cart.hasIssues && (
             <p role="alert" className="mb-4 flex items-start gap-2 rounded-xl bg-berry/10 p-3 text-sm text-berry">
               <AlertTriangle size={16} aria-hidden="true" className="mt-0.5 shrink-0" />
-              Ada roti yang perlu diperbarui sebelum checkout.
+              Some loaves need updating before checkout.
             </p>
           )}
           <ul className="divide-y divide-line">

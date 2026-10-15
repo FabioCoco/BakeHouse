@@ -7,8 +7,8 @@ import { formatRupiah } from '../../utils/formatRupiah.js';
 const MAX_QUANTITY = 99;
 
 const ISSUE_MESSAGES = {
-  unavailable: 'Roti ini sudah tidak tersedia. Hapus dari keranjang.',
-  insufficient_stock: 'Stok tidak cukup. Kurangi jumlahnya.',
+  unavailable: 'This bread is no longer available. Remove it from your cart.',
+  insufficient_stock: 'Not enough stock. Reduce the quantity.',
 };
 
 // One line in the cart. Used by the drawer and the cart page.
@@ -17,7 +17,7 @@ export default function CartItemRow({ line, onQuantityChange, onRemove }) {
 
   if (!product) {
     return (
-      <li className="py-4 text-sm text-berry">Produk ini sudah tidak tersedia. Kosongkan keranjang untuk melanjutkan.</li>
+      <li className="py-4 text-sm text-berry">This product is no longer available. Empty your cart to continue.</li>
     );
   }
 
@@ -45,7 +45,7 @@ export default function CartItemRow({ line, onQuantityChange, onRemove }) {
           <button
             type="button"
             onClick={() => onRemove(product._id)}
-            aria-label={`Hapus ${name} dari keranjang`}
+            aria-label={`Remove ${name} from cart`}
             className="rounded-full p-2 text-cocoa transition hover:bg-berry/10 hover:text-berry"
           >
             <Trash2 size={18} aria-hidden="true" />
@@ -60,7 +60,7 @@ export default function CartItemRow({ line, onQuantityChange, onRemove }) {
 
         <div className="mt-auto flex flex-wrap items-center justify-between gap-3">
           <QuantityStepper
-            label={`Jumlah ${name}`}
+            label={`Quantity for ${name}`}
             value={quantity}
             min={1}
             max={maxQuantity}
@@ -70,7 +70,7 @@ export default function CartItemRow({ line, onQuantityChange, onRemove }) {
           <p className="font-medium text-espresso">{formatRupiah(lineTotal)}</p>
         </div>
         {stock > 0 && stock <= 5 && !issues.length && (
-          <p className="text-xs text-cocoa">Sisa {stock} di toko.</p>
+          <p className="text-xs text-cocoa">Only {stock} left in stock.</p>
         )}
       </div>
     </li>

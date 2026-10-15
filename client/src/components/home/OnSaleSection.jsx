@@ -21,7 +21,7 @@ export default function OnSaleSection() {
     <section aria-labelledby="promo-title" className="py-20">
       <Container className="flex flex-col gap-10">
         <RevealOnScroll>
-          <SectionHeading eyebrow="Hanya minggu ini" title="Sedang Promo" titleId="promo-title" linkTo="/products?onSale=true" />
+          <SectionHeading eyebrow="This week only" title="On sale now" titleId="promo-title" linkTo="/products?onSale=true" />
         </RevealOnScroll>
 
         {loading ? (

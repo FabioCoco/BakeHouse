@@ -17,13 +17,13 @@ export default function Account() {
   const setUser = useAuthStore((state) => state.setUser);
 
   useEffect(() => {
-    document.title = 'Akun · BakeHouse';
+    document.title = 'Account · BakeHouse';
   }, []);
 
   return (
     <Container className="flex flex-col gap-8 py-16">
       <div className="flex flex-col gap-2">
-        <p className="eyebrow">Akun</p>
+        <p className="eyebrow">Account</p>
         <h1 className="text-5xl">Halo, {user?.name}</h1>
       </div>
 
@@ -34,13 +34,13 @@ export default function Account() {
             <dd className="font-medium">{user?.email}</dd>
           </div>
           <div>
-            <dt className="text-sm text-cocoa">Telepon</dt>
-            <dd className="font-medium">{user?.phone || 'Belum diisi'}</dd>
+            <dt className="text-sm text-cocoa">Phone</dt>
+            <dd className="font-medium">{user?.phone || 'Not provided'}</dd>
           </div>
           <div>
-            <dt className="text-sm text-cocoa">Peran</dt>
+            <dt className="text-sm text-cocoa">Role</dt>
             <dd>
-              <Badge tone={user?.role === 'admin' ? 'honey' : 'neutral'}>{user?.role === 'admin' ? 'Admin' : 'Pelanggan'}</Badge>
+              <Badge tone={user?.role === 'admin' ? 'honey' : 'neutral'}>{user?.role === 'admin' ? 'Admin' : 'Customer'}</Badge>
             </dd>
           </div>
         </dl>
@@ -50,14 +50,14 @@ export default function Account() {
 
       {user?.hasPassword !== false && <PasswordForm />}
 
-      <nav aria-label="Akun" className="grid gap-4 sm:grid-cols-2">
+      <nav aria-label="Account" className="grid gap-4 sm:grid-cols-2">
         <Link to="/orders" className="rounded-2xl border border-line bg-surface p-6 transition hover:border-sand-dark hover:shadow-soft">
-          <span className="font-serif text-2xl text-espresso">Pesanan Saya</span>
-          <span className="mt-1 block text-sm text-cocoa">Lihat status dan riwayat pesanan.</span>
+          <span className="font-serif text-2xl text-espresso">My orders</span>
+          <span className="mt-1 block text-sm text-cocoa">View order status and history.</span>
         </Link>
         <Link to="/account/addresses" className="rounded-2xl border border-line bg-surface p-6 transition hover:border-sand-dark hover:shadow-soft">
-          <span className="font-serif text-2xl text-espresso">Alamat</span>
-          <span className="mt-1 block text-sm text-cocoa">Kelola alamat pengiriman.</span>
+          <span className="font-serif text-2xl text-espresso">Address</span>
+          <span className="mt-1 block text-sm text-cocoa">Manage shipping addresses.</span>
         </Link>
       </nav>
     </Container>
@@ -73,8 +73,8 @@ function ProfileForm({ user, onSaved }) {
   const handleSubmit = async (event) => {
     event.preventDefault();
     const clientErrors = {};
-    if (!name.trim()) clientErrors.name = 'Nama wajib diisi';
-    if (phone.trim() && !PHONE_PATTERN.test(phone.trim())) clientErrors.phone = 'Nomor telepon tidak valid';
+    if (!name.trim()) clientErrors.name = 'Name is required';
+    if (phone.trim() && !PHONE_PATTERN.test(phone.trim())) clientErrors.phone = 'Phone number is not valid';
     setErrors(clientErrors);
     if (Object.keys(clientErrors).length) return;
 
@@ -82,7 +82,7 @@ function ProfileForm({ user, onSaved }) {
     try {
       const updated = await profileService.updateProfile({ name: name.trim(), phone: phone.trim() });
       onSaved(updated);
-      toast.success('Profil diperbarui.');
+      toast.success('Profile updated.');
     } catch (err) {
       const fieldErrors = mapServerErrors(err.errors);
       if (Object.keys(fieldErrors).length) setErrors(fieldErrors);
@@ -96,23 +96,23 @@ function ProfileForm({ user, onSaved }) {
     <Card as="section" aria-labelledby="profile-title" className="p-8">
       <form onSubmit={handleSubmit} noValidate className="flex flex-col gap-5">
         <h2 id="profile-title" className="text-2xl">
-          Ubah Profil
+          Edit Profile
         </h2>
         <div className="grid gap-5 sm:grid-cols-2">
-          <Input label="Nama" value={name} maxLength={100} onChange={(e) => setName(e.target.value)} error={errors.name} />
+          <Input label="Name" value={name} maxLength={100} onChange={(e) => setName(e.target.value)} error={errors.name} />
           <Input
-            label="Nomor telepon"
+            label="Phone number"
             type="tel"
             value={phone}
             maxLength={20}
             onChange={(e) => setPhone(e.target.value)}
             error={errors.phone}
-            hint="Opsional. Dipakai toko jika perlu menghubungi kamu."
+            hint="Optional. The shop uses it only if it needs to contact you."
           />
         </div>
         <div>
           <Button type="submit" disabled={saving}>
-            {saving ? 'Menyimpan…' : 'Simpan Profil'}
+            {saving ? 'Saving…' : 'Save Profile'}
           </Button>
         </div>
       </form>
@@ -129,10 +129,10 @@ function PasswordForm() {
   const handleSubmit = async (event) => {
     event.preventDefault();
     const clientErrors = {};
-    if (!currentPassword) clientErrors.currentPassword = 'Kata sandi saat ini wajib diisi';
+    if (!currentPassword) clientErrors.currentPassword = 'Current password is required';
     const passwordError = validatePassword(newPassword);
     if (passwordError) clientErrors.newPassword = passwordError;
-    if (currentPassword && currentPassword === newPassword) clientErrors.newPassword = 'Kata sandi baru harus berbeda';
+    if (currentPassword && currentPassword === newPassword) clientErrors.newPassword = 'New password must be different';
     setErrors(clientErrors);
     if (Object.keys(clientErrors).length) return;
 
@@ -141,7 +141,7 @@ function PasswordForm() {
       await profileService.changePassword({ currentPassword, newPassword });
       setCurrentPassword('');
       setNewPassword('');
-      toast.success('Kata sandi diperbarui.');
+      toast.success('Password updated.');
     } catch (err) {
       const fieldErrors = mapServerErrors(err.errors);
       if (Object.keys(fieldErrors).length) setErrors(fieldErrors);
@@ -155,11 +155,11 @@ function PasswordForm() {
     <Card as="section" aria-labelledby="password-title" className="p-8">
       <form onSubmit={handleSubmit} noValidate className="flex flex-col gap-5">
         <h2 id="password-title" className="text-2xl">
-          Ganti Kata Sandi
+          Change Password
         </h2>
         <div className="grid gap-5 sm:grid-cols-2">
           <Input
-            label="Kata sandi saat ini"
+            label="Current password"
             type="password"
             autoComplete="current-password"
             value={currentPassword}
@@ -167,18 +167,18 @@ function PasswordForm() {
             error={errors.currentPassword}
           />
           <Input
-            label="Kata sandi baru"
+            label="New password"
             type="password"
             autoComplete="new-password"
             value={newPassword}
             onChange={(e) => setNewPassword(e.target.value)}
             error={errors.newPassword}
-            hint="8 sampai 72 karakter, mengandung huruf dan angka."
+            hint="8 to 72 characters, including letters and numbers."
           />
         </div>
         <div>
           <Button type="submit" disabled={saving}>
-            {saving ? 'Menyimpan…' : 'Ganti Kata Sandi'}
+            {saving ? 'Saving…' : 'Change Password'}
           </Button>
         </div>
       </form>

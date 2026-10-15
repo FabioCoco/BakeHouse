@@ -9,19 +9,19 @@ export default function Pagination({ page, totalPages, onPageChange }) {
         type="button"
         onClick={() => onPageChange(page - 1)}
         disabled={page <= 1}
-        aria-label="Halaman sebelumnya"
+        aria-label="Previous page"
         className="flex h-10 w-10 items-center justify-center rounded-full border border-line bg-surface transition hover:border-sand-dark disabled:opacity-40"
       >
         <ChevronLeft size={18} aria-hidden="true" />
       </button>
       <span className="text-sm text-cocoa">
-        Halaman <span className="font-semibold text-espresso">{page}</span> dari {totalPages}
+        Page <span className="font-semibold text-espresso">{page}</span> of {totalPages}
       </span>
       <button
         type="button"
         onClick={() => onPageChange(page + 1)}
         disabled={page >= totalPages}
-        aria-label="Halaman berikutnya"
+        aria-label="Next page"
         className="flex h-10 w-10 items-center justify-center rounded-full border border-line bg-surface transition hover:border-sand-dark disabled:opacity-40"
       >
         <ChevronRight size={18} aria-hidden="true" />

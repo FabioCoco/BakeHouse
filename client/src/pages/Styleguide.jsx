@@ -51,12 +51,11 @@ export default function Styleguide() {
         <p className="eyebrow">Internal</p>
         <h1 className="text-5xl md:text-6xl">Styleguide</h1>
         <p className="max-w-2xl text-cocoa">
-          Palet, tipografi, dan komponen dasar BakeHouse. Halaman ini hanya untuk pengecekan visual selama
-          pengembangan.
+          Colors, typography, and base components for BakeHouse. This page is for visual checks during development only.
         </p>
       </header>
 
-      <Section title="Warna">
+      <Section title="Colors">
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
           {COLORS.map((color) => (
             <div key={color.name} className="overflow-hidden rounded-2xl border border-line bg-surface">
@@ -69,59 +68,58 @@ export default function Styleguide() {
         </div>
       </Section>
 
-      <Section title="Tipografi">
+      <Section title="Typography">
         <Card className="flex flex-col gap-4 p-8">
           <p className="eyebrow">Eyebrow label</p>
-          <h1 className="text-5xl md:text-6xl">Dipanggang Pagi Ini, dari Paris hingga Tokyo.</h1>
+          <h1 className="text-5xl md:text-6xl">Baked this morning, from Paris to Tokyo.</h1>
           <h2 className="text-4xl">Heading level 2</h2>
           <h3 className="text-2xl">Heading level 3</h3>
           <p className="max-w-2xl text-base text-espresso">
-            Body text 16px dengan line-height yang lega. Roti croissant kami dibuat dengan mentega pilihan dan
-            difermentasi perlahan selama 48 jam.
+            Body text at 16px with a generous line height. Our croissants are made with premium butter and slowly fermented for 48 hours.
           </p>
-          <p className="text-sm text-cocoa">Teks sekunder 14px untuk keterangan dan bantuan.</p>
+          <p className="text-sm text-cocoa">Secondary text at 14px for captions and help.</p>
           <p className="font-serif text-2xl text-espresso">{formatRupiah(45000)}</p>
         </Card>
       </Section>
 
-      <Section title="Tombol">
+      <Section title="Buttons">
         <div className="flex flex-wrap items-center gap-4">
-          <Button>Lihat Menu</Button>
-          <Button variant="outline">Cara Pesan</Button>
+          <Button>View menu</Button>
+          <Button variant="outline">How to order</Button>
           <Button variant="ghost">Ghost</Button>
-          <Button variant="danger">Batalkan</Button>
+          <Button variant="danger">Cancel</Button>
           <Button disabled>Disabled</Button>
-          <Button size="sm">Kecil</Button>
-          <Button size="lg">Besar</Button>
+          <Button size="sm">Small</Button>
+          <Button size="lg">Large</Button>
         </div>
       </Section>
 
-      <Section title="Input dan pilihan">
+      <Section title="Inputs and choices">
         <div className="grid gap-6 md:grid-cols-2">
-          <Input label="Email" placeholder="nama@email.com" hint="Kami tidak akan membagikan email kamu." />
-          <Input label="Kode promo" placeholder="BAKE10" error="Kode promo tidak valid" />
+          <Input label="Email" placeholder="name@email.com" hint="We will never share your email." />
+          <Input label="Promo code" placeholder="BAKE10" error="Promo code is not valid" />
           <Select
-            label="Urutkan"
+            label="Sort"
             options={[
-              { value: 'newest', label: 'Terbaru' },
-              { value: 'price_asc', label: 'Harga terendah' },
-              { value: 'price_desc', label: 'Harga tertinggi' },
+              { value: 'newest', label: 'Newest' },
+              { value: 'price_asc', label: 'Lowest price' },
+              { value: 'price_desc', label: 'Highest price' },
             ]}
           />
           <div className="flex flex-col gap-2">
-            <span className="text-sm font-medium">Jumlah</span>
+            <span className="text-sm font-medium">Quantity</span>
             <QuantityStepper value={quantity} max={5} onChange={setQuantity} />
           </div>
         </div>
       </Section>
 
-      <Section title="Badge dan status pesanan">
+      <Section title="Badges and order status">
         <div className="flex flex-wrap items-center gap-3">
           <Badge>Neutral</Badge>
           <Badge tone="honey">France</Badge>
-          <Badge tone="sage">Tersedia</Badge>
-          <Badge tone="golden">Sisa 3</Badge>
-          <Badge tone="berry">Habis</Badge>
+          <Badge tone="sage">In stock</Badge>
+          <Badge tone="golden">3 left</Badge>
+          <Badge tone="berry">Sold out</Badge>
         </div>
         <div className="flex flex-wrap items-center gap-3">
           {Object.keys(ORDER_STATUS_MAP).map((status) => (
@@ -130,7 +128,7 @@ export default function Styleguide() {
         </div>
       </Section>
 
-      <Section title="Kartu, skeleton, dan kosong">
+      <Section title="Cards, skeleton, and empty state">
         <div className="grid gap-6 md:grid-cols-3">
           <Card className="overflow-hidden">
             <Skeleton className="aspect-[4/5] w-full rounded-none" />
@@ -141,26 +139,26 @@ export default function Styleguide() {
           </Card>
           <Card className="flex flex-col gap-3 p-6">
             <Badge tone="honey" className="self-start">
-              Baru
+              New
             </Badge>
-            <h3 className="text-2xl">Croissant Mentega</h3>
-            <p className="text-cocoa">Dipanggang setiap pagi dengan mentega Prancis.</p>
+            <h3 className="text-2xl">Butter Croissant</h3>
+            <p className="text-cocoa">Baked every morning with French butter.</p>
             <p className="mt-auto font-serif text-xl">{formatRupiah(32000)}</p>
           </Card>
           <Card>
             <EmptyState
               icon={Search}
-              title="Tidak ada roti yang cocok"
-              description="Coba ubah kata kunci atau reset filter."
-              action={<Button variant="outline" size="sm">Reset filter</Button>}
+              title="No breads match"
+              description="Try a different keyword or reset the filters."
+              action={<Button variant="outline" size="sm">Reset filters</Button>}
             />
           </Card>
         </div>
       </Section>
 
-      <Section title="Pagination dan empty state">
+      <Section title="Pagination and empty state">
         <Card>
-          <EmptyState icon={Package} title="Belum ada pesanan" description="Pesanan kamu akan muncul di sini." />
+          <EmptyState icon={Package} title="No orders yet" description="Your orders will appear here." />
         </Card>
         <Pagination page={page} totalPages={5} onPageChange={setPage} />
       </Section>

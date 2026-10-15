@@ -6,10 +6,10 @@ export default function ConfirmDialog({
   open,
   onClose,
   onConfirm,
-  title = 'Apakah kamu yakin?',
+  title = 'Are you sure?',
   description,
-  confirmLabel = 'Ya, lanjutkan',
-  cancelLabel = 'Batal',
+  confirmLabel = 'Yes, continue',
+  cancelLabel = 'Cancel',
   danger = false,
   loading = false,
 }) {

@@ -11,7 +11,7 @@ export default function PriceTag({ price, effectivePrice, isOnSale, className = 
       <span className={isOnSale ? 'font-semibold text-crust' : undefined}>{formatRupiah(finalPrice)}</span>
       {isOnSale && (
         <>
-          <span className="sr-only">Harga normal</span>
+          <span className="sr-only">Regular price</span>
           <s className="font-sans text-sm text-cocoa">{formatRupiah(price)}</s>
         </>
       )}

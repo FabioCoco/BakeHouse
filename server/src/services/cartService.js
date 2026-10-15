@@ -12,8 +12,24 @@ export const getOrCreateCart = (userId) =>
     { upsert: true, new: true },
   );
 
+// Carts written before the atomic add could hold several lines for one product. Merge them once and save.
+const mergeDuplicateLines = async (cart) => {
+  const byProduct = new Map();
+  for (const item of cart.items) {
+    const key = String(item.product);
+    const entry = byProduct.get(key);
+    if (entry) entry.quantity += item.quantity;
+    else byProduct.set(key, { product: item.product, quantity: item.quantity });
+  }
+  if (byProduct.size !== cart.items.length) {
+    cart.items = [...byProduct.values()];
+    await cart.save();
+  }
+  return cart;
+};
+
 const findPopulatedCart = async (userId) => {
-  const cart = await getOrCreateCart(userId);
+  const cart = await mergeDuplicateLines(await getOrCreateCart(userId));
   return cart.populate({ path: 'items.product', select: PRODUCT_FIELDS });
 };
 
@@ -53,15 +69,41 @@ const toCartView = (cart) => {
 
 export const getCart = async (userId) => toCartView(await findPopulatedCart(userId));
 
+// Adds one line, or increases the existing line. Each write is a single atomic update, so parallel clicks
+// on "add to cart" never create two lines for the same product.
+const writeLine = async (userId, productId, quantity, attempt = 0) => {
+  const existing = await Cart.exists({ user: userId, 'items.product': productId });
+
+  try {
+    if (existing) {
+      await Cart.updateOne({ user: userId, 'items.product': productId }, { $inc: { 'items.$.quantity': quantity } });
+    } else {
+      // Matches only when no line for this product exists yet. If a parallel request has just created one, this
+      // would try to insert a second cart for the user, and the unique index rejects it. The retry then takes the branch above.
+      await Cart.updateOne(
+        { user: userId, 'items.product': { $ne: productId } },
+        { $push: { items: { product: productId, quantity } } },
+        { upsert: true },
+      );
+    }
+  } catch (err) {
+    if (err.code === 11000 && attempt < 3) {
+      return writeLine(userId, productId, quantity, attempt + 1);
+    }
+    throw err;
+  }
+};
+
 export const addItem = async ({ userId, productId, quantity }) => {
   const product = await Product.findOne({ _id: productId, isActive: true });
   if (!product) {
     throw ApiError.notFound('Product not found');
   }
 
-  const cart = await getOrCreateCart(userId);
-  const existing = cart.items.find((item) => String(item.product) === String(productId));
-  const newQuantity = (existing?.quantity ?? 0) + quantity;
+  await getOrCreateCart(userId);
+  const cart = await Cart.findOne({ user: userId, 'items.product': productId }, { 'items.$': 1 }).lean();
+  const currentQuantity = cart?.items?.[0]?.quantity ?? 0;
+  const newQuantity = currentQuantity + quantity;
 
   if (newQuantity > product.stock) {
     throw ApiError.conflict(`Only ${product.stock} of "${product.name}" available`, [
@@ -69,13 +111,7 @@ export const addItem = async ({ userId, productId, quantity }) => {
     ]);
   }
 
-  if (existing) {
-    existing.quantity = newQuantity;
-  } else {
-    cart.items.push({ product: product._id, quantity });
-  }
-  await cart.save();
-
+  await writeLine(userId, productId, quantity);
   return getCart(userId);
 };
 

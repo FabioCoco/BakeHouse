@@ -12,7 +12,7 @@ export default function CategoryStrip() {
   return (
     <Container as="section" id="kategori" aria-labelledby="kategori-title" className="scroll-mt-20 py-14">
       <h2 id="kategori-title" className="sr-only">
-        Kategori roti
+        Bread categories
       </h2>
 
       {loading && (
@@ -23,7 +23,7 @@ export default function CategoryStrip() {
         </div>
       )}
 
-      {error && <p className="text-cocoa">Kategori belum bisa dimuat.</p>}
+      {error && <p className="text-cocoa">Categories could not be loaded.</p>}
 
       {!loading && !error && (
         <ul className="flex snap-x gap-3 overflow-x-auto pb-2 md:flex-wrap md:justify-center md:overflow-visible">

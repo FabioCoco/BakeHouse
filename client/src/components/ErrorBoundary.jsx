@@ -19,14 +19,14 @@ export default class ErrorBoundary extends Component {
     if (this.state.hasError) {
       return (
         <div role="alert" className="mx-auto flex min-h-svh max-w-xl flex-col items-center justify-center gap-4 px-4 text-center">
-          <p className="eyebrow">Ada kendala</p>
-          <h1 className="text-4xl">Maaf, halaman gagal dimuat.</h1>
+          <p className="eyebrow">Something went wrong</p>
+          <h1 className="text-4xl">Sorry, this page failed to load.</h1>
           <button
             type="button"
             onClick={() => window.location.reload()}
             className="h-11 rounded-full bg-crust px-6 font-medium text-surface transition duration-200 hover:bg-crust-hover"
           >
-            Muat ulang
+            Reload
           </button>
         </div>
       );

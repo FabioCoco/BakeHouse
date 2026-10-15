@@ -15,7 +15,7 @@ export default function useCart() {
   const setCart = useCartStore((state) => state.setCart);
 
   const requireLogin = () => {
-    toast('Masuk dulu untuk menyimpan roti di keranjang.');
+    toast('Sign in to save bread in your cart.');
     navigate('/login', { state: { from: location.pathname + location.search } });
   };
 
@@ -33,8 +33,8 @@ export default function useCart() {
     if (conflict?.available !== undefined) {
       toast.error(
         conflict.available > 0
-          ? `Stok ${conflict.name} tinggal ${conflict.available}.`
-          : `${conflict.name} sudah habis.`,
+          ? `Only ${conflict.available} of ${conflict.name} left.`
+          : `${conflict.name} is sold out.`,
       );
     } else {
       toast.error(err.message);
@@ -49,7 +49,7 @@ export default function useCart() {
     try {
       const body = await cartService.addItem(product._id, quantity);
       if (seq === latestRequest) setCart(body.data);
-      toast.success(`${product.name} ditambahkan ke keranjang.`);
+      toast.success(`${product.name} added to cart.`);
     } catch (err) {
       handleError(err);
     }

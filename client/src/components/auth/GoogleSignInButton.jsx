@@ -15,10 +15,10 @@ export default function GoogleSignInButton({ onCredential, disabled = false }) {
             if (response.credential) {
               onCredential(response.credential);
             } else {
-              toast.error('Google tidak mengembalikan kredensial. Coba lagi.');
+              toast.error('Google did not return a credential. Please try again.');
             }
           }}
-          onError={() => toast.error('Masuk dengan Google gagal. Coba lagi.')}
+          onError={() => toast.error('Sign in with Google failed. Please try again.')}
           theme="outline"
           shape="pill"
           size="large"

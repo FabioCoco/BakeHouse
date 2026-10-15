@@ -64,25 +64,25 @@ export default function OrderDetailDrawer({ orderId, open, onClose, onChanged })
   const footer = order && allowed.length > 0 && (
     <div className="flex flex-col gap-3">
       <Select
-        label="Ubah status"
+        label="Update status"
         value={nextStatus}
         onChange={(event) => setNextStatus(event.target.value)}
         options={[
-          { value: '', label: 'Pilih status baru', disabled: true },
+          { value: '', label: 'Choose a new status', disabled: true },
           ...allowed.map((status) => ({ value: status, label: ORDER_STATUS_MAP[status].label })),
         ]}
       />
       <Button disabled={!nextStatus || saving} onClick={requestChange} className="w-full">
-        {saving ? 'Menyimpan…' : 'Simpan Status'}
+        {saving ? 'Saving…' : 'Save status'}
       </Button>
     </div>
   );
 
   return (
     <>
-      <Drawer open={open} onClose={onClose} title="Detail Pesanan" footer={footer} width="max-w-lg">
+      <Drawer open={open} onClose={onClose} title="Order details" footer={footer} width="max-w-lg">
         {detail.loading && <Skeleton className="h-80 w-full" />}
-        {detail.error && <p className="text-cocoa">Pesanan belum bisa dimuat.</p>}
+        {detail.error && <p className="text-cocoa">This order could not be loaded.</p>}
 
         {order && (
           <div className="flex flex-col gap-6">
@@ -93,19 +93,19 @@ export default function OrderDetailDrawer({ orderId, open, onClose, onChanged })
                 <PaymentStatusPill paymentStatus={order.paymentStatus} />
               </div>
               {order.paymentStatus === 'paid' && order.payment?.paidAt && (
-                <p className="text-sm text-cocoa">Dibayar {formatDateTime(order.payment.paidAt)} via {order.payment.paymentType ?? 'Midtrans'}</p>
+                <p className="text-sm text-cocoa">Paid {formatDateTime(order.payment.paidAt)} via {order.payment.paymentType ?? 'Midtrans'}</p>
               )}
-              <p className="text-sm text-cocoa">Dibuat {formatDateTime(order.createdAt)}</p>
+              <p className="text-sm text-cocoa">Created {formatDateTime(order.createdAt)}</p>
             </div>
 
             <section className="flex flex-col gap-1 text-sm">
-              <h3 className="eyebrow mb-1">Pelanggan</h3>
-              <p className="font-medium text-espresso">{order.user?.name ?? 'Akun dihapus'}</p>
+              <h3 className="eyebrow mb-1">Customer</h3>
+              <p className="font-medium text-espresso">{order.user?.name ?? 'Account deleted'}</p>
               <p className="text-cocoa">{order.user?.email}</p>
             </section>
 
             <section className="flex flex-col gap-1 text-sm">
-              <h3 className="eyebrow mb-1">Pengiriman</h3>
+              <h3 className="eyebrow mb-1">Shipping</h3>
               <p className="font-medium text-espresso">{order.shippingAddress.recipientName}</p>
               <p className="text-cocoa">{order.shippingAddress.phone}</p>
               <p className="text-cocoa">
@@ -116,13 +116,13 @@ export default function OrderDetailDrawer({ orderId, open, onClose, onChanged })
 
             {order.paymentNote && (
               <section className="text-sm">
-                <h3 className="eyebrow mb-1">Catatan transfer</h3>
+                <h3 className="eyebrow mb-1">Payment note</h3>
                 <p className="text-cocoa">{order.paymentNote}</p>
               </section>
             )}
 
             <section>
-              <h3 className="eyebrow mb-2">Item</h3>
+              <h3 className="eyebrow mb-2">Items</h3>
               <ul className="divide-y divide-line text-sm">
                 {order.items.map((item) => (
                   <li key={`${item.product}`} className="flex justify-between gap-4 py-2">
@@ -139,7 +139,7 @@ export default function OrderDetailDrawer({ orderId, open, onClose, onChanged })
                   <dd>{formatRupiah(order.subtotal)}</dd>
                 </div>
                 <div className="flex justify-between">
-                  <dt className="text-cocoa">Ongkos kirim</dt>
+                  <dt className="text-cocoa">Shipping fee</dt>
                   <dd>{order.shippingFee === 0 ? 'Gratis' : formatRupiah(order.shippingFee)}</dd>
                 </div>
                 <div className="flex justify-between font-medium">
@@ -150,12 +150,12 @@ export default function OrderDetailDrawer({ orderId, open, onClose, onChanged })
             </section>
 
             <section>
-              <h3 className="eyebrow mb-4">Riwayat</h3>
+              <h3 className="eyebrow mb-4">History</h3>
               <OrderTimeline history={order.statusHistory} />
             </section>
 
             {allowed.length === 0 && (
-              <p className="text-sm text-cocoa">Status ini sudah final. Tidak ada perubahan yang bisa dilakukan.</p>
+              <p className="text-sm text-cocoa">This status is final. No further changes are possible.</p>
             )}
           </div>
         )}
@@ -165,14 +165,14 @@ export default function OrderDetailDrawer({ orderId, open, onClose, onChanged })
         open={confirming}
         onClose={() => setConfirming(false)}
         onConfirm={applyChange}
-        title="Batalkan pesanan ini?"
+        title="Cancel this order?"
         description={
           order?.paymentStatus === 'paid'
-            ? 'Stok akan dikembalikan dan pembayaran ditandai "Dikembalikan". Ini simulasi sandbox, tidak ada dana yang dikirim.'
-            : 'Stok roti di pesanan ini akan dikembalikan ke katalog.'
+            ? 'Stock will be returned and the payment marked "Refunded". This is a sandbox simulation, so no money is sent.'
+            : 'Stock for this order will be returned to the catalog.'
         }
-        confirmLabel="Ya, batalkan"
-        cancelLabel="Tidak"
+        confirmLabel="Yes, cancel"
+        cancelLabel="No"
         danger
         loading={saving}
       />

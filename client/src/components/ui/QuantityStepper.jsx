@@ -1,7 +1,7 @@
 import { Minus, Plus } from 'lucide-react';
 
 // Quantity control capped at `max` (the product's stock). Set `max` to 0 to disable it.
-export default function QuantityStepper({ value, min = 1, max = 99, onChange, label = 'Jumlah', disabled = false }) {
+export default function QuantityStepper({ value, min = 1, max = 99, onChange, label = 'Quantity', disabled = false }) {
   const canDecrease = !disabled && value > min;
   const canIncrease = !disabled && value < max;
 
@@ -11,7 +11,7 @@ export default function QuantityStepper({ value, min = 1, max = 99, onChange, la
         type="button"
         onClick={() => onChange(value - 1)}
         disabled={!canDecrease}
-        aria-label="Kurangi jumlah"
+        aria-label="Decrease quantity"
         className="flex h-10 w-10 items-center justify-center rounded-full text-espresso transition hover:bg-sand/40 disabled:opacity-40"
       >
         <Minus size={16} aria-hidden="true" />
@@ -23,7 +23,7 @@ export default function QuantityStepper({ value, min = 1, max = 99, onChange, la
         type="button"
         onClick={() => onChange(value + 1)}
         disabled={!canIncrease}
-        aria-label="Tambah jumlah"
+        aria-label="Increase quantity"
         className="flex h-10 w-10 items-center justify-center rounded-full text-espresso transition hover:bg-sand/40 disabled:opacity-40"
       >
         <Plus size={16} aria-hidden="true" />

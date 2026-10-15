@@ -31,7 +31,7 @@ export default function AccountAddresses() {
   const [confirmDelete, setConfirmDelete] = useState(null);
 
   useEffect(() => {
-    document.title = 'Alamat · BakeHouse';
+    document.title = 'Addresses · BakeHouse';
   }, []);
 
   const reload = () => setVersion((v) => v + 1);
@@ -61,10 +61,10 @@ export default function AccountAddresses() {
     try {
       if (editing === 'new') {
         await addressService.add(payload);
-        toast.success('Alamat ditambahkan.');
+        toast.success('Address added.');
       } else {
         await addressService.update(editing._id, payload);
-        toast.success('Alamat diperbarui.');
+        toast.success('Address updated.');
       }
       closeEditor();
       reload();
@@ -80,7 +80,7 @@ export default function AccountAddresses() {
   const handleSetDefault = async (address) => {
     try {
       await addressService.update(address._id, { isDefault: true });
-      toast.success('Alamat utama diperbarui.');
+      toast.success('Default address updated.');
       reload();
     } catch (err) {
       toast.error(err.message);
@@ -91,7 +91,7 @@ export default function AccountAddresses() {
     setDeleting(confirmDelete._id);
     try {
       await addressService.remove(confirmDelete._id);
-      toast.success('Alamat dihapus.');
+      toast.success('Address deleted.');
       setConfirmDelete(null);
       reload();
     } catch (err) {
@@ -106,11 +106,11 @@ export default function AccountAddresses() {
       <header className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div className="flex flex-col gap-2">
           <Link to="/account" className="text-sm text-cocoa hover:text-espresso">
-            ← Akun
+            ← Account
           </Link>
-          <h1 className="text-5xl">Alamat Pengiriman</h1>
+          <h1 className="text-5xl">Shipping Addresses</h1>
         </div>
-        <Button onClick={() => openEditor(null)}>Tambah Alamat</Button>
+        <Button onClick={() => openEditor(null)}>Add Address</Button>
       </header>
 
       {addresses.loading && (
@@ -120,14 +120,14 @@ export default function AccountAddresses() {
         </div>
       )}
 
-      {addresses.error && <p className="text-cocoa">Alamat belum bisa dimuat.</p>}
+      {addresses.error && <p className="text-cocoa">Addresses could not be loaded.</p>}
 
       {!addresses.loading && !addresses.error && list.length === 0 && (
         <EmptyState
           icon={MapPin}
-          title="Belum ada alamat"
-          description="Tambahkan alamat agar checkout lebih cepat."
-          action={<Button variant="outline" onClick={() => openEditor(null)}>Tambah Alamat</Button>}
+          title="No addresses yet"
+          description="Add an address to make checkout faster."
+          action={<Button variant="outline" onClick={() => openEditor(null)}>Add Address</Button>}
         />
       )}
 
@@ -138,7 +138,7 @@ export default function AccountAddresses() {
               <Card className="flex h-full flex-col gap-3 p-6">
                 <div className="flex flex-wrap items-center gap-2">
                   <span className="font-medium text-espresso">{address.label}</span>
-                  {address.isDefault && <Badge tone="honey">Utama</Badge>}
+                  {address.isDefault && <Badge tone="honey">Default</Badge>}
                 </div>
                 <div className="text-sm">
                   <p className="font-medium text-espresso">{address.recipientName}</p>
@@ -149,7 +149,7 @@ export default function AccountAddresses() {
                 </div>
                 <div className="mt-auto flex flex-wrap gap-2 pt-2">
                   <Button variant="outline" size="sm" onClick={() => openEditor(address)}>
-                    <Pencil size={14} aria-hidden="true" /> Ubah
+                    <Pencil size={14} aria-hidden="true" /> Edit
                   </Button>
                   {!address.isDefault && (
                     <Button variant="ghost" size="sm" onClick={() => handleSetDefault(address)}>
@@ -163,7 +163,7 @@ export default function AccountAddresses() {
                     onClick={() => setConfirmDelete(address)}
                     disabled={deleting === address._id}
                   >
-                    <Trash2 size={14} aria-hidden="true" /> Hapus
+                    <Trash2 size={14} aria-hidden="true" /> Delete
                   </Button>
                 </div>
               </Card>
@@ -175,14 +175,14 @@ export default function AccountAddresses() {
       <Modal
         open={editing !== null}
         onClose={closeEditor}
-        title={editing === 'new' ? 'Tambah alamat' : 'Ubah alamat'}
+        title={editing === 'new' ? 'Add address' : 'Edit address'}
         footer={
           <div className="flex justify-end gap-3">
             <Button variant="ghost" onClick={closeEditor} disabled={saving}>
-              Batal
+              Cancel
             </Button>
             <Button type="submit" form="address-form" disabled={saving}>
-              {saving ? 'Menyimpan…' : 'Simpan'}
+              {saving ? 'Saving…' : 'Save'}
             </Button>
           </div>
         }
@@ -196,7 +196,7 @@ export default function AccountAddresses() {
               onChange={(event) => setIsDefault(event.target.checked)}
               className="h-4 w-4 accent-crust"
             />
-            Jadikan alamat utama
+            Set as default address
           </label>
         </form>
       </Modal>
@@ -205,8 +205,8 @@ export default function AccountAddresses() {
         open={confirmDelete !== null}
         onClose={() => setConfirmDelete(null)}
         onConfirm={handleDelete}
-        title="Hapus alamat ini?"
-        description="Alamat ini akan dihapus dari daftar. Pesanan yang sudah dibuat tidak terpengaruh."
+        title="Delete this address?"
+        description="This address will be removed from your list. Existing orders are not affected."
         confirmLabel="Ya, hapus"
         danger
         loading={deleting !== null}

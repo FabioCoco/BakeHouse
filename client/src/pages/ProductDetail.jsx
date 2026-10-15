@@ -22,6 +22,7 @@ import NotFound from './NotFound.jsx';
 export default function ProductDetail() {
   const { slug } = useParams();
   const [quantity, setQuantity] = useState(1);
+  const [adding, setAdding] = useState(false);
 
   const detail = useFetch(() => productService.getBySlug(slug), [slug]);
   const product = detail.body?.data;
@@ -42,7 +43,7 @@ export default function ProductDetail() {
   );
 
   useEffect(() => {
-    document.title = product ? `${product.name} · BakeHouse` : 'Memuat roti · BakeHouse';
+    document.title = product ? `${product.name} · BakeHouse` : 'Loading bread · BakeHouse';
     setQuantity(1);
     window.scrollTo({ top: 0 });
   }, [slug, product?.name]);
@@ -58,7 +59,7 @@ export default function ProductDetail() {
   if (detail.error) {
     return (
       <Container className="py-24 text-center">
-        <p className="text-cocoa">Roti ini belum bisa dimuat. Coba muat ulang halaman.</p>
+        <p className="text-cocoa">This loaf could not be loaded. Try reloading the page.</p>
       </Container>
     );
   }
@@ -74,7 +75,7 @@ export default function ProductDetail() {
         <ol className="flex flex-wrap items-center gap-2 text-sm text-cocoa">
           <li>
             <Link to="/" className="hover:text-espresso">
-              Beranda
+              Home
             </Link>
           </li>
           <li aria-hidden="true">/</li>
@@ -122,7 +123,7 @@ export default function ProductDetail() {
 
           <div className="flex flex-col gap-4 border-t border-line pt-6 sm:flex-row sm:items-center">
             <QuantityStepper
-              label={`Jumlah ${name}`}
+              label={`Quantity for ${name}`}
               value={quantityValue}
               min={1}
               max={stock}
@@ -131,11 +132,19 @@ export default function ProductDetail() {
             />
             <Button
               size="lg"
-              disabled={soldOut}
+              disabled={soldOut || adding}
               className="flex-1"
-              onClick={() => addToCart(product, quantityValue)}
+              onClick={async () => {
+                // Blocks repeat clicks while the request is in flight, so one click adds one item.
+                setAdding(true);
+                try {
+                  await addToCart(product, quantityValue);
+                } finally {
+                  setAdding(false);
+                }
+              }}
             >
-              {soldOut ? 'Stok habis' : 'Tambah ke Keranjang'}
+              {soldOut ? 'Sold out' : adding ? 'Adding…' : 'Add to Cart'}
             </Button>
             <Button
               size="lg"
@@ -144,7 +153,7 @@ export default function ProductDetail() {
               className="flex-1"
               onClick={() => navigate(`/checkout?buyNow=${product.slug}&qty=${quantityValue}`)}
             >
-              Beli Sekarang
+              Buy Now
             </Button>
           </div>
         </div>
@@ -155,9 +164,9 @@ export default function ProductDetail() {
       {(related.loading || relatedItems.length > 0) && (
         <section aria-labelledby="related-title" className="flex flex-col gap-8">
           <div className="flex flex-col gap-2">
-            <p className="eyebrow">Masih dari {category?.name}</p>
+            <p className="eyebrow">More from {category?.name}</p>
             <h2 id="related-title" className="text-4xl">
-              Roti Lainnya
+              More Breads
             </h2>
           </div>
           <div className="grid grid-cols-2 gap-4 md:gap-6 lg:grid-cols-4">

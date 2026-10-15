@@ -6,11 +6,11 @@ import { useAuthStore } from '../../store/useAuthStore.js';
 
 const ADMIN_LINKS = [
   { to: '/admin', label: 'Dashboard', icon: LayoutDashboard, end: true },
-  { to: '/admin/products', label: 'Produk', icon: Package },
-  { to: '/admin/categories', label: 'Kategori', icon: Shapes },
-  { to: '/admin/orders', label: 'Pesanan', icon: ReceiptText },
-  { to: '/admin/reviews', label: 'Ulasan', icon: MessageSquare },
-  { to: '/admin/settings', label: 'Pengaturan', icon: Settings },
+  { to: '/admin/products', label: 'Products', icon: Package },
+  { to: '/admin/categories', label: 'Categories', icon: Shapes },
+  { to: '/admin/orders', label: 'Orders', icon: ReceiptText },
+  { to: '/admin/reviews', label: 'Reviews', icon: MessageSquare },
+  { to: '/admin/settings', label: 'Settings', icon: Settings },
 ];
 
 // Admin shell: sidebar on desktop, horizontal tabs on mobile. Both offer a way back to the storefront and a logout.
@@ -26,7 +26,7 @@ export default function AdminLayout() {
       // Clear the local session even if the request fails.
     }
     clearAuth();
-    toast.success('Kamu sudah keluar.');
+    toast.success('You have signed out.');
     navigate('/');
   };
 
@@ -60,7 +60,7 @@ export default function AdminLayout() {
             className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-cocoa transition duration-200 hover:bg-sand/40 hover:text-espresso"
           >
             <Home size={18} aria-hidden="true" />
-            Ke Beranda
+            Back to store
           </NavLink>
           <button
             type="button"
@@ -68,7 +68,7 @@ export default function AdminLayout() {
             className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-left text-sm font-medium text-berry transition duration-200 hover:bg-berry/10"
           >
             <LogOut size={18} aria-hidden="true" />
-            Keluar
+            Sign out
           </button>
         </div>
       </aside>
@@ -88,10 +88,10 @@ export default function AdminLayout() {
             </NavLink>
           ))}
           <NavLink to="/" className="ml-auto shrink-0 rounded-full px-3 py-1.5 text-sm font-medium text-cocoa">
-            Beranda
+            Home
           </NavLink>
           <button type="button" onClick={handleLogout} className="shrink-0 rounded-full px-3 py-1.5 text-sm font-medium text-berry">
-            Keluar
+            Sign out
           </button>
         </nav>
         <main id="main" className="flex-1 px-4 py-8 md:px-10">

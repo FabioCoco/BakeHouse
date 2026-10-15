@@ -9,7 +9,7 @@ export default function RatingSummary({ average = 0, count = 0, distribution = {
       <div className="flex flex-col items-start gap-2">
         <p className="font-serif text-5xl text-espresso">{count ? average.toFixed(1) : '–'}</p>
         <StarRating value={average} size={18} />
-        <p className="text-sm text-cocoa">{count} ulasan</p>
+        <p className="text-sm text-cocoa">{count} reviews</p>
       </div>
 
       <ul className="flex flex-1 flex-col gap-2" aria-label="Distribusi rating">

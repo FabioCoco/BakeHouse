@@ -43,12 +43,12 @@ export default function AdminDashboard() {
     <div className="flex flex-col gap-8">
       <header className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div className="flex flex-col gap-1">
-          <p className="eyebrow">Ringkasan</p>
+          <p className="eyebrow">Overview</p>
           <h1 className="text-4xl">Dashboard</h1>
         </div>
         <div className="w-full sm:w-64">
           <Select
-            label="Rentang waktu"
+            label="Time range"
             value={range}
             onChange={(event) => setParams({ range: event.target.value === '30d' ? undefined : event.target.value })}
             options={RANGE_OPTIONS}
@@ -57,23 +57,23 @@ export default function AdminDashboard() {
       </header>
 
       {analytics.loading && <Skeleton className="h-32 w-full" />}
-      {analytics.error && <p className="text-cocoa">Analitik belum bisa dimuat.</p>}
+      {analytics.error && <p className="text-cocoa">Analytics could not be loaded.</p>}
 
       {data && (
         <>
           <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-            <Kpi label="Pendapatan" value={formatRupiah(data.kpis.revenue.value)} change={data.kpis.revenue.changePct} />
-            <Kpi label="Pesanan dibayar" value={data.kpis.orders.value} change={data.kpis.orders.changePct} />
-            <Kpi label="Rata-rata nilai pesanan" value={formatRupiah(data.kpis.averageOrderValue.value)} change={data.kpis.averageOrderValue.changePct} />
+            <Kpi label="Revenue" value={formatRupiah(data.kpis.revenue.value)} change={data.kpis.revenue.changePct} />
+            <Kpi label="Paid orders" value={data.kpis.orders.value} change={data.kpis.orders.changePct} />
+            <Kpi label="Average order value" value={formatRupiah(data.kpis.averageOrderValue.value)} change={data.kpis.averageOrderValue.changePct} />
             <Kpi
               label="Konversi pembayaran"
               value={`${data.kpis.conversion.rate}%`}
-              hint={`${data.kpis.conversion.paid} dari ${data.kpis.conversion.created} pesanan dibuat dibayar`}
+              hint={`${data.kpis.conversion.paid} of ${data.kpis.conversion.created} orders paid`}
             />
           </div>
 
           <Card className="flex flex-col gap-4 p-6">
-            <h2 className="text-2xl">Pendapatan per hari</h2>
+            <h2 className="text-2xl">Revenue per day</h2>
             <div className="h-72 w-full">
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart data={data.revenueByDay} margin={{ top: 8, right: 16, bottom: 0, left: 0 }}>
@@ -82,7 +82,7 @@ export default function AdminDashboard() {
                   <YAxis tickFormatter={(v) => `${Math.round(v / 1000)}rb`} stroke={COLORS.cocoa} tick={{ fontSize: 12 }} width={56} />
                   <Tooltip
                     labelFormatter={shortDate}
-                    formatter={(value, name) => (name === 'revenue' ? [formatRupiah(value), 'Pendapatan'] : [value, 'Pesanan'])}
+                    formatter={(value, name) => (name === 'revenue' ? [formatRupiah(value), 'Revenue'] : [value, 'Orders'])}
                   />
                   <Line type="monotone" dataKey="revenue" stroke={COLORS.crust} strokeWidth={2.5} dot={false} />
                 </LineChart>
@@ -92,9 +92,9 @@ export default function AdminDashboard() {
 
           <div className="grid gap-6 lg:grid-cols-2">
             <Card className="flex flex-col gap-4 p-6">
-              <h2 className="text-2xl">Produk terlaris</h2>
+              <h2 className="text-2xl">Best-selling products</h2>
               {data.topProducts.byQuantity.length === 0 ? (
-                <p className="text-cocoa">Belum ada penjualan pada rentang ini.</p>
+                <p className="text-cocoa">No sales in this range.</p>
               ) : (
                 <div className="h-72 w-full">
                   <ResponsiveContainer width="100%" height="100%">
@@ -102,7 +102,7 @@ export default function AdminDashboard() {
                       <CartesianGrid stroke={COLORS.line} horizontal={false} />
                       <XAxis type="number" stroke={COLORS.cocoa} tick={{ fontSize: 12 }} allowDecimals={false} />
                       <YAxis type="category" dataKey="name" width={150} stroke={COLORS.cocoa} tick={{ fontSize: 12 }} />
-                      <Tooltip formatter={(value, name) => (name === 'quantity' ? [value, 'Terjual'] : [formatRupiah(value), 'Pendapatan'])} />
+                      <Tooltip formatter={(value, name) => (name === 'quantity' ? [value, 'Sold'] : [formatRupiah(value), 'Revenue'])} />
                       <Bar dataKey="quantity" fill={COLORS.crust} radius={[0, 6, 6, 0]} />
                     </BarChart>
                   </ResponsiveContainer>
@@ -111,9 +111,9 @@ export default function AdminDashboard() {
             </Card>
 
             <Card className="flex flex-col gap-4 p-6">
-              <h2 className="text-2xl">Pendapatan per kategori</h2>
+              <h2 className="text-2xl">Revenue per category</h2>
               {data.revenueByCategory.length === 0 ? (
-                <p className="text-cocoa">Belum ada penjualan pada rentang ini.</p>
+                <p className="text-cocoa">No sales in this range.</p>
               ) : (
                 <div className="h-72 w-full">
                   <ResponsiveContainer width="100%" height="100%">
@@ -121,7 +121,7 @@ export default function AdminDashboard() {
                       <CartesianGrid stroke={COLORS.line} vertical={false} />
                       <XAxis dataKey="category" stroke={COLORS.cocoa} tick={{ fontSize: 12 }} interval={0} />
                       <YAxis tickFormatter={(v) => `${Math.round(v / 1000)}rb`} stroke={COLORS.cocoa} tick={{ fontSize: 12 }} width={56} />
-                      <Tooltip formatter={(value) => [formatRupiah(value), 'Pendapatan']} />
+                      <Tooltip formatter={(value) => [formatRupiah(value), 'Revenue']} />
                       <Bar dataKey="revenue" radius={[6, 6, 0, 0]}>
                         {data.revenueByCategory.map((entry, i) => (
                           <Cell key={entry.category} fill={CATEGORY_COLORS[i % CATEGORY_COLORS.length]} />
@@ -141,19 +141,19 @@ export default function AdminDashboard() {
       {summaryData && (
         <div className="grid gap-6 lg:grid-cols-2">
           <Card className="flex flex-col gap-5 p-6">
-            <h2 className="text-2xl">Pesanan per Status</h2>
+            <h2 className="text-2xl">Orders by status</h2>
             <StatusBreakdown counts={summaryData.ordersByStatus} />
           </Card>
 
           <Card className="flex flex-col gap-5 p-6">
             <div className="flex items-center justify-between">
-              <h2 className="text-2xl">Stok Menipis</h2>
+              <h2 className="text-2xl">Low stock</h2>
               <Link to="/admin/products" className="text-sm font-medium text-crust hover:underline">
-                Kelola produk →
+                Manage products →
               </Link>
             </div>
             {!data || data.lowStock.length === 0 ? (
-              <p className="text-cocoa">Semua produk aktif masih punya stok cukup.</p>
+              <p className="text-cocoa">All active products have enough stock.</p>
             ) : (
               <ul className="divide-y divide-line">
                 {data.lowStock.map((product) => (
@@ -163,7 +163,7 @@ export default function AdminDashboard() {
                     </div>
                     <span className="flex-1 text-sm font-medium text-espresso">{product.name}</span>
                     <span className={`text-sm font-semibold ${product.stock === 0 ? 'text-berry' : 'text-crust'}`}>
-                      {product.stock === 0 ? 'Habis' : `Sisa ${product.stock}`}
+                      {product.stock === 0 ? 'Sold out' : `${product.stock} left`}
                     </span>
                   </li>
                 ))}
@@ -176,13 +176,13 @@ export default function AdminDashboard() {
       {summaryData && (
         <Card className="flex flex-col gap-4 p-6">
           <div className="flex items-center justify-between">
-            <h2 className="text-2xl">Pesanan Terbaru</h2>
+            <h2 className="text-2xl">Latest orders</h2>
             <Link to="/admin/orders" className="text-sm font-medium text-crust hover:underline">
-              Semua pesanan →
+              All orders →
             </Link>
           </div>
           {summaryData.latestOrders.length === 0 ? (
-            <EmptyState title="Belum ada pesanan" />
+            <EmptyState title="No orders yet" />
           ) : (
             <ul className="divide-y divide-line">
               {summaryData.latestOrders.map((order) => (
@@ -190,7 +190,7 @@ export default function AdminDashboard() {
                   <div className="flex flex-col">
                     <span className="font-mono text-espresso">{order.orderNumber}</span>
                     <span className="text-cocoa">
-                      {order.user?.name ?? 'Akun dihapus'} · {formatDateTime(order.createdAt)}
+                      {order.user?.name ?? 'Account deleted'} · {formatDateTime(order.createdAt)}
                     </span>
                   </div>
                   <div className="flex items-center gap-4">
@@ -211,7 +211,7 @@ export default function AdminDashboard() {
 function Kpi({ label, value, change, hint }) {
   const hasChange = change !== null && change !== undefined;
   const changeText = hasChange
-    ? `${change > 0 ? '+' : ''}${change}% dari periode sebelumnya`
+    ? `${change > 0 ? '+' : ''}${change}% from the previous period`
     : 'Belum ada pembanding';
   const changeClass = !hasChange ? 'text-cocoa' : change >= 0 ? 'text-sage' : 'text-berry';
 

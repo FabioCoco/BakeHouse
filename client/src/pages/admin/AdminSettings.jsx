@@ -41,7 +41,7 @@ export default function AdminSettings() {
   }, [settings.body]);
 
   useEffect(() => {
-    document.title = 'Pengaturan · Admin BakeHouse';
+    document.title = 'Settings · Admin BakeHouse';
   }, []);
 
   const updateBanner = (index, name, value) => {
@@ -63,7 +63,7 @@ export default function AdminSettings() {
     setFeatured((list) => {
       if (list.includes(id)) return list.filter((x) => x !== id);
       if (list.length >= MAX_FEATURED) {
-        toast.error(`Maksimal ${MAX_FEATURED} kategori unggulan.`);
+        toast.error(`Up to ${MAX_FEATURED} featured categories allowed.`);
         return list;
       }
       return [...list, id];
@@ -73,12 +73,12 @@ export default function AdminSettings() {
   const validate = () => {
     const next = {};
     banners.forEach((b, i) => {
-      if (!b.title.trim()) next[`banners.${i}.title`] = 'Judul wajib diisi';
+      if (!b.title.trim()) next[`banners.${i}.title`] = 'Title is required';
       if (!IMAGE_PATTERN.test(b.image.trim())) {
-        next[`banners.${i}.image`] = 'Gunakan URL https atau nama file gambar seperti promo.jpg';
+        next[`banners.${i}.image`] = 'Use an https URL or an image file name such as promo.jpg';
       }
       if (b.ctaLink && !(b.ctaLink.startsWith('/') || /^https:\/\//.test(b.ctaLink))) {
-        next[`banners.${i}.ctaLink`] = 'Tautan harus diawali "/" atau https://';
+        next[`banners.${i}.ctaLink`] = 'Link must start with "/" or https://';
       }
     });
     setErrors(next);
@@ -87,7 +87,7 @@ export default function AdminSettings() {
 
   const handleSave = async () => {
     if (!validate()) {
-      toast.error('Periksa kembali isian banner.');
+      toast.error('Check the banner fields.');
       return;
     }
     setSaving(true);
@@ -105,7 +105,7 @@ export default function AdminSettings() {
         })),
         featuredCategories: featured,
       });
-      toast.success('Pengaturan disimpan.');
+      toast.success('Settings saved.');
       setErrors({});
     } catch (err) {
       const fieldErrors = mapServerErrors(err.errors);
@@ -121,20 +121,20 @@ export default function AdminSettings() {
   }
 
   if (settings.error) {
-    return <p className="text-cocoa">Pengaturan belum bisa dimuat.</p>;
+    return <p className="text-cocoa">Settings could not be loaded.</p>;
   }
 
   return (
     <div className="flex flex-col gap-8">
       <header className="flex flex-col gap-1">
         <p className="eyebrow">Toko</p>
-        <h1 className="text-4xl">Pengaturan</h1>
+        <h1 className="text-4xl">Settings</h1>
       </header>
 
       <Card className="flex flex-col gap-4 p-6">
         <h2 className="text-2xl">Pengumuman</h2>
         <Input
-          label="Teks pengumuman (kosongkan untuk menyembunyikan)"
+          label="Announcement text (leave empty to hide)"
           value={announcement}
           maxLength={160}
           onChange={(e) => setAnnouncement(e.target.value)}
@@ -145,7 +145,7 @@ export default function AdminSettings() {
       <section aria-labelledby="banner-title" className="flex flex-col gap-4">
         <div className="flex items-center justify-between gap-4">
           <h2 id="banner-title" className="text-2xl">
-            Banner Promo
+            Promo Banner
           </h2>
           <Button
             variant="outline"
@@ -153,11 +153,11 @@ export default function AdminSettings() {
             disabled={banners.length >= MAX_BANNERS}
             onClick={() => setBanners((list) => [...list, { ...NEW_BANNER }])}
           >
-            <Plus size={16} aria-hidden="true" /> Tambah banner
+            <Plus size={16} aria-hidden="true" /> Add banner
           </Button>
         </div>
 
-        {banners.length === 0 && <p className="text-cocoa">Belum ada banner. Banner tampil di bawah hero beranda.</p>}
+        {banners.length === 0 && <p className="text-cocoa">No banners yet. Banners appear below the home hero.</p>}
 
         {banners.map((banner, index) => (
           <Card key={banner._id ?? `new-${index}`} className="flex flex-col gap-4 p-6">
@@ -173,7 +173,7 @@ export default function AdminSettings() {
                 <button
                   type="button"
                   onClick={() => setBanners((list) => list.filter((_, i) => i !== index))}
-                  aria-label={`Hapus banner ${index + 1}`}
+                  aria-label={`Delete banner ${index + 1}`}
                   className="rounded-full p-2 text-berry hover:bg-berry/10"
                 >
                   <Trash2 size={16} aria-hidden="true" />
@@ -183,7 +183,7 @@ export default function AdminSettings() {
 
             <div className="grid gap-4 md:grid-cols-2">
               <Input
-                label="Judul"
+                label="Title"
                 value={banner.title}
                 maxLength={100}
                 onChange={(e) => updateBanner(index, 'title', e.target.value)}
@@ -197,21 +197,21 @@ export default function AdminSettings() {
               />
               <ImageUploader
                 kind="banner"
-                label="Gambar banner"
+                label="Banner image"
                 value={banner.image}
                 onChange={(filename) => updateBanner(index, 'image', filename)}
                 onRemove={() => updateBanner(index, 'image', '')}
                 error={errors[`banners.${index}.image`]}
-                hint="JPG, PNG, WebP, atau AVIF, maksimal 2 MB."
+                hint="JPG, PNG, WebP, or AVIF, max 2 MB."
               />
               <Input
-                label="Label tombol"
+                label="Button label"
                 value={banner.ctaLabel}
                 maxLength={40}
                 onChange={(e) => updateBanner(index, 'ctaLabel', e.target.value)}
               />
               <Input
-                label="Tautan tombol"
+                label="Button link"
                 value={banner.ctaLink}
                 maxLength={200}
                 onChange={(e) => updateBanner(index, 'ctaLink', e.target.value)}
@@ -225,7 +225,7 @@ export default function AdminSettings() {
                   onChange={(e) => updateBanner(index, 'isActive', e.target.checked)}
                   className="h-4 w-4 accent-crust"
                 />
-                Tampilkan di beranda
+                Show on home page
               </label>
             </div>
           </Card>
@@ -234,11 +234,11 @@ export default function AdminSettings() {
 
       <section aria-labelledby="featured-title" className="flex flex-col gap-4">
         <h2 id="featured-title" className="text-2xl">
-          Kategori Unggulan
+          Featured Categories
         </h2>
-        <p className="text-sm text-cocoa">Pilih sampai {MAX_FEATURED} kategori. Dipakai sebagai urutan kategori di beranda.</p>
+        <p className="text-sm text-cocoa">Choose up to {MAX_FEATURED} categories. They set the category order on the home page.</p>
         <fieldset className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-          <legend className="sr-only">Kategori unggulan</legend>
+          <legend className="sr-only">Featured categories</legend>
           {categoryList.map((category) => (
             <label key={category._id} className="flex items-center gap-3 rounded-xl border border-line bg-surface px-4 py-3 text-sm">
               <input
@@ -255,7 +255,7 @@ export default function AdminSettings() {
 
       <div className="flex justify-end">
         <Button size="lg" onClick={handleSave} disabled={saving}>
-          {saving ? 'Menyimpan…' : 'Simpan Pengaturan'}
+          {saving ? 'Saving…' : 'Save Settings'}
         </Button>
       </div>
     </div>

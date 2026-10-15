@@ -6,7 +6,7 @@ export function ImagePlaceholder({ name, className = '' }) {
   return (
     <div
       role="img"
-      aria-label={`Foto ${name} belum tersedia`}
+      aria-label={`Photo for ${name} is not available yet`}
       className={`flex h-full w-full items-center justify-center bg-linear-to-br from-honey via-sand to-sand-dark ${className}`}
     >
       <span className="font-serif text-5xl text-crust/60" aria-hidden="true">

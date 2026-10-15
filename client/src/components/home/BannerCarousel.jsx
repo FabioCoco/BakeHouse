@@ -32,7 +32,7 @@ export default function BannerCarousel() {
   const go = (step) => setIndex((prev) => (prev + step + banners.length) % banners.length);
 
   return (
-    <Container as="section" aria-roledescription="carousel" aria-label="Promo" className="py-10">
+    <Container as="section" aria-roledescription="carousel" aria-label="Offers" className="py-10">
       <div
         className="relative overflow-hidden rounded-2xl border border-line bg-surface shadow-soft"
         onMouseEnter={() => setPaused(true)}
@@ -52,7 +52,7 @@ export default function BannerCarousel() {
           </div>
 
           <div className="flex flex-col gap-4 p-8 md:p-12" aria-live="polite">
-            <p className="eyebrow">Promo</p>
+            <p className="eyebrow">Offer</p>
             <h2 className="text-3xl md:text-4xl">{current.title}</h2>
             {current.subtitle && <p className="text-cocoa">{current.subtitle}</p>}
             {current.ctaLabel && current.ctaLink && (
@@ -76,7 +76,7 @@ export default function BannerCarousel() {
             <button
               type="button"
               onClick={() => go(-1)}
-              aria-label="Promo sebelumnya"
+              aria-label="Previous offer"
               className="rounded-full bg-surface/90 p-2 text-espresso shadow-soft transition hover:bg-surface"
             >
               <ChevronLeft size={18} aria-hidden="true" />
@@ -87,7 +87,7 @@ export default function BannerCarousel() {
                   key={banner._id}
                   type="button"
                   onClick={() => setIndex(i)}
-                  aria-label={`Tampilkan promo ${i + 1}`}
+                  aria-label={`Show offer ${i + 1}`}
                   aria-current={i === index}
                   className={`h-2.5 rounded-full transition-all ${i === index ? 'w-6 bg-crust' : 'w-2.5 bg-sand-dark'}`}
                 />
@@ -96,7 +96,7 @@ export default function BannerCarousel() {
             <button
               type="button"
               onClick={() => go(1)}
-              aria-label="Promo berikutnya"
+              aria-label="Next offer"
               className="rounded-full bg-surface/90 p-2 text-espresso shadow-soft transition hover:bg-surface"
             >
               <ChevronRight size={18} aria-hidden="true" />

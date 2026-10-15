@@ -2,18 +2,6 @@
 
 Toko roti artisan online dengan dashboard admin. Monorepo: `server/` (Express + MongoDB) dan `client/` (Vite + React).
 
-## Screenshots
-
-<!-- Replace these placeholders with real screenshots before release. -->
-
-| Beranda | Katalog | Detail produk |
-| --- | --- | --- |
-| _screenshot placeholder_ | _screenshot placeholder_ | _screenshot placeholder_ |
-
-| Checkout (Midtrans Snap) | Dashboard admin | Pengaturan admin |
-| --- | --- | --- |
-| _screenshot placeholder_ | _screenshot placeholder_ | _screenshot placeholder_ |
-
 ## Features
 
 | Rubrik | Yang tersedia |
