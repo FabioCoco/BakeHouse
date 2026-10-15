@@ -1,172 +1,172 @@
 # BakeHouse
 
-Toko roti artisan online dengan dashboard admin. Monorepo: `server/` (Express + MongoDB) dan `client/` (Vite + React).
+An online artisan bakery with an admin dashboard. It is a monorepo with two parts: `server/` (Express + MongoDB) and `client/` (Vite + React).
 
 ## Features
 
-| Rubrik | Yang tersedia |
+| Area | What's included |
 | --- | --- |
-| **Landing** | Hero video dengan poster, pengumuman di atas navbar, carousel banner promo yang dikelola admin, "Sedang Promo", "Baru Keluar dari Oven", bagian asal roti, dan "Cara Pesan". |
-| **Products** | Katalog dengan pencarian, filter kategori, asal, dan promo, serta pengurutan termasuk diskon terbesar. Detail produk dengan gambar, harga diskon, stok, dan ulasan. |
-| **Authentication** | Daftar dan masuk dengan email dan kata sandi, atau dengan Google Sign-In. Sesi disimpan di cookie httpOnly. Ada dua peran: `customer` dan `admin`. |
-| **User Profile** | Ubah nama dan nomor telepon, ganti kata sandi (tidak tersedia untuk akun Google), kelola alamat pengiriman, riwayat pesanan, dan ulasan. |
-| **Cart** | Keranjang tersimpan di server dan ikut berpindah antar perangkat. Ubah jumlah dan hapus item dengan pembaruan optimistik. Stok dicek ulang setiap perubahan. |
-| **Checkout & Payment** | Checkout dari keranjang atau langsung dari "Beli Sekarang". Pembayaran lewat Midtrans Snap (sandbox). Pesanan diberi batas waktu pembayaran 24 jam. Saat Midtrans melaporkan kedaluwarsa, pesanan dibatalkan dan stoknya dikembalikan. |
-| **Admin Dashboard** | Analitik dengan rentang 7, 30, atau 90 hari. KPI dengan perbandingan periode sebelumnya, pendapatan per hari, produk terlaris, pendapatan per kategori, konversi pembayaran, dan stok menipis. |
-| **All Orders** | Daftar semua pesanan dengan filter status dan pencarian nomor. Detail pesanan dengan riwayat status. Perubahan status hanya yang diizinkan alur pesanan. |
-| **All Products** | Tambah, ubah, dan nonaktifkan produk. Unggah beberapa foto. Atur stok langsung di tabel. Atur diskon dengan tanggal mulai dan berakhir. |
-| **Kategori dan ulasan** | Kelola kategori. Ulasan hanya dari pembeli dengan pesanan selesai, dan admin bisa menyembunyikan ulasan. |
-| **Pengaturan toko** | Pengumuman dan banner promo (dengan unggah gambar). Kategori unggulan bisa diatur, tetapi belum dipakai di beranda. |
+| Landing | Hero video with a poster image, an announcement bar above the navbar, an admin-managed promo banner carousel, "On Sale", "Fresh from the Oven", a section on where the breads come from, and "How to Order". |
+| Products | Catalog with search, filters (category, origin, promo), and sorting, including biggest discount. Product pages show images, discounted price, stock, and reviews. |
+| Authentication | Sign up and log in with email and password, or with Google Sign-In. Sessions live in an httpOnly cookie. Two roles: `customer` and `admin`. |
+| User Profile | Edit name and phone number, change password (not available for Google accounts), manage shipping addresses, and view order history and reviews. |
+| Cart | Stored on the server, so it follows the user across devices. Quantity changes and removals update optimistically. Stock is re-checked on every change. |
+| Checkout & Payment | Check out from the cart or straight from "Buy Now". Payment goes through Midtrans Snap (sandbox). Orders have a 24-hour payment window. When Midtrans reports an expiry, the order is cancelled and its stock is restored. |
+| Admin Dashboard | Analytics for the last 7, 30, or 90 days: KPIs compared with the previous period, revenue per day, top-selling products, revenue by category, payment conversion, and low stock. |
+| All Orders | List of every order, filterable by status and searchable by order number. Order details include status history. Only transitions allowed by the order flow can be applied. |
+| All Products | Add, edit, and deactivate products. Upload multiple photos. Edit stock directly in the table. Set discounts with start and end dates. |
+| Categories and reviews | Manage categories. Only buyers with a completed order can leave a review, and admins can hide reviews. |
+| Store settings | Announcement and promo banners (with image upload). Featured categories can be configured but aren't used on the homepage yet. |
 
 ## Tech stack
 
-- **Server:** Node.js, Express 4, Mongoose 8 (MongoDB Atlas), JWT di cookie httpOnly, express-validator, multer, midtrans-client, Jest, Supertest, mongodb-memory-server.
-- **Client:** Vite 8, React 19, React Router 7, Zustand, Axios, Tailwind CSS 4, recharts, lucide-react, react-hot-toast, @react-oauth/google.
+- Server: Node.js, Express 4, Mongoose 8 (MongoDB Atlas), JWT in an httpOnly cookie, express-validator, multer, midtrans-client, Jest, Supertest, mongodb-memory-server.
+- Client: Vite 8, React 19, React Router 7, Zustand, Axios, Tailwind CSS 4, recharts, lucide-react, react-hot-toast, @react-oauth/google.
 
-## Struktur
+## Project structure
 
 ```
 bakehouse/
-  server/   API, model, seed, dan tes
-  client/   aplikasi web (storefront dan admin)
+  server/   API, models, seed script, tests
+  client/   web app (storefront and admin)
 ```
 
 ## Requirements
 
-- Node.js 20.19+ atau 22.12+
-- Cluster MongoDB Atlas (atau MongoDB dengan replica set, karena checkout memakai transaksi)
-- Akun sandbox Midtrans (untuk pembayaran)
-- Opsional: Google Cloud client ID (untuk Google Sign-In)
+- Node.js 20.19+ or 22.12+
+- A MongoDB Atlas cluster, or any MongoDB deployment with a replica set (checkout uses transactions)
+- A Midtrans sandbox account (for payments)
+- Optional: a Google Cloud client ID (for Google Sign-In)
 
 ## Setup
 
 ```bash
 # 1. Server
 cd server
-cp .env.example .env        # isi nilai di bawah
+cp .env.example .env        # fill in the values described below
 npm install
-npm run seed                # hanya untuk database kosong, lihat catatan
+npm run seed                # empty databases only, see the note below
 npm run dev                 # http://localhost:5000
 
-# 2. Client (terminal lain)
+# 2. Client (in another terminal)
 cd client
 cp .env.example .env
 npm install
 npm run dev                 # http://localhost:5173
 ```
 
-Vite meneruskan `/api` dan `/uploads` ke server, jadi cookie sesi tetap berada pada origin yang sama selama development.
+Vite proxies `/api` and `/uploads` to the server, so the session cookie stays on the same origin during development.
 
-Catatan seed: `npm run seed` menolak jalan di database yang sudah berisi data. Untuk mengulang, jalankan `npm run seed:destroy` lalu `npm run seed`. Perintah destroy menghapus semua data BakeHouse, termasuk akun dan pesanan.
+Seed note: `npm run seed` refuses to run on a database that already has data. To start over, run `npm run seed:destroy` and then `npm run seed`. The destroy command deletes all BakeHouse data, including accounts and orders.
 
 ## Scripts
 
-| Lokasi | Perintah | Fungsi |
+| Location | Command | What it does |
 | --- | --- | --- |
-| `server` | `npm run dev` | Server dengan nodemon di port 5000 |
-| `server` | `npm start` | Server tanpa nodemon |
-| `server` | `npm run seed` | Mengisi database kosong: admin, pelanggan demo, kategori, produk, pesanan dan ulasan contoh |
-| `server` | `npm run seed:destroy` | Menghapus semua data BakeHouse |
-| `server` | `npm test` | Seluruh tes (MongoDB in-memory) |
-| `client` | `npm run dev` | Vite dev server di port 5173 |
-| `client` | `npm run build` | Build production ke `client/dist` |
-| `client` | `npm run preview` | Menjalankan build di port 4173 |
+| `server` | `npm run dev` | Runs the server with nodemon on port 5000 |
+| `server` | `npm start` | Runs the server without nodemon |
+| `server` | `npm run seed` | Fills an empty database with an admin, demo customers, categories, products, and sample orders and reviews |
+| `server` | `npm run seed:destroy` | Deletes all BakeHouse data |
+| `server` | `npm test` | Runs the full test suite (in-memory MongoDB) |
+| `client` | `npm run dev` | Vite dev server on port 5173 |
+| `client` | `npm run build` | Production build into `client/dist` |
+| `client` | `npm run preview` | Serves the build on port 4173 |
 
 ## Environment variables
 
 ### `server/.env`
 
-| Variabel | Wajib | Keterangan |
+| Variable | Required | Description |
 | --- | --- | --- |
-| `MONGODB_URI` | Ya | Connection string Atlas, dengan replica set |
-| `JWT_SECRET` | Ya | Minimal 32 karakter |
-| `MIDTRANS_SERVER_KEY` | Ya | Server key sandbox (`SB-Mid-server-...`) |
-| `MIDTRANS_CLIENT_KEY` | Ya | Client key sandbox (`SB-Mid-client-...`) |
-| `MIDTRANS_IS_PRODUCTION` | Tidak | `false` (default) untuk sandbox |
-| `PORT` | Tidak | Default 5000 |
-| `CLIENT_URL` | Tidak | Asal frontend untuk CORS dan tautan kembali dari Midtrans. Default `http://localhost:5173` |
-| `JWT_EXPIRES_IN` | Tidak | Default `7d` |
-| `COOKIE_SAME_SITE` | Tidak | `lax` (dev) atau `none` (production, butuh HTTPS) |
-| `GOOGLE_CLIENT_ID` | Tidak | Kosong berarti Google Sign-In dinonaktifkan |
-| `AUTH_RATE_LIMIT_MAX` | Tidak | Batas percobaan auth per 15 menit per IP |
-| `SHIPPING_FEE` | Tidak | Ongkir dalam rupiah |
-| `FREE_SHIPPING_THRESHOLD` | Tidak | Subtotal minimal untuk gratis ongkir |
-| `SEED_ADMIN_EMAIL`, `SEED_ADMIN_PASSWORD` | Untuk seed | Akun admin |
-| `SEED_CUSTOMER_PASSWORD` | Untuk seed | Kata sandi pelanggan demo |
+| `MONGODB_URI` | Yes | Atlas connection string, with a replica set |
+| `JWT_SECRET` | Yes | At least 32 characters |
+| `MIDTRANS_SERVER_KEY` | Yes | Sandbox server key (`SB-Mid-server-...`) |
+| `MIDTRANS_CLIENT_KEY` | Yes | Sandbox client key (`SB-Mid-client-...`) |
+| `MIDTRANS_IS_PRODUCTION` | No | `false` (default) for sandbox |
+| `PORT` | No | Defaults to 5000 |
+| `CLIENT_URL` | No | Frontend origin, used for CORS and Midtrans return links. Defaults to `http://localhost:5173` |
+| `JWT_EXPIRES_IN` | No | Defaults to `7d` |
+| `COOKIE_SAME_SITE` | No | `lax` (development) or `none` (production, requires HTTPS) |
+| `GOOGLE_CLIENT_ID` | No | If empty, Google Sign-In is disabled |
+| `AUTH_RATE_LIMIT_MAX` | No | Maximum auth attempts per IP per 15 minutes |
+| `SHIPPING_FEE` | No | Shipping fee in rupiah |
+| `FREE_SHIPPING_THRESHOLD` | No | Minimum subtotal for free shipping |
+| `SEED_ADMIN_EMAIL`, `SEED_ADMIN_PASSWORD` | For seeding | Admin account credentials |
+| `SEED_CUSTOMER_PASSWORD` | For seeding | Password for the demo customers |
 
 ### `client/.env`
 
-| Variabel | Keterangan |
+| Variable | Description |
 | --- | --- |
-| `VITE_API_URL` | Default `/api`. Biarkan begitu saat development. |
-| `VITE_GOOGLE_CLIENT_ID` | Kosong menyembunyikan tombol Google |
-| `VITE_MIDTRANS_CLIENT_KEY` | Harus sama dengan `MIDTRANS_CLIENT_KEY` di server |
-| `VITE_MIDTRANS_IS_PRODUCTION` | `false` untuk sandbox |
+| `VITE_API_URL` | Defaults to `/api`. Leave it as is during development. |
+| `VITE_GOOGLE_CLIENT_ID` | If empty, the Google button is hidden |
+| `VITE_MIDTRANS_CLIENT_KEY` | Must match `MIDTRANS_CLIENT_KEY` on the server |
+| `VITE_MIDTRANS_IS_PRODUCTION` | `false` for sandbox |
 
-## Payment (Midtrans Sandbox)
+## Payment (Midtrans sandbox)
 
-Pembayaran memakai Midtrans Snap dalam mode sandbox. Tidak ada uang nyata yang berpindah.
+Payments use Midtrans Snap in sandbox mode, so no real money moves.
 
-**1. Kunci**
+### 1. Keys
 
-Ambil server key dan client key sandbox dari dashboard Midtrans di menu Settings, lalu Access Keys. Isi `MIDTRANS_SERVER_KEY` dan `MIDTRANS_CLIENT_KEY` di `server/.env`, dan `VITE_MIDTRANS_CLIENT_KEY` di `client/.env`. Server tidak akan jalan tanpa dua kunci server.
+Get the sandbox server key and client key from the Midtrans dashboard under Settings, then Access Keys. Put `MIDTRANS_SERVER_KEY` and `MIDTRANS_CLIENT_KEY` in `server/.env`, and `VITE_MIDTRANS_CLIENT_KEY` in `client/.env`. The server won't start without both server-side keys.
 
-**2. Webhook (opsional untuk development)**
+### 2. Webhook (optional in development)
 
-Midtrans mengirim status pembayaran ke server lewat webhook. Webhook butuh alamat publik, jadi di komputer lokal gunakan ngrok:
+Midtrans sends payment status updates to the server through a webhook. A webhook needs a public address, so on a local machine use ngrok:
 
 ```bash
 ngrok http 5000
 ```
 
-Di dashboard Midtrans, buka Settings, lalu Configuration, dan isi **Payment Notification URL** dengan:
+In the Midtrans dashboard, go to Settings, then Configuration, and set **Payment Notification URL** to:
 
 ```
-https://<subdomain-ngrok>.ngrok-free.app/api/payments/midtrans/notification
+https://<ngrok-subdomain>.ngrok-free.app/api/payments/midtrans/notification
 ```
 
-Tanpa webhook, status pesanan tetap diperbarui. Halaman pesanan memeriksa status ke Midtrans saat dibuka dan setelah popup pembayaran ditutup.
+Without the webhook, order status still gets updated. The order page checks the status with Midtrans when it opens and after the payment popup closes.
 
-**3. Mencoba pembayaran**
+### 3. Trying a payment
 
-- Pilih bank transfer di Snap, lalu buka simulator sandbox Midtrans dan selesaikan pembayarannya.
-- Untuk kartu kredit, pakai kartu uji dari dokumentasi Midtrans. Kartu uji dan kode OTP sandbox bisa berubah, jadi cek dokumentasi terbaru.
-- Batas pembayaran 24 jam dihitung dari pembuatan pesanan. Pesanan dibatalkan dan stoknya dikembalikan saat Midtrans melaporkan kedaluwarsa, atau saat status diperiksa dari halaman pesanan. Tidak ada job terjadwal, jadi pesanan yang tidak pernah diperiksa bisa tetap menunggu dan menahan stok.
+- Pick bank transfer in Snap, then open the Midtrans sandbox simulator and complete the payment there.
+- For credit cards, use a test card from the Midtrans docs. Sandbox test cards and OTP codes change from time to time, so check the current documentation.
+- The 24-hour payment window starts when the order is created. An order is cancelled and its stock restored when Midtrans reports an expiry, or when its status is checked from the order page. There is no scheduled job, so an order that is never checked can stay pending and keep holding stock.
 
-**4. Catatan**
+### 4. Notes
 
-- Membatalkan pesanan yang sudah lunas hanya menandainya "Dikembalikan". Tidak ada dana yang dikirim, dan refund harus dilakukan manual di dashboard Midtrans.
-- Jika pembayaran masuk setelah pesanan dibatalkan, server hanya mencatat peringatan. Pesanan itu tidak diaktifkan lagi, dan refund perlu dilakukan manual.
+- Cancelling a paid order only marks it as "Refunded". No money is sent back, so the refund has to be done manually in the Midtrans dashboard.
+- If a payment arrives after the order was cancelled, the server only logs a warning. The order is not reactivated, and the refund has to be done manually.
 
-## Akun demo
+## Demo accounts
 
-Setelah `npm run seed`:
+After `npm run seed`:
 
-| Peran | Email | Kata sandi |
+| Role | Email | Password |
 | --- | --- | --- |
 | Admin | `SEED_ADMIN_EMAIL` | `SEED_ADMIN_PASSWORD` |
-| Pelanggan | `rina@example.com`, `budi@example.com`, `dewi@example.com`, `andi@example.com`, `sari@example.com`, `yoga@example.com` | `SEED_CUSTOMER_PASSWORD` |
+| Customer | `rina@example.com`, `budi@example.com`, `dewi@example.com`, `andi@example.com`, `sari@example.com`, `yoga@example.com` | `SEED_CUSTOMER_PASSWORD` |
 
-Admin login langsung ke `/admin`. Pelanggan kembali ke beranda atau ke halaman yang tadi dibuka.
+Admins go straight to `/admin` after logging in. Customers return to the homepage or to the page they were on.
 
-## Tes
+## Tests
 
 ```bash
 cd server
 npm test
 ```
 
-Tes memakai MongoDB in-memory. Pada pemakaian pertama, library mengunduh binary MongoDB (sekitar 800 MB). Folder tujuannya bisa diatur dengan variabel `MONGOMS_DOWNLOAD_DIR`, dan folder sementara bisa diarahkan ke drive lain dengan `TEMP`. Tes menulis file upload sementara dan menghapusnya sendiri.
+Tests run against an in-memory MongoDB. The first run downloads a MongoDB binary (about 800 MB). Set `MONGOMS_DOWNLOAD_DIR` to choose where it goes, and point `TEMP` at another drive if you want the temporary files elsewhere. The tests write temporary upload files and clean them up afterwards.
 
-Cakupan: auth, produk, keranjang, checkout, pembayaran (verifikasi signature, mapping status, idempotensi, kegagalan Snap), buy now, diskon, ulasan, profil dan pengaturan, analitik, dan upload.
+Coverage: auth, products, cart, checkout, payments (signature verification, status mapping, idempotency, Snap failures), Buy Now, discounts, reviews, profile and settings, analytics, and uploads.
 
 ## Out of scope
 
-- Pengiriman dan pelacakan kurir. Ongkir dihitung sederhana berdasarkan subtotal.
-- Pengiriman email (konfirmasi pesanan, reset kata sandi).
-- Refund otomatis. Refund dilakukan manual.
-- Job terjadwal untuk pesanan yang kedaluwarsa tanpa notifikasi.
-- Pemakaian kategori unggulan di beranda.
-- Filter stok di katalog.
-- Multi-mata uang dan pajak.
-- Pengelolaan stok multi-gudang.
+- Courier shipping and tracking. Shipping cost is a simple calculation based on subtotal.
+- Email (order confirmations, password reset).
+- Automatic refunds. Refunds are manual.
+- A scheduled job for orders that expire without a notification.
+- Featured categories on the homepage.
+- A stock filter in the catalog.
+- Multi-currency and tax.
+- Multi-warehouse stock management.

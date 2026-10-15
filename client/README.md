@@ -1,11 +1,11 @@
 # BakeHouse Client
 
-Frontend toko roti BakeHouse dan dashboard admin. Dibangun dengan Vite, React, React Router, Zustand, Axios, dan Tailwind CSS. Backend ada di `../server` dan harus berjalan di `http://localhost:5000`.
+The storefront and admin dashboard for BakeHouse. Built with Vite, React, React Router, Zustand, Axios, and Tailwind CSS. The backend lives in `../server` and must be running at `http://localhost:5000`.
 
 ## Requirements
 
-- Node.js 20.19+ atau 22.12+ (Vite 8 membutuhkan versi ini)
-- Server BakeHouse berjalan di `http://localhost:5000` (lihat `../server/.env.example`)
+- Node.js 20.19+ or 22.12+ (Vite 8 needs one of these)
+- The BakeHouse server running at `http://localhost:5000` (see `../server/.env.example`)
 
 ## Setup
 
@@ -16,53 +16,53 @@ npm install
 npm run dev
 ```
 
-Buka `http://localhost:5173`.
+Then open `http://localhost:5173`.
 
-Vite meneruskan `/api` dan `/uploads` ke server di port 5000. Dengan begitu cookie auth httpOnly tetap berada pada origin yang sama selama development.
+Vite proxies `/api` and `/uploads` to the server on port 5000, so the httpOnly auth cookie stays on the same origin during development.
 
 ## Environment
 
-| Variabel | Default | Keterangan |
+| Variable | Default | Description |
 | --- | --- | --- |
-| `VITE_API_URL` | `/api` | Base URL API. Biarkan `/api` saat development agar lewat proxy Vite. |
-| `VITE_GOOGLE_CLIENT_ID` | _(kosong)_ | Client ID Google Sign-In. Jika kosong, tombol Google disembunyikan. Server juga perlu `GOOGLE_CLIENT_ID` yang sama. |
+| `VITE_API_URL` | `/api` | API base URL. Keep `/api` in development so requests go through the Vite proxy. |
+| `VITE_GOOGLE_CLIENT_ID` | _(empty)_ | Google Sign-In client ID. If empty, the Google button is hidden. The server needs the same value in `GOOGLE_CLIENT_ID`. |
 
-Jangan commit file `.env`.
+Don't commit your `.env` file.
 
 ## Scripts
 
-| Perintah | Fungsi |
+| Command | What it does |
 | --- | --- |
-| `npm run dev` | Dev server di port 5173 dengan proxy ke server |
-| `npm run build` | Build production ke `dist/` |
-| `npm run preview` | Menjalankan hasil build di port 4173, dengan proxy yang sama |
+| `npm run dev` | Dev server on port 5173, proxying to the server |
+| `npm run build` | Production build into `dist/` |
+| `npm run preview` | Serves the build on port 4173, with the same proxy |
 
-Halaman `/styleguide` hanya tersedia di mode development, untuk memeriksa palet, tipografi, dan komponen dasar.
+The `/styleguide` page is only available in development. Use it to check the palette, typography, and base components.
 
 ## Structure
 
 ```
 src/
-  api/          Instance Axios. Menormalkan error ke { message, errors, status }.
-  components/   ui/ (primitive), layout/, home/, product/, cart/, order/, admin/, auth/
-  config/       Konfigurasi hero, data toko, dan katalog (origin dan sort)
-  hooks/        useFetch, useInView, useDebounce, useQueryParams, useCart, dll.
-  pages/        Halaman customer, pages/admin/ untuk dashboard admin
-  routes/       Router, ProtectedRoute (login), AdminRoute (role admin)
-  services/     Pemanggil API per domain (auth, product, cart, order, address, admin)
-  store/        Zustand: useAuthStore, useCartStore, useUIStore
-  utils/        Format Rupiah dan tanggal, validasi (mengikuti server), status pesanan
+  api/          Axios instance. Normalizes errors to { message, errors, status }.
+  components/   ui/ (primitives), layout/, home/, product/, cart/, order/, admin/, auth/
+  config/       Hero config, store data, and catalog options (origin and sort)
+  hooks/        useFetch, useInView, useDebounce, useQueryParams, useCart, and others
+  pages/        Customer pages, plus pages/admin/ for the admin dashboard
+  routes/       Router, ProtectedRoute (requires login), AdminRoute (requires admin role)
+  services/     API callers by domain (auth, product, cart, order, address, admin)
+  store/        Zustand stores: useAuthStore, useCartStore, useUIStore
+  utils/        Rupiah and date formatting, validation (mirrors the server), order statuses
 ```
 
 ## Notes
 
-- Token auth disimpan sebagai cookie httpOnly oleh server. Frontend tidak pernah menyimpan token di JavaScript.
-- Sesi dipulihkan dengan `GET /auth/me` saat aplikasi dibuka. Selama pengecekan itu, splash ditampilkan sehingga halaman yang dilindungi tidak berkedip.
-- Keranjang disinkronkan dari server. Perubahan jumlah dan penghapusan bersifat optimistik dan dikembalikan jika server menolak.
-- Pembayaran memakai Midtrans Snap (sandbox). Checkout membuat pesanan, lalu membuka popup Snap. Setelah popup ditutup, halaman pesanan menyinkronkan status dari server.
-- Gambar produk dimuat dari `/uploads/<nama-file>`. Jika file belum ada, ditampilkan placeholder.
+- The server stores the auth token in an httpOnly cookie. The frontend never keeps the token in JavaScript.
+- The session is restored with `GET /auth/me` when the app loads. A splash screen shows during that check, so protected pages don't flicker.
+- The cart is synced from the server. Quantity changes and removals update optimistically and roll back if the server rejects them.
+- Payments use Midtrans Snap (sandbox). Checkout creates the order and then opens the Snap popup. After the popup closes, the order page syncs the status from the server.
+- Product images load from `/uploads/<file-name>`. A placeholder is shown if the file is missing.
 
-## Verifikasi
+## Verification
 
-- `npm run build` berhasil.
-- Lighthouse pada build preview (Chrome headless, throttling default), mobile: accessibility 94–100, best practices 96, SEO 100 di beranda dan katalog. Performa 74–82; skor ini bervariasi antar run dan dipengaruhi video hero.
+- `npm run build` succeeds.
+- Lighthouse on the preview build (headless Chrome, default throttling), mobile: accessibility 94 to 100, best practices 96, and SEO 100 on the homepage and catalog. Performance is 74 to 82. The score varies between runs and the hero video drags it down.
