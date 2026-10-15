@@ -98,10 +98,11 @@ export default function Checkout() {
     const fieldErrors = Object.fromEntries(
       Object.entries(mapServerErrors(err.errors)).map(([key, message]) => [key.replace(/^address\./, ''), message]),
     );
-    if (Object.keys(fieldErrors).length) {
+    // Address field errors only show on the new-address form. With a saved address, show the message as a toast.
+    if (Object.keys(fieldErrors).length && activeMode === 'new') {
       setAddressErrors(fieldErrors);
     } else {
-      toast.error(err.message);
+      toast.error(err.errors?.[0]?.message ?? err.message);
     }
   };
 

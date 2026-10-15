@@ -5,7 +5,12 @@ const POSTAL_CODE_PATTERN = /^[0-9A-Za-z -]{3,10}$/;
 
 // Builds the rules for one address field. Set `when` to only check it if a condition holds.
 const addressField = (path, { max, required, pattern, label, when }) => {
-  let chain = body(path)
+  // The condition must come first, otherwise the checks above still run when the field is skipped.
+  let chain = body(path);
+  if (when) {
+    chain = chain.if(when);
+  }
+  chain = chain
     .isString()
     .withMessage(`${label} must be text`)
     .bail()
@@ -20,9 +25,6 @@ const addressField = (path, { max, required, pattern, label, when }) => {
   }
   if (!required) {
     chain = chain.optional();
-  }
-  if (when) {
-    chain = chain.if(when);
   }
   return chain;
 };

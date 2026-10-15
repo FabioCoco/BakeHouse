@@ -153,6 +153,23 @@ describe('POST /api/orders/checkout', () => {
     expect(cart.body.data.items).toHaveLength(0);
   });
 
+  it('accepts a saved address by id without validating the unused address snapshot', async () => {
+    const croissant = await createProduct(category, { name: 'Saved Address Croissant', price: 22000, stock: 5 });
+    await addToCart(croissant, 1);
+
+    const saved = await request(app).post('/api/users/me/addresses').set('Cookie', customerCookie).send(testAddress);
+    expect({ status: saved.status, body: saved.body }).toMatchObject({ status: 201 });
+    const addressId = saved.body.data.at(-1)._id;
+
+    const res = await request(app)
+      .post('/api/orders/checkout')
+      .set('Cookie', customerCookie)
+      .send({ addressId });
+
+    if (res.status !== 201) throw new Error(`checkout ${res.status}: ${JSON.stringify(res.body)}`);
+    expect(res.body.data.order.shippingAddress.street).toBe(testAddress.street);
+  });
+
   it('charges no shipping fee at or above the free-shipping threshold', async () => {
     const cake = await createProduct(category, { price: 300000, stock: 2 });
     await addToCart(cake, 1);
