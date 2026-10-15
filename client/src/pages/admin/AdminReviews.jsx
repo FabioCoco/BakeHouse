@@ -52,7 +52,7 @@ export default function AdminReviews() {
   return (
     <div className="flex flex-col gap-6">
       <header className="flex flex-col gap-1">
-        <p className="eyebrow">Moderasi</p>
+        <p className="eyebrow">Moderation</p>
         <h1 className="text-4xl">Reviews</h1>
       </header>
 

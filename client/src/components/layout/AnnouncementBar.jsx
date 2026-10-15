@@ -9,7 +9,7 @@ export default function AnnouncementBar() {
   if (!text) return null;
 
   return (
-    <div role="region" aria-label="Pengumuman" className="bg-crust px-4 py-2 text-center text-sm font-medium text-surface">
+    <div role="region" aria-label="Announcement" className="bg-crust px-4 py-2 text-center text-sm font-medium text-surface">
       {text}
     </div>
   );

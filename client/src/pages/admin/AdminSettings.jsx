@@ -127,12 +127,12 @@ export default function AdminSettings() {
   return (
     <div className="flex flex-col gap-8">
       <header className="flex flex-col gap-1">
-        <p className="eyebrow">Toko</p>
+        <p className="eyebrow">Shop</p>
         <h1 className="text-4xl">Settings</h1>
       </header>
 
       <Card className="flex flex-col gap-4 p-6">
-        <h2 className="text-2xl">Pengumuman</h2>
+        <h2 className="text-2xl">Announcement</h2>
         <Input
           label="Announcement text (leave empty to hide)"
           value={announcement}

@@ -69,7 +69,7 @@ export default function AdminOrders() {
   return (
     <div className="flex flex-col gap-6">
       <header className="flex flex-col gap-1">
-        <p className="eyebrow">Operasional</p>
+        <p className="eyebrow">Operational</p>
         <h1 className="text-4xl">Orders</h1>
       </header>
 

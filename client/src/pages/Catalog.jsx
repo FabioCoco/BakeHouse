@@ -54,7 +54,7 @@ export default function Catalog() {
   return (
     <Container className="flex flex-col gap-10 py-12 md:py-16">
       <header className="flex flex-col gap-3">
-        <p className="eyebrow">Katalog</p>
+        <p className="eyebrow">Catalog</p>
         <h1 className="text-5xl md:text-6xl">Our Bread Menu</h1>
       </header>
 
